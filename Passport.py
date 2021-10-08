@@ -1,15 +1,19 @@
 import json
 import os
+from copy import deepcopy
 from datetime import datetime, date, time
 from random import choice, randint
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 
 class Passport:
     def __init__(self):
         self.passport_data = {
             'firstName': 'Иван',
-            'secondName': 'Иванович',
-            'patronymicName': 'Иванов',
+            'secondName': 'Иванов',
+            'patronymicName': 'Иванович',
             'address': 'Г. Ярославль, улица Строителей 77',
             'seriesPassport': 1102,
             'numberPassport': 123685,
@@ -61,7 +65,7 @@ class Passport:
 
 
 class GenerateImg:
-    def __init__(self, file_background=''):
+    def __init__(self, file_background='8QfxS6biN-w.jpg'):
         self.parameters_generate = {
             'blurCheckBox': True,
             'crumpledCheckBox': True,
@@ -70,7 +74,7 @@ class GenerateImg:
             'flashnumSpinBox': 1,
             'blurFlashnumBlotsnum': 30,
             'fontComboBox': '',
-            'fontsizeSpinBox': 18,
+            'fontsizeSpinBox': 28,
             'fontblurSpinBox': 80,
             'images': {'labelFoto': '',
                        'label_signature_1': '',
@@ -96,7 +100,7 @@ class GenerateImg:
                     self.parameters_generate[key] = choice(fonts_list)
                 del fonts_list
             elif key == 'fontsizeSpinBox':
-                self.parameters_generate[key] = randint(14, 26)
+                self.parameters_generate[key] = randint(14, 30)
 
             """
             'images': {'labelFoto': '',
@@ -106,14 +110,158 @@ class GenerateImg:
                        }
             """
 
-
     @staticmethod
     def _load_markup(file):
         # file_background сделать в json файл
-        if os.path.isfile(file):
-            with open(file, 'w') as f:
+        # Правильнее наоборот искать?
+        file_json = f'{os.path.abspath(os.curdir)}/passportDrawer/background/{file.split(".")[-2]}.json'
+        print(file_json)
+        if os.path.isfile(file_json):
+            with open(file_json, 'r') as f:
                 data = json.load(f)
                 return data
 
     def update(self, parameters_generate):
         self.parameters_generate.update(parameters_generate)
+
+    def _write_series_and_number(self, text, font, shape):
+        print(shape)
+        img_text = Image.new("RGBA", shape, (0, 0, 0, 0))
+        drawer = ImageDraw.Draw(img_text)
+        drawer.text((0, 0), text, fill=(153, 103, 105), font=font,
+                    stroke_width=0,
+                    stroke_fill=(0, 0, 0))
+        # ImageDraw.Draw(img_text)
+        return img_text
+
+    def _get_hyphenated_str(self, text, font, width_img):
+        # Декаратор поднятия регистра?
+
+        width, height = font.getsize(text)
+        if font.getsize(text)[0] >= width_img:
+            result = [i for i, chr in enumerate(text) if chr == ' ']
+            if result == []:
+                print('Error')
+
+            for index, pos in enumerate(result):
+                if text[pos - 1] == ',':
+                    text = "\n".join([text[:pos], text[pos + 1:]])
+
+                    if font.getsize(text[pos + 3:])[0] < width_img:
+                        return text
+
+        text = text.replace(' ', '\n')
+        return text
+
+    def _draw_text(self, text, font, shape):
+        # text = self._get_hyphenated_str(text, font, shape[0])
+        print(shape, text)
+        img_text = Image.new("RGBA", shape, (0, 0, 0, 0))
+        drawer = ImageDraw.Draw(img_text)
+        drawer.text((0, 0), text, fill=(50, 50, 50), font=font,
+                    stroke_width=0,
+                    stroke_fill=(0, 0, 0))
+        # ImageDraw.Draw(img)
+
+        return img_text
+
+    def _get_box_size(self, markup_origin, number=False) -> tuple:
+
+        markup = deepcopy(markup_origin)
+        print(markup)
+        left_upper_point = markup[0]  # min(markup)
+        del markup[markup.index(left_upper_point)]
+        print('min', left_upper_point)
+
+        right_upper_point = min(markup, key=lambda x: x[0])
+        del markup[markup.index(right_upper_point)]
+
+        down_point = max(markup, key=lambda y: y[1])
+        print(left_upper_point, right_upper_point, down_point)
+        print(right_upper_point[1], left_upper_point[1])
+
+        if number:
+            # y, x
+            return right_upper_point[1] - left_upper_point[1], down_point[0] - left_upper_point[0]
+        else:
+            # x, y
+            return down_point[0] - left_upper_point[0], right_upper_point[1] - left_upper_point[1]
+
+    def _get_place(self, markup) -> tuple:
+        return tuple(markup[0])
+        # tuple(min(markup))
+
+    def create_image(self, passport_data):
+        print(self.parameters_generate, passport_data)
+        with Image.open(f'{os.path.abspath(os.curdir)}/passportDrawer/background/'
+                        f'{self.parameters_generate["images"]["background"][0]}') as img:
+
+            img = img.convert('RGBA')
+            font = ImageFont.truetype(f'{os.path.abspath(os.curdir)}/passportDrawer/fonts/'
+                                      f'{self.parameters_generate["fontComboBox"]}',
+                                      self.parameters_generate["fontsizeSpinBox"])
+
+            background_markup = {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))
+                                 for elem in self.parameters_generate["images"]["background"][1]["shapes"]}
+
+            # Что-то сделать со строчками
+            print(self._get_place(background_markup["issue_place"]))
+            img_text = self._draw_text(passport_data['department'], font,
+                                       self._get_box_size(background_markup["issue_place"]))
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_place"]), img_text)
+
+            """
+            font_numbers = ImageFont.truetype(f'{os.path.abspath(os.curdir)}'
+                                              f'/passportDrawer/fonts/a_SeriferNr_Bold.ttf', 14)
+            img_text = self._write_series_and_number(" ".join([str(passport_data['seriesPassport']),
+                                                               str(passport_data['numberPassport'])]),
+                                                     font_numbers,
+                                                     self._get_box_size(background_markup["number_group1"],
+                                                                        number=True))
+            img_text = img_text.rotate(270)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group1"]), img_text)
+
+            img_text = self._write_series_and_number(" ".join([str(passport_data['seriesPassport']),
+                                                               str(passport_data['numberPassport'])]),
+                                                     font_numbers,
+                                                     self._get_box_size(background_markup["number_group2"],
+                                                                        number=True))
+            img_text = img_text.rotate(270)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["surname"]), img_text)
+
+            img_text = self._draw_text(passport_data['secondName'], font,
+                                       self._get_box_size(background_markup["surname"]))
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["surname"]), img_text)
+
+            print(len(background_markup["surname"]))
+            img_text = self._draw_text(passport_data['firstName'], font,
+                                       self._get_box_size(background_markup["name"]))
+            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["name"]), img_text)
+
+            img_text = self._draw_text(passport_data['patronymicName'], font,
+                                       self._get_box_size(background_markup["patronymic"]))
+            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["patronymic"]), img_text)
+
+            img_text = self._draw_text(passport_data['address'], font,
+                                       self._get_box_size(background_markup["birth_place"]))
+            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["birth_place"]), img_text)
+
+            img_text = self._draw_text("-".join(map(str, passport_data['departmentCode'])), font,
+                                       self._get_box_size(background_markup["code"]))
+            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["code"]), img_text)
+
+            img_text = self._draw_text(passport_data['dateOFbirth'].strftime("%m.%d.%Y"), font,
+                                       self._get_box_size(background_markup["birth_date"]))
+            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["birth_date"]), img_text)
+
+            img_text = self._draw_text(passport_data['dateOFissue'].strftime("%m.%d.%Y"), font,
+                                       self._get_box_size(background_markup["issue_date"]))
+            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["issue_date"]), img_text)
+
+            img_text = self._draw_text(passport_data['sex'], font,
+                                       self._get_box_size(background_markup["sex"]))
+            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["sex"]), img_text)
+            """
+            #img.show()
+            img.save("1.png")
+        return img

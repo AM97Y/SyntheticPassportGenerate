@@ -1,3 +1,6 @@
+from PIL.ImageQt import ImageQt
+from PyQt5.QtGui import QPixmap, QImage
+
 import ChangeDataDialog
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
@@ -5,7 +8,7 @@ from PyQt5.QtWidgets import *
 from datetime import datetime
 
 import Passport
-import passportDrawer.TextFont2Img as textGenerate
+import passportDrawer.TextFont2Img as imgGenerate
 
 
 class MainWindow(QMainWindow):
@@ -24,6 +27,7 @@ class MainWindow(QMainWindow):
         self.generate = Passport.GenerateImg()
 
         self._dialog = None
+        self.output_path = './output'
 
     def _update_passport(self):
         new_parameters_generate = {
@@ -39,7 +43,7 @@ class MainWindow(QMainWindow):
             'images': {'labelFoto': self._dialog.imgs_dict['labelFoto'],
                        'label_signature_1': self._dialog.imgs_dict['label_signature_1'],
                        'label_signature_2': self._dialog.imgs_dict['label_signature_2'],
-                       #'background': ['file_background', self._load_markup('file_background')]
+                       'background': self.generate.parameters_generate["images"]["background"],
                        }
         }
         new_passport_data = {
@@ -60,11 +64,27 @@ class MainWindow(QMainWindow):
         self.passport.update(new_passport_data)
         self.generate.update(new_parameters_generate)
 
+        self._create_image_passport()
+
     def showGenerate(self):
         self.passport.random_init()
         self.generate.random_init()
-        #img = textGenerate("args.config_file").create_text_images(self.passport.passport_data, self.generate.parameters_generate)
+        self._create_image_passport()
         print('showGenerate')
+
+    def _create_image_passport(self):
+        self.img = self.generate.create_image(self.passport.passport_data)
+        # img = QtGui.QPixmap(self.img)
+        print(self.passportView, self.img)
+        # self.passportView.setPixmap(self.img)
+        # uic.loadUi('MainWindow.ui', self)
+        qimage = qim = ImageQt(self.img)
+        img = QPixmap.fromImage(qimage) \
+            .scaledToWidth(self.passportImg.frameGeometry().width() - 400) \
+            .scaledToWidth(self.passportImg.frameGeometry().height() - 400)
+        self.passportImg.setPixmap(img)
+        # self.passportImg ДОБАВИТЬ СКРОЛИН И ЧТОБЫ ОКНО НЕ УВЕЛИЧИТЬ.
+        self.show()
 
     def save(self):
         today = datetime.now()
