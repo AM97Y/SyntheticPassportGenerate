@@ -188,14 +188,13 @@ class GenerateImg:
             return down_point[0] - left_upper_point[0], right_upper_point[1] - left_upper_point[1]
 
     def _get_place(self, markup) -> tuple:
-        return tuple(markup[0])
+        return markup[0][0], markup[0][1]
         # tuple(min(markup))
 
     def create_image(self, passport_data):
         print(self.parameters_generate, passport_data)
         with Image.open(f'{os.path.abspath(os.curdir)}/passportDrawer/background/'
                         f'{self.parameters_generate["images"]["background"][0]}') as img:
-
             img = img.convert('RGBA')
             font = ImageFont.truetype(f'{os.path.abspath(os.curdir)}/passportDrawer/fonts/'
                                       f'{self.parameters_generate["fontComboBox"]}',
@@ -210,7 +209,6 @@ class GenerateImg:
                                        self._get_box_size(background_markup["issue_place"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_place"]), img_text)
 
-            """
             font_numbers = ImageFont.truetype(f'{os.path.abspath(os.curdir)}'
                                               f'/passportDrawer/fonts/a_SeriferNr_Bold.ttf', 14)
             img_text = self._write_series_and_number(" ".join([str(passport_data['seriesPassport']),
@@ -236,32 +234,30 @@ class GenerateImg:
             print(len(background_markup["surname"]))
             img_text = self._draw_text(passport_data['firstName'], font,
                                        self._get_box_size(background_markup["name"]))
-            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["name"]), img_text)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["name"]), img_text)
 
             img_text = self._draw_text(passport_data['patronymicName'], font,
                                        self._get_box_size(background_markup["patronymic"]))
-            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["patronymic"]), img_text)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["patronymic"]), img_text)
 
             img_text = self._draw_text(passport_data['address'], font,
                                        self._get_box_size(background_markup["birth_place"]))
-            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["birth_place"]), img_text)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["birth_place"]), img_text)
 
             img_text = self._draw_text("-".join(map(str, passport_data['departmentCode'])), font,
                                        self._get_box_size(background_markup["code"]))
-            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["code"]), img_text)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["code"]), img_text)
 
             img_text = self._draw_text(passport_data['dateOFbirth'].strftime("%m.%d.%Y"), font,
                                        self._get_box_size(background_markup["birth_date"]))
-            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["birth_date"]), img_text)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["birth_date"]), img_text)
 
             img_text = self._draw_text(passport_data['dateOFissue'].strftime("%m.%d.%Y"), font,
                                        self._get_box_size(background_markup["issue_date"]))
-            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["issue_date"]), img_text)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_date"]), img_text)
 
             img_text = self._draw_text(passport_data['sex'], font,
                                        self._get_box_size(background_markup["sex"]))
-            img.paste(img_text.convert('RGBA'), self._get_box_size(background_markup["sex"]), img_text)
-            """
-            #img.show()
-            img.save("1.png")
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["sex"]), img_text)
+
         return img
