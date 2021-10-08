@@ -55,8 +55,8 @@ class Passport:
             elif key != 'sex':
                 tmp_choices = []
                 # Сделать проверку на пол, мб прикрутить pymorphy
-                if os.path.isfile(f'{os.path.abspath(os.curdir)}/passportDrawer/dataPassport/{key}.txt'):
-                    with open(f'{os.path.abspath(os.curdir)}/passportDrawer/dataPassport/{key}.txt', "r") as f:
+                if os.path.isfile(f'{os.path.abspath(os.curdir)}/dataPassport/{key}.txt'):
+                    with open(f'{os.path.abspath(os.curdir)}/dataPassport/{key}.txt', "r") as f:
                         for line in f:
                             tmp_choices.append(line.strip())
 
@@ -94,7 +94,7 @@ class GenerateImg:
                 self.parameters_generate[key] = randint(0, 100)
             elif key == 'fontComboBox':
                 fonts_list = []
-                with open(f'{os.path.abspath(os.curdir)}/passportDrawer/fonts/fonts.txt', "r") as f:
+                with open(f'{os.path.abspath(os.curdir)}/fonts/fonts.txt', "r") as f:
                     for line in f:
                         fonts_list.append(line.strip().split('/')[-1])
                     self.parameters_generate[key] = choice(fonts_list)
@@ -114,7 +114,7 @@ class GenerateImg:
     def _load_markup(file):
         # file_background сделать в json файл
         # Правильнее наоборот искать?
-        file_json = f'{os.path.abspath(os.curdir)}/passportDrawer/background/{file.split(".")[-2]}.json'
+        file_json = f'{os.path.abspath(os.curdir)}/background/{file.split(".")[-2]}.json'
         print(file_json)
         if os.path.isfile(file_json):
             with open(file_json, 'r') as f:
@@ -193,10 +193,10 @@ class GenerateImg:
 
     def create_image(self, passport_data):
         print(self.parameters_generate, passport_data)
-        with Image.open(f'{os.path.abspath(os.curdir)}/passportDrawer/background/'
+        with Image.open(f'{os.path.abspath(os.curdir)}/background/'
                         f'{self.parameters_generate["images"]["background"][0]}') as img:
             img = img.convert('RGBA')
-            font = ImageFont.truetype(f'{os.path.abspath(os.curdir)}/passportDrawer/fonts/'
+            font = ImageFont.truetype(f'{os.path.abspath(os.curdir)}/fonts/'
                                       f'{self.parameters_generate["fontComboBox"]}',
                                       self.parameters_generate["fontsizeSpinBox"])
 
@@ -210,7 +210,7 @@ class GenerateImg:
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_place"]), img_text)
 
             font_numbers = ImageFont.truetype(f'{os.path.abspath(os.curdir)}'
-                                              f'/passportDrawer/fonts/a_SeriferNr_Bold.ttf', 14)
+                                              f'/fonts/a_SeriferNr_Bold.ttf', 14)
             img_text = self._write_series_and_number(" ".join([str(passport_data['seriesPassport']),
                                                                str(passport_data['numberPassport'])]),
                                                      font_numbers,

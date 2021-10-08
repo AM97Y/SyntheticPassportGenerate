@@ -38,7 +38,7 @@ class ChangeDataDialog(QDialog):
         print(passport_data['sex'])
 
         print(parameters_generate['fontComboBox'])
-        for file in os.listdir(f'{os.path.abspath(os.curdir)}/passportDrawer/fonts/'):
+        for file in os.listdir(f'{os.path.abspath(os.curdir)}/fonts/'):
             if file != 'fonts.txt':
                 self.fontComboBox.addItem(file)
         self.fontComboBox.setCurrentText(parameters_generate['fontComboBox'])
