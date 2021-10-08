@@ -56,8 +56,8 @@ class MainWindow(QMainWindow):
             'departmentCode': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
             'department': self._dialog.organizationLineEdit1.text(),
             'city': self._dialog.birthplaceLineEdit1.text(),
-            'dateOFissue': self._dialog.issueDateEdit.date(),
-            'dateOFbirth': self._dialog.birthDateEdit.date(),
+            'dateOFissue': self._dialog.issueDateEdit.date().currentDate().toPyDate(),
+            'dateOFbirth': self._dialog.birthDateEdit.date().currentDate().toPyDate(),
             'sex': self._dialog.sexComboBox.currentText(),
         }
 
