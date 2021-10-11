@@ -83,6 +83,7 @@ class GenerateImg:
                        'background': [file_background, self._load_markup(file_background)]
                        }
         }
+        self.random_init()
 
     def random_init(self):
         self._set_random_color()
@@ -131,7 +132,7 @@ class GenerateImg:
             with open(file_json, 'r') as f:
                 data = json.load(f)
                 return data
-        return {}
+        return {} # Посмотреть формат
 
     def update(self, parameters_generate) -> None:
         self.parameters_generate.update(parameters_generate)
@@ -326,6 +327,7 @@ class GenerateImg:
             with Image.open(self.parameters_generate['images']['labelFoto']) as img_photo:
                 img_photo = img_photo.resize(self._get_box_size(background_markup["photo"], Image.NEAREST))
                 img.paste(img_photo, self._get_place(background_markup["photo"]))
+
 
             with Image.open(self.parameters_generate['images']['label_signature_1']) as img_photo:
                 img_photo = img_photo.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
