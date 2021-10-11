@@ -3,7 +3,7 @@ import os
 from copy import deepcopy
 from datetime import datetime, date, time
 from random import choice, randint
-from PIL import Image
+from PIL import Image, ImageFilter
 from PIL import ImageDraw
 from PIL import ImageFont
 
@@ -103,6 +103,15 @@ class GenerateImg:
                 del fonts_list
             elif key == 'fontsizeSpinBox':
                 self.parameters_generate[key] = randint(14, 30)
+            elif key == 'images':
+                path = f'{os.path.abspath(os.curdir)}/Foto/'
+                path_blots = os.listdir(f'{path}')
+                self.parameters_generate[key]['labelFoto'] = path + choice(path_blots)
+
+                path = f'{os.path.abspath(os.curdir)}/signs/'
+                path_blots = os.listdir(f'{path}')
+                self.parameters_generate[key]['label_signature_1'] = path + choice(path_blots)
+                self.parameters_generate[key]['label_signature_2'] = path + choice(path_blots)
 
             """
             'images': {'labelFoto': '',
@@ -192,22 +201,43 @@ class GenerateImg:
         pix = randint(120, 200)
         self.color_text = (pix, pix, pix)
 
-    def _draw_watermark(self, img, count_watermark, path):
+    def _draw_watermark(self, img, count_watermark, path, resize=False):
         (w, h) = img.size
         if count_watermark > 0:
             path_blots = os.listdir(f'{path}')
             for i in range(0, count_watermark):
-                with Image.open(f'{path}/{choice([x for x in path_blots])}') as img_cup:
-                    paste_mask = img_cup.split()[3].point(
+                with Image.open(f'{path}/{choice([x for x in path_blots])}') as img_watermark:
+                    img_watermark = img_watermark.convert('RGBA')
+                    if resize:
+                        point = (0, 0)
+                        img_watermark = img_watermark.resize((w, h), Image.NEAREST)
+                    else:
+                        point = (randint(0, w), randint(0, h))
+
+                    paste_mask = img_watermark.split()[3].point(
                         lambda i: i * self.parameters_generate['blurFlashnumBlotsnum'] / 100.)
-                    img.paste(img_cup, (randint(0, w), randint(0, h)), mask=paste_mask)
+                    img.paste(img_watermark, point, mask=paste_mask)
         return img
 
-    def _overlay_watermark(self, img):
-        # Убрать дублирование кода
-        """'blurCheckBox': True,
-        'crumpledCheckBox': True,
-        'noiseCheckBox': True,"""
+    def _overlay_artifacts(self, img):
+
+        count_watermark = self.parameters_generate['blotsnumSpinBox']
+        path = f'{os.path.abspath(os.curdir)}/dirty/'
+        img = self._draw_watermark(img, count_watermark, path)
+
+        count_watermark = self.parameters_generate['flashnumSpinBox']
+        path = f'{os.path.abspath(os.curdir)}/glares/'
+        img = self._draw_watermark(img, count_watermark, path)
+
+        if self.parameters_generate['crumpledCheckBox']:
+            path = f'{os.path.abspath(os.curdir)}/crumpled paper/'
+            img = self._draw_watermark(img, 1, path, resize=True)
+
+        if self.parameters_generate['blurCheckBox']:
+            img = img.filter(ImageFilter.BLUR)
+
+        if self.parameters_generate['noiseCheckBox']:
+            img = img.filter(ImageFilter.MinFilter(3))
 
         return img
 
@@ -292,14 +322,19 @@ class GenerateImg:
                                        self._get_box_size(background_markup["sex"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["sex"]), img_text)
 
-            count_watermark = self.parameters_generate['blotsnumSpinBox']
-            path = f'{os.path.abspath(os.curdir)}/dirty/'
-            img = self._draw_watermark(img, count_watermark, path)
+            # Foto
+            with Image.open(self.parameters_generate['images']['labelFoto']) as img_photo:
+                img_photo = img_photo.resize(self._get_box_size(background_markup["photo"], Image.NEAREST))
+                img.paste(img_photo, self._get_place(background_markup["photo"]))
 
-            count_watermark = self.parameters_generate['flashnumSpinBox']
-            path = f'{os.path.abspath(os.curdir)}/glares/'
-            img = self._draw_watermark(img, count_watermark, path)
+            with Image.open(self.parameters_generate['images']['label_signature_1']) as img_photo:
+                img_photo = img_photo.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
+                img.paste(img_photo.convert('RGBA'), self._get_place(background_markup["signature"]))
 
-            # img = self._overlay_watermark(img)
+            """with Image.open(self.parameters_generate['images']['label_signature_2']) as img_photo:
+                img_photo = img_photo.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
+                img.paste(img_photo.convert('RGBA'), self._get_place(background_markup["signature"]))"""
+
+            img = self._overlay_artifacts(img)
 
         return img
