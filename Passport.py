@@ -168,70 +168,88 @@ class GenerateImg:
     def _get_box_size(self, markup_origin, number=False) -> tuple:
 
         markup = deepcopy(markup_origin)
-        print(markup)
+        # print(markup)
         left_upper_point = markup[0]  # min(markup)
         del markup[markup.index(left_upper_point)]
-        print('min', left_upper_point)
+        # print('min', left_upper_point)
 
         right_upper_point = min(markup, key=lambda x: x[0])
         del markup[markup.index(right_upper_point)]
 
         down_point = max(markup, key=lambda y: y[1])
         print(left_upper_point, right_upper_point, down_point)
-        print(right_upper_point[1], left_upper_point[1])
+        # print(right_upper_point[1], left_upper_point[1])
+
 
         if number:
             # y, x
-            return right_upper_point[1] - left_upper_point[1], down_point[0] - left_upper_point[0]
+            #return right_upper_point[1] - left_upper_point[1], down_point[0] - left_upper_point[0]
+            return right_upper_point[1] - left_upper_point[1], right_upper_point[1] - left_upper_point[1]
         else:
             # x, y
             return down_point[0] - left_upper_point[0], right_upper_point[1] - left_upper_point[1]
 
-    def _get_place(self, markup) -> tuple:
-        return markup[0][0], markup[0][1]
+    def _get_place(self, markup, number=False) -> tuple:
+        if number:
+            # Чтобы от этого избавиться, надо найти как вставлять по вернему левому углу.
+            extra_space = self._get_box_size(markup)
+            return markup[0][0] - (extra_space[1] - extra_space[0]), markup[0][1]
+        else:
+            return markup[0][0], markup[0][1]
         # tuple(min(markup))
 
     def create_image(self, passport_data):
-        print(self.parameters_generate, passport_data)
         with Image.open(f'{os.path.abspath(os.curdir)}/background/'
                         f'{self.parameters_generate["images"]["background"][0]}') as img:
             img = img.convert('RGBA')
+            background_markup = {}
             font = ImageFont.truetype(f'{os.path.abspath(os.curdir)}/fonts/'
                                       f'{self.parameters_generate["fontComboBox"]}',
                                       self.parameters_generate["fontsizeSpinBox"])
 
-            background_markup = {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))
-                                 for elem in self.parameters_generate["images"]["background"][1]["shapes"]}
+            # background_markup = {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))
+            #                     for elem in self.parameters_generate["images"]["background"][1]["shapes"]}
+
+            for elem in self.parameters_generate["images"]["background"][1]["shapes"]:
+                # Берем только первое вхождение, надо обсудить issue_place.
+                if background_markup.get(elem['label'], None) is None:
+                    background_markup.update(
+                        {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))})
 
             # Что-то сделать со строчками
-            print(self._get_place(background_markup["issue_place"]))
+
             img_text = self._draw_text(passport_data['department'], font,
                                        self._get_box_size(background_markup["issue_place"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_place"]), img_text)
 
             font_numbers = ImageFont.truetype(f'{os.path.abspath(os.curdir)}'
-                                              f'/fonts/a_SeriferNr_Bold.ttf', 14)
+                                              f'/fonts/a_SeriferNr_Bold.ttf',
+                                              self.parameters_generate["fontsizeSpinBox"])
             img_text = self._write_series_and_number(" ".join([str(passport_data['seriesPassport']),
                                                                str(passport_data['numberPassport'])]),
                                                      font_numbers,
                                                      self._get_box_size(background_markup["number_group1"],
                                                                         number=True))
             img_text = img_text.rotate(270)
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group1"]), img_text)
 
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group1"], number=True), img_text)
+
+            print(" ".join([str(passport_data['seriesPassport']), str(passport_data['numberPassport'])]),
+                  background_markup["number_group2"],
+                  self._get_box_size(background_markup["number_group2"]))
             img_text = self._write_series_and_number(" ".join([str(passport_data['seriesPassport']),
                                                                str(passport_data['numberPassport'])]),
                                                      font_numbers,
                                                      self._get_box_size(background_markup["number_group2"],
                                                                         number=True))
+
             img_text = img_text.rotate(270)
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["surname"]), img_text)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group2"], number=True), img_text)
 
             img_text = self._draw_text(passport_data['secondName'], font,
                                        self._get_box_size(background_markup["surname"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["surname"]), img_text)
 
-            print(len(background_markup["surname"]))
             img_text = self._draw_text(passport_data['firstName'], font,
                                        self._get_box_size(background_markup["name"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["name"]), img_text)
