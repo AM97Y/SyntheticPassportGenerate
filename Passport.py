@@ -10,6 +10,7 @@ from PIL import ImageFont
 
 class Passport:
     def __init__(self):
+        self.color_text = (0, 0, 0)
         self.passport_data = {
             'firstName': 'Иван',
             'secondName': 'Иванов',
@@ -84,6 +85,7 @@ class GenerateImg:
         }
 
     def random_init(self):
+        self._set_random_color()
         sex = choice(('МУЖ.', 'ЖЕН.'))
         for key, _ in self.parameters_generate.items():
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
@@ -111,7 +113,7 @@ class GenerateImg:
             """
 
     @staticmethod
-    def _load_markup(file):
+    def _load_markup(file) -> dict:
         # file_background сделать в json файл
         # Правильнее наоборот искать?
         file_json = f'{os.path.abspath(os.curdir)}/background/{file.split(".")[-2]}.json'
@@ -120,28 +122,19 @@ class GenerateImg:
             with open(file_json, 'r') as f:
                 data = json.load(f)
                 return data
+        return {}
 
-    def update(self, parameters_generate):
+    def update(self, parameters_generate) -> None:
         self.parameters_generate.update(parameters_generate)
 
-    def _write_series_and_number(self, text, font, shape):
-        print(shape)
-        img_text = Image.new("RGBA", shape, (0, 0, 0, 0))
-        drawer = ImageDraw.Draw(img_text)
-        drawer.text((0, 0), text, fill=(153, 103, 105), font=font,
-                    stroke_width=0,
-                    stroke_fill=(0, 0, 0))
-        # ImageDraw.Draw(img_text)
-        return img_text
-
-    def _get_hyphenated_str(self, text, font, width_img):
+    def _get_hyphenated_str(self, text, font, width_img) -> str:
         # Декаратор поднятия регистра?
 
         width, height = font.getsize(text)
         if font.getsize(text)[0] >= width_img:
             result = [i for i, chr in enumerate(text) if chr == ' ']
-            if result == []:
-                print('Error')
+            if not result:
+                print('Error _get_hyphenated_str')
 
             for index, pos in enumerate(result):
                 if text[pos - 1] == ',':
@@ -153,37 +146,35 @@ class GenerateImg:
         text = text.replace(' ', '\n')
         return text
 
-    def _draw_text(self, text, font, shape):
+    def _draw_text(self, text, font, shape, number=False):
         # text = self._get_hyphenated_str(text, font, shape[0])
         print(shape, text)
         img_text = Image.new("RGBA", shape, (0, 0, 0, 0))
         drawer = ImageDraw.Draw(img_text)
-        drawer.text((0, 0), text, fill=(50, 50, 50), font=font,
+        if number:
+            color = (130, 30, 30)
+        else:
+            color = self.color_text
+        drawer.text((0, 0), text, fill=color, font=font,
                     stroke_width=0,
                     stroke_fill=(0, 0, 0))
-        # ImageDraw.Draw(img)
 
         return img_text
 
     def _get_box_size(self, markup_origin, number=False) -> tuple:
 
         markup = deepcopy(markup_origin)
-        # print(markup)
+
         left_upper_point = markup[0]  # min(markup)
         del markup[markup.index(left_upper_point)]
-        # print('min', left_upper_point)
 
         right_upper_point = min(markup, key=lambda x: x[0])
         del markup[markup.index(right_upper_point)]
 
         down_point = max(markup, key=lambda y: y[1])
         print(left_upper_point, right_upper_point, down_point)
-        # print(right_upper_point[1], left_upper_point[1])
-
 
         if number:
-            # y, x
-            #return right_upper_point[1] - left_upper_point[1], down_point[0] - left_upper_point[0]
             return right_upper_point[1] - left_upper_point[1], right_upper_point[1] - left_upper_point[1]
         else:
             # x, y
@@ -196,7 +187,29 @@ class GenerateImg:
             return markup[0][0] - (extra_space[1] - extra_space[0]), markup[0][1]
         else:
             return markup[0][0], markup[0][1]
-        # tuple(min(markup))
+
+    def _set_random_color(self) -> None:
+        pix = randint(120, 200)
+        self.color_text = (pix, pix, pix)
+
+    def _draw_watermark(self, img, count_watermark, path):
+        (w, h) = img.size
+        if count_watermark > 0:
+            path_blots = os.listdir(f'{path}')
+            for i in range(0, count_watermark):
+                with Image.open(f'{path}/{choice([x for x in path_blots])}') as img_cup:
+                    paste_mask = img_cup.split()[3].point(
+                        lambda i: i * self.parameters_generate['blurFlashnumBlotsnum'] / 100.)
+                    img.paste(img_cup, (randint(0, w), randint(0, h)), mask=paste_mask)
+        return img
+
+    def _overlay_watermark(self, img):
+        # Убрать дублирование кода
+        """'blurCheckBox': True,
+        'crumpledCheckBox': True,
+        'noiseCheckBox': True,"""
+
+        return img
 
     def create_image(self, passport_data):
         with Image.open(f'{os.path.abspath(os.curdir)}/background/'
@@ -225,26 +238,27 @@ class GenerateImg:
             font_numbers = ImageFont.truetype(f'{os.path.abspath(os.curdir)}'
                                               f'/fonts/a_SeriferNr_Bold.ttf',
                                               self.parameters_generate["fontsizeSpinBox"])
-            img_text = self._write_series_and_number(" ".join([str(passport_data['seriesPassport']),
-                                                               str(passport_data['numberPassport'])]),
-                                                     font_numbers,
-                                                     self._get_box_size(background_markup["number_group1"],
-                                                                        number=True))
+            img_text = self._draw_text(" ".join([str(passport_data['seriesPassport']),
+                                                 str(passport_data['numberPassport'])]),
+                                       font_numbers,
+                                       self._get_box_size(background_markup["number_group1"], number=True),
+                                       number=True)
             img_text = img_text.rotate(270)
-
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group1"], number=True), img_text)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group1"], number=True),
+                      img_text)
 
             print(" ".join([str(passport_data['seriesPassport']), str(passport_data['numberPassport'])]),
                   background_markup["number_group2"],
                   self._get_box_size(background_markup["number_group2"]))
-            img_text = self._write_series_and_number(" ".join([str(passport_data['seriesPassport']),
-                                                               str(passport_data['numberPassport'])]),
-                                                     font_numbers,
-                                                     self._get_box_size(background_markup["number_group2"],
-                                                                        number=True))
+            img_text = self._draw_text(" ".join([str(passport_data['seriesPassport']),
+                                                 str(passport_data['numberPassport'])]),
+                                       font_numbers,
+                                       self._get_box_size(background_markup["number_group2"], number=True),
+                                       number=True)
 
             img_text = img_text.rotate(270)
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group2"], number=True), img_text)
+            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group2"], number=True),
+                      img_text)
 
             img_text = self._draw_text(passport_data['secondName'], font,
                                        self._get_box_size(background_markup["surname"]))
@@ -277,5 +291,15 @@ class GenerateImg:
             img_text = self._draw_text(passport_data['sex'], font,
                                        self._get_box_size(background_markup["sex"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["sex"]), img_text)
+
+            count_watermark = self.parameters_generate['blotsnumSpinBox']
+            path = f'{os.path.abspath(os.curdir)}/dirty/'
+            img = self._draw_watermark(img, count_watermark, path)
+
+            count_watermark = self.parameters_generate['flashnumSpinBox']
+            path = f'{os.path.abspath(os.curdir)}/glares/'
+            img = self._draw_watermark(img, count_watermark, path)
+
+            # img = self._overlay_watermark(img)
 
         return img
