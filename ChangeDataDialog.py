@@ -3,7 +3,7 @@ import os
 
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QFileDialog
 
 
 class ChangeDataDialog(QDialog):
