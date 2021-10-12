@@ -11,7 +11,7 @@ from PIL import ImageFont
 
 class Passport:
     def __init__(self):
-        self.color_text = (0, 0, 0)
+
         self.passport_data = {
             'first_name': 'Иван',
             'second_name': 'Иванов',
@@ -75,6 +75,8 @@ class GenerateImg:
             'flashnumSpinBox': 1,
             'blurFlashnumBlotsnum': 30,
             'fontComboBox': '',
+            'upperCheckBox': True,
+            'color_text': (0, 0, 0),
             'fontsizeSpinBox': 28,
             'fontblurSpinBox': 80,
             'images': {'labelFoto': '',
@@ -86,7 +88,6 @@ class GenerateImg:
         self.random_init()
 
     def random_init(self):
-        self._set_random_color()
         sex = choice(('МУЖ.', 'ЖЕН.'))
         for key, _ in self.parameters_generate.items():
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
@@ -113,6 +114,11 @@ class GenerateImg:
                 path_blots = os.listdir(f'{path}')
                 self.parameters_generate[key]['label_signature_1'] = path + choice(path_blots)
                 self.parameters_generate[key]['label_signature_2'] = path + choice(path_blots)
+            elif key == 'upperCheckBox':
+                self.parameters_generate[key] = choice((True, False))
+            elif key == 'color_text':
+                pix = randint(120, 200)
+                self.parameters_generate[key] = (pix, pix, pix)
 
             """
             'images': {'labelFoto': '',
@@ -168,13 +174,15 @@ class GenerateImg:
 
     def _draw_text(self, text, font, shape, number=False):
         # text = self._get_hyphenated_str(text, font, shape[0])
-        print(shape, text)
+        if self.parameters_generate['upperCheckBox']:
+            text = text.upper()
+
         img_text = Image.new("RGBA", shape, (0, 0, 0, 0))
         drawer = ImageDraw.Draw(img_text)
         if number:
             color = (130, 30, 30)
         else:
-            color = self.color_text
+            color = self.parameters_generate['color_text']
         print(text, font, shape)
         drawer.text((0, 0), text, fill=color, font=font,
                     stroke_width=0,
@@ -202,7 +210,7 @@ class GenerateImg:
         else:
             x = right_upper_point[0] - left_upper_point[0]
             y = down_point[1] - left_upper_point[1]
-            print(x,y)
+            print(x, y)
 
         return x, y
 
@@ -214,9 +222,6 @@ class GenerateImg:
         else:
             return markup[0][0], markup[0][1]
 
-    def _set_random_color(self) -> None:
-        pix = randint(120, 200)
-        self.color_text = (pix, pix, pix)
 
     def _draw_watermark(self, img, count_watermark, path, random_point=False, paste_point=(0, 0),
                         resize_size=None):
