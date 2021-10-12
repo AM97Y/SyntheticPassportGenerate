@@ -3,7 +3,7 @@ import os
 
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QDialog
 
 
 class ChangeDataDialog(QDialog):
@@ -37,7 +37,7 @@ class ChangeDataDialog(QDialog):
         self.codeSpinBox1_G.setValue(parameters_generate['color_text'][1])
         self.codeSpinBox1_B.setValue(parameters_generate['color_text'][2])
 
-        self.blurCheckBox.setChecked(parameters_generate['upperCheckBox'])
+        self.upperCheckBox.setChecked(parameters_generate['upperCheckBox'])
 
         self.blurCheckBox.setChecked(parameters_generate['blurCheckBox'])
         self.crumpledCheckBox.setChecked(parameters_generate['crumpledCheckBox'])

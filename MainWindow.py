@@ -5,8 +5,8 @@ from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow
 
-import ChangeDataDialog
-import Passport
+from ChangeDataDialog import ChangeDataDialog
+from Passport import Passport, GenerateImg
 
 
 class MainWindow(QMainWindow):
@@ -21,8 +21,8 @@ class MainWindow(QMainWindow):
         self.saveButton.clicked.connect(self.save)
         self.generateButton.clicked.connect(self.show_generate)
 
-        self.passport = Passport.Passport()
-        self.generate = Passport.GenerateImg()
+        self.passport = Passport()
+        self.generate = GenerateImg()
 
         self._dialog = None
         self.output_path = './output'
@@ -47,6 +47,7 @@ class MainWindow(QMainWindow):
                        'background': self.generate.parameters_generate["images"]["background"],
                        }
         }
+        print(self._dialog.upperCheckBox.isChecked())
         new_passport_data = {
             'first_name': self._dialog.nameLineEdit.text(),
             'second_name': self._dialog.surnameLineEdit1.text(),
@@ -73,7 +74,6 @@ class MainWindow(QMainWindow):
 
     def _create_image_passport(self):
         self.img = self.generate.create_image(self.passport.passport_data)
-        self.img.show()
         qimage = ImageQt(self.img)
         img = QPixmap.fromImage(qimage) \
             .scaledToWidth(self.passportImg.frameGeometry().width() - 400) \
@@ -87,6 +87,6 @@ class MainWindow(QMainWindow):
         self.img.save(f'{self.output_path}/{today.strftime("%Y-%m-%d-%H.%M.%S.%f")}.png')
 
     def show_change_dialog(self):
-        self._dialog = ChangeDataDialog.ChangeDataDialog(self.passport.passport_data, self.generate.parameters_generate)
+        self._dialog = ChangeDataDialog(self.passport.passport_data, self.generate.parameters_generate)
         self._dialog.buttonBox.accepted.connect(self._update_passport)
         self._dialog.show()
