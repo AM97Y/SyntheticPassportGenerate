@@ -13,17 +13,16 @@ class Passport:
     def __init__(self):
         self.color_text = (0, 0, 0)
         self.passport_data = {
-            'firstName': 'Иван',
-            'secondName': 'Иванов',
-            'patronymicName': 'Иванович',
+            'first_name': 'Иван',
+            'second_name': 'Иванов',
+            'patronymic_name': 'Иванович',
             'address': 'Г. Ярославль, улица Строителей 77',
-            'seriesPassport': 1102,
-            'numberPassport': 123685,
-            'departmentCode': [888, 999],
+            'series_passport': 1102,
+            'number_passport': 123685,
+            'department_code': [888, 999],
             'department': 'УВД',
-            'city': 'Ярославль',
-            'dateOFbirth': datetime.now(),
-            'dateOFissue': datetime.now(),
+            'date_birth': datetime.now(),
+            'date_issue': datetime.now(),
             'sex': 'МУЖ.',
         }
 
@@ -35,21 +34,21 @@ class Passport:
         sex = choice(('МУЖ.', 'ЖЕН.'))
         self.passport_data['sex'] = sex
         for key, _ in self.passport_data.items():
-            if key == 'seriesPassport':
+            if key == 'series_passport':
                 self.passport_data[key] = randint(1000, 9999)
-            elif key == 'numberPassport':
+            elif key == 'number_passport':
                 self.passport_data[key] = randint(100000, 999999)
-            elif key == 'departmentCode':
+            elif key == 'department_code':
                 self.passport_data[key] = [randint(100, 999), randint(100, 999)]
-            elif key == 'dateOFbirth':
+            elif key == 'date_birth':
                 year = randint(1900, datetime.now().year - diff)
                 # Проверить вхождение последнего числа
                 month = randint(1, 12)
                 # Сделать зависимость от месяца
                 day = randint(1, 28)
                 self.passport_data[key] = date(year, month, day)
-            elif key == 'dateOFissue':
-                year = self.passport_data['dateOFbirth'].year + diff
+            elif key == 'date_issue':
+                year = self.passport_data['date_birth'].year + diff
                 month = randint(1, 12)
                 # Сделать зависимость от месяца
                 day = randint(1, 28)
@@ -133,7 +132,7 @@ class GenerateImg:
             with open(file_json, 'r') as f:
                 data = json.load(f)
                 return data
-        return {} # Посмотреть формат
+        return {}  # Посмотреть формат
 
     def update(self, parameters_generate) -> None:
         self.parameters_generate.update(parameters_generate)
@@ -166,6 +165,7 @@ class GenerateImg:
             color = (130, 30, 30)
         else:
             color = self.color_text
+        print(text, font, shape)
         drawer.text((0, 0), text, fill=color, font=font,
                     stroke_width=0,
                     stroke_fill=(0, 0, 0))
@@ -270,8 +270,8 @@ class GenerateImg:
             font_numbers = ImageFont.truetype(f'{os.path.abspath(os.curdir)}'
                                               f'/fonts/a_SeriferNr_Bold.ttf',
                                               self.parameters_generate["fontsizeSpinBox"])
-            img_text = self._draw_text(" ".join([str(passport_data['seriesPassport']),
-                                                 str(passport_data['numberPassport'])]),
+            img_text = self._draw_text(" ".join([str(passport_data['series_passport']),
+                                                 str(passport_data['number_passport'])]),
                                        font_numbers,
                                        self._get_box_size(background_markup["number_group1"], number=True),
                                        number=True)
@@ -279,11 +279,11 @@ class GenerateImg:
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group1"], number=True),
                       img_text)
 
-            print(" ".join([str(passport_data['seriesPassport']), str(passport_data['numberPassport'])]),
+            print(" ".join([str(passport_data['series_passport']), str(passport_data['number_passport'])]),
                   background_markup["number_group2"],
                   self._get_box_size(background_markup["number_group2"]))
-            img_text = self._draw_text(" ".join([str(passport_data['seriesPassport']),
-                                                 str(passport_data['numberPassport'])]),
+            img_text = self._draw_text(" ".join([str(passport_data['series_passport']),
+                                                 str(passport_data['number_passport'])]),
                                        font_numbers,
                                        self._get_box_size(background_markup["number_group2"], number=True),
                                        number=True)
@@ -292,15 +292,15 @@ class GenerateImg:
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group2"], number=True),
                       img_text)
 
-            img_text = self._draw_text(passport_data['secondName'], font,
+            img_text = self._draw_text(passport_data['second_name'], font,
                                        self._get_box_size(background_markup["surname"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["surname"]), img_text)
 
-            img_text = self._draw_text(passport_data['firstName'], font,
+            img_text = self._draw_text(passport_data['first_name'], font,
                                        self._get_box_size(background_markup["name"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["name"]), img_text)
 
-            img_text = self._draw_text(passport_data['patronymicName'], font,
+            img_text = self._draw_text(passport_data['patronymic_name'], font,
                                        self._get_box_size(background_markup["patronymic"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["patronymic"]), img_text)
 
@@ -308,15 +308,15 @@ class GenerateImg:
                                        self._get_box_size(background_markup["birth_place"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["birth_place"]), img_text)
 
-            img_text = self._draw_text("-".join(map(str, passport_data['departmentCode'])), font,
+            img_text = self._draw_text("-".join(map(str, passport_data['department_code'])), font,
                                        self._get_box_size(background_markup["code"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["code"]), img_text)
 
-            img_text = self._draw_text(passport_data['dateOFbirth'].strftime("%m.%d.%Y"), font,
+            img_text = self._draw_text(passport_data['date_birth'].strftime("%m.%d.%Y"), font,
                                        self._get_box_size(background_markup["birth_date"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["birth_date"]), img_text)
 
-            img_text = self._draw_text(passport_data['dateOFissue'].strftime("%m.%d.%Y"), font,
+            img_text = self._draw_text(passport_data['date_issue'].strftime("%m.%d.%Y"), font,
                                        self._get_box_size(background_markup["issue_date"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_date"]), img_text)
 
@@ -328,7 +328,6 @@ class GenerateImg:
             with Image.open(self.parameters_generate['images']['labelFoto']) as img_photo:
                 img_photo = img_photo.resize(self._get_box_size(background_markup["photo"], Image.NEAREST))
                 img.paste(img_photo, self._get_place(background_markup["photo"]))
-
 
             with Image.open(self.parameters_generate['images']['label_signature_1']) as img_photo:
                 img_photo = img_photo.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))

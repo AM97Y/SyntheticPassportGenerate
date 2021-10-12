@@ -12,9 +12,7 @@ class ChangeDataDialog(QDialog):
         uic.loadUi('ChangeDataDialog.ui', self)
 
         # self.setWindowIcon(QtGui.QIcon('Icons/results.ico'))
-        # self.buttonBox.accepted.connect(self.ok)
-        # self.buttonBox.rejected.connect(self.cancel)
-        # https://coderoad.ru/44193227/%D0%9A%D0%B0%D0%BA-%D1%8F-%D0%BC%D0%BE%D0%B3%D1%83-%D1%80%D0%B8%D1%81%D0%BE%D0%B2%D0%B0%D1%82%D1%8C-%D0%B2%D0%BD%D1%83%D1%82%D1%80%D0%B8-%D1%81%D1%83%D1%89%D0%B5%D1%81%D1%82%D0%B2%D1%83%D1%8E%D1%89%D0%B5%D0%B3%D0%BE-QGraphicsVIew
+
         self.labelFoto.mousePressEvent = functools.partial(self._load_img, obj=self.labelFoto, name='labelFoto')
         self.label_signature_1.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_1,
                                                                    name='label_signature_1')
@@ -46,23 +44,23 @@ class ChangeDataDialog(QDialog):
 
         self.organizationLineEdit1.setText(passport_data['department'])
 
-        self.surnameLineEdit1.setText(passport_data['secondName'])
-        self.nameLineEdit.setText(passport_data['firstName'])
-        self.patronymicLineEdit.setText(passport_data['patronymicName'])
+        self.surnameLineEdit1.setText(passport_data['second_name'])
+        self.nameLineEdit.setText(passport_data['first_name'])
+        self.patronymicLineEdit.setText(passport_data['patronymic_name'])
 
-        self.birthplaceLineEdit1.setText(passport_data['city'])
+        self.birthplaceLineEdit1.setText(passport_data['address'])
 
-        self.serieSpinBox.setValue(passport_data['seriesPassport'])
-        self.numberSpinBox.setValue(passport_data['numberPassport'])
+        self.serieSpinBox.setValue(passport_data['series_passport'])
+        self.numberSpinBox.setValue(passport_data['number_passport'])
 
-        self.issueDateEdit.setDate(passport_data['dateOFissue'])
+        self.issueDateEdit.setDate(passport_data['date_issue'])
 
-        self.codeSpinBox1.setValue(passport_data['departmentCode'][0])
-        self.codeSpinBox2.setValue(passport_data['departmentCode'][1])
+        self.codeSpinBox1.setValue(passport_data['department_code'][0])
+        self.codeSpinBox2.setValue(passport_data['department_code'][1])
 
         self.sexComboBox.setCurrentText(passport_data['sex'])
 
-        self.birthDateEdit.setDate(passport_data['dateOFbirth'])
+        self.birthDateEdit.setDate(passport_data['date_birth'])
 
         self.blotsnumSpinBox.setValue(parameters_generate['blotsnumSpinBox'])
         self.flashnumSpinBox.setValue(parameters_generate['flashnumSpinBox'])

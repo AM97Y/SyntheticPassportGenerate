@@ -17,9 +17,9 @@ class MainWindow(QMainWindow):
         # self.setWindowIcon(QtGui.QIcon('Icons/thermometer.ico'))
         self.img = None
 
-        self.changeButton.clicked.connect(self.showChangeDataDialog)
+        self.changeButton.clicked.connect(self.show_change_dialog)
         self.saveButton.clicked.connect(self.save)
-        self.generateButton.clicked.connect(self.showGenerate)
+        self.generateButton.clicked.connect(self.show_generate)
 
         self.passport = Passport.Passport()
         self.generate = Passport.GenerateImg()
@@ -45,17 +45,16 @@ class MainWindow(QMainWindow):
                        }
         }
         new_passport_data = {
-            'firstName': self._dialog.nameLineEdit.text(),
-            'secondName': self._dialog.surnameLineEdit1.text(),
-            'patronymicName': self._dialog.patronymicLineEdit.text(),
-            'asdress': self._dialog,
-            'seriesPassport': self._dialog.serieSpinBox.value(),
-            'numberPassport': self._dialog.numberSpinBox.value(),
-            'departmentCode': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
+            'first_name': self._dialog.nameLineEdit.text(),
+            'second_name': self._dialog.surnameLineEdit1.text(),
+            'patronymic_name': self._dialog.patronymicLineEdit.text(),
+            'address': self._dialog.birthplaceLineEdit1.text(),
+            'series_passport': self._dialog.serieSpinBox.value(),
+            'number_passport': self._dialog.numberSpinBox.value(),
+            'department_code': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
             'department': self._dialog.organizationLineEdit1.text(),
-            'city': self._dialog.birthplaceLineEdit1.text(),
-            'dateOFissue': self._dialog.issueDateEdit.date().currentDate().toPyDate(),
-            'dateOFbirth': self._dialog.birthDateEdit.date().currentDate().toPyDate(),
+            'date_issue': self._dialog.issueDateEdit.date().currentDate().toPyDate(),
+            'date_birth': self._dialog.birthDateEdit.date().currentDate().toPyDate(),
             'sex': self._dialog.sexComboBox.currentText(),
         }
 
@@ -64,19 +63,15 @@ class MainWindow(QMainWindow):
 
         self._create_image_passport()
 
-    def showGenerate(self):
+    def show_generate(self):
         self.passport.random_init()
         self.generate.random_init()
         self._create_image_passport()
-        print('showGenerate')
 
     def _create_image_passport(self):
         self.img = self.generate.create_image(self.passport.passport_data)
-        # img = QtGui.QPixmap(self.img)
-        print(self.passportView, self.img)
-        # self.passportView.setPixmap(self.img)
-        # uic.loadUi('MainWindow.ui', self)
-        qimage = qim = ImageQt(self.img)
+        self.img.show()
+        qimage = ImageQt(self.img)
         img = QPixmap.fromImage(qimage) \
             .scaledToWidth(self.passportImg.frameGeometry().width() - 400) \
             .scaledToWidth(self.passportImg.frameGeometry().height() - 400)
@@ -88,8 +83,7 @@ class MainWindow(QMainWindow):
         today = datetime.now()
         self.img.save(f'{self.output_path}/{today.strftime("%Y-%m-%d-%H.%M.%S.%f")}.png')
 
-    def showChangeDataDialog(self):
-        print('ChangeDataDialog')
+    def show_change_dialog(self):
         self._dialog = ChangeDataDialog.ChangeDataDialog(self.passport.passport_data, self.generate.parameters_generate)
         self._dialog.buttonBox.accepted.connect(self._update_passport)
         self._dialog.show()
