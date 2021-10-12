@@ -1,14 +1,12 @@
-from PIL.ImageQt import ImageQt
-from PyQt5.QtGui import QPixmap, QImage
-
-import ChangeDataDialog
-from PyQt5 import uic
-from PyQt5.QtWidgets import *
-
 from datetime import datetime
 
+from PIL.ImageQt import ImageQt
+from PyQt5 import uic
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QMainWindow
+
+import ChangeDataDialog
 import Passport
-import passportDrawer.TextFont2Img as imgGenerate
 
 
 class MainWindow(QMainWindow):

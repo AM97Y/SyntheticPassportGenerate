@@ -1,12 +1,14 @@
 
 import sys
-import MainWindow
 
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QApplication
 
-app = QApplication(sys.argv)
+from MainWindow import MainWindow
 
-mw = MainWindow.MainWindow()
-mw.show()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
 
-sys.exit(app.exec_())
+    mw = MainWindow()
+    mw.show()
+
+    sys.exit(app.exec_())

@@ -1,8 +1,9 @@
 import json
 import os
 from copy import deepcopy
-from datetime import datetime, date, time
+from datetime import datetime, date
 from random import choice, randint
+
 from PIL import Image, ImageFilter
 from PIL import ImageDraw
 from PIL import ImageFont

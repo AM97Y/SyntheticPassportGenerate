@@ -1,12 +1,9 @@
-import datetime
 import functools
 import os
 
+from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
-from PyQt5 import uic, QtGui
-
-import Passport
 
 
 class ChangeDataDialog(QDialog):
@@ -23,12 +20,12 @@ class ChangeDataDialog(QDialog):
                                                                    name='label_signature_1')
         self.label_signature_2.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_2,
                                                                    name='label_signature_2')
-        self.imgs_dict = {'labelFoto': '',
-                          'label_signature_1': '',
-                          'label_signature_2': '',
+
+        self.imgs_dict = {'labelFoto': parameters_generate['images']['labelFoto'],
+                          'label_signature_1': parameters_generate['images']['label_signature_1'],
+                          'label_signature_2': parameters_generate['images']['label_signature_2'],
                           'background': ['', {}]
                           }
-
         self._fill_fields(passport_data, parameters_generate)
 
     def _fill_fields(self, passport_data, parameters_generate):
