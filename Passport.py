@@ -131,8 +131,18 @@ class GenerateImg:
         if os.path.isfile(file_json):
             with open(file_json, 'r') as f:
                 data = json.load(f)
-                return data
-        return {}  # Посмотреть формат
+                background_markup = {}
+                # background_markup = {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))
+                #                     for elem in self.parameters_generate["images"]["background"][1]["shapes"]}
+
+                for elem in data["shapes"]:
+                    # Берем только первое вхождение, надо обсудить issue_place.
+                    if background_markup.get(elem['label'], None) is None:
+                        background_markup.update(
+                            {elem['label']: list(map(lambda x: [abs(int(x[0])), abs(int(x[1]))], elem['points']))})
+
+                return background_markup
+        return {}
 
     def update(self, parameters_generate) -> None:
         self.parameters_generate.update(parameters_generate)
@@ -175,21 +185,26 @@ class GenerateImg:
     def _get_box_size(self, markup_origin, number=False) -> tuple:
 
         markup = deepcopy(markup_origin)
-
+        print(markup)
         left_upper_point = markup[0]  # min(markup)
-        del markup[markup.index(left_upper_point)]
+        # del markup[markup.index(left_upper_point)]
 
-        right_upper_point = min(markup, key=lambda x: x[0])
-        del markup[markup.index(right_upper_point)]
+        right_upper_point = markup[1]  # min(markup, key=lambda x: x[0])
+        # del markup[markup.index(right_upper_point)]
 
-        down_point = max(markup, key=lambda y: y[1])
+        down_point = markup[3]  # max(markup, key=lambda y: y[1])
         print(left_upper_point, right_upper_point, down_point)
 
         if number:
-            return right_upper_point[1] - left_upper_point[1], right_upper_point[1] - left_upper_point[1]
+            x = down_point[1] - left_upper_point[1]
+            y = x
+
         else:
-            # x, y
-            return down_point[0] - left_upper_point[0], right_upper_point[1] - left_upper_point[1]
+            x = right_upper_point[0] - left_upper_point[0]
+            y = down_point[1] - left_upper_point[1]
+            print(x,y)
+
+        return x, y
 
     def _get_place(self, markup, number=False) -> tuple:
         if number:
@@ -203,23 +218,25 @@ class GenerateImg:
         pix = randint(120, 200)
         self.color_text = (pix, pix, pix)
 
-    def _draw_watermark(self, img, count_watermark, path, resize=False):
+    def _draw_watermark(self, img, count_watermark, path, random_point=False, paste_point=(0, 0),
+                        resize_size=None):
         (w, h) = img.size
         if count_watermark > 0:
             path_blots = os.listdir(f'{path}')
             for i in range(0, count_watermark):
                 with Image.open(f'{path}/{choice([x for x in path_blots])}') as img_watermark:
                     img_watermark = img_watermark.convert('RGBA')
-                    if resize:
-                        point = (0, 0)
-                        img_watermark = img_watermark.resize((w, h), Image.NEAREST)
-                    else:
-                        point = (randint(0, w), randint(0, h))
+                    if random_point:
+                        paste_point = (randint(0, w), randint(0, h))
+
+                    if resize_size is not None:
+                        img_watermark = img_watermark.resize(resize_size, Image.NEAREST)
 
                     paste_mask = img_watermark.split()[3].point(
                         lambda i: i * self.parameters_generate['blurFlashnumBlotsnum'] / 100.)
-                    img.paste(img_watermark, point, mask=paste_mask)
-        return img
+
+                    img.paste(img_watermark, paste_point, mask=paste_mask)
+        return img.convert('RGBA')
 
     def _overlay_artifacts(self, img):
 
@@ -233,7 +250,9 @@ class GenerateImg:
 
         if self.parameters_generate['crumpledCheckBox']:
             path = f'{os.path.abspath(os.curdir)}/crumpled paper/'
-            img = self._draw_watermark(img, 1, path, resize=True)
+            markup = self.parameters_generate["images"]["background"][1]['passport']
+            img = self._draw_watermark(img, 1, path, paste_point=self._get_place(markup),
+                                       resize_size=self._get_box_size(markup))
 
         if self.parameters_generate['blurCheckBox']:
             img = img.filter(ImageFilter.BLUR)
@@ -247,21 +266,10 @@ class GenerateImg:
         with Image.open(f'{os.path.abspath(os.curdir)}/background/'
                         f'{self.parameters_generate["images"]["background"][0]}') as img:
             img = img.convert('RGBA')
-            background_markup = {}
+            background_markup = self.parameters_generate["images"]["background"][1]
             font = ImageFont.truetype(f'{os.path.abspath(os.curdir)}/fonts/'
                                       f'{self.parameters_generate["fontComboBox"]}',
                                       self.parameters_generate["fontsizeSpinBox"])
-
-            # background_markup = {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))
-            #                     for elem in self.parameters_generate["images"]["background"][1]["shapes"]}
-
-            for elem in self.parameters_generate["images"]["background"][1]["shapes"]:
-                # Берем только первое вхождение, надо обсудить issue_place.
-                if background_markup.get(elem['label'], None) is None:
-                    background_markup.update(
-                        {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))})
-
-            # Что-то сделать со строчками
 
             img_text = self._draw_text(passport_data['department'], font,
                                        self._get_box_size(background_markup["issue_place"]))
