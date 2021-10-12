@@ -5,7 +5,7 @@ from datetime import datetime, date
 from random import choice, randint
 
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageOps
 from PIL import ImageDraw
 from PIL import ImageFont
 
@@ -258,6 +258,7 @@ class GenerateImg:
             markup = self.parameters_generate["images"]["background"][1]['passport']
             img = self._draw_watermark(img, 1, path, paste_point=self._get_place(markup),
                                        resize_size=self._get_box_size(markup))
+            img = ImageOps.autocontrast(img.convert('RGB'), cutoff = 2, ignore = 2)
 
         if self.parameters_generate['blurCheckBox']:
             img = img.filter(ImageFilter.BLUR)
