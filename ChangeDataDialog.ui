@@ -274,6 +274,16 @@
      <height>22</height>
     </rect>
    </property>
+   <item>
+    <property name="text">
+     <string>ЖЕН.</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>МУЖ.</string>
+    </property>
+   </item>
   </widget>
   <widget class="QLabel" name="label_10">
    <property name="geometry">
@@ -394,7 +404,7 @@
    <property name="geometry">
     <rect>
      <x>730</x>
-     <y>150</y>
+     <y>170</y>
      <width>121</width>
      <height>141</height>
     </rect>
@@ -404,7 +414,7 @@
    <property name="geometry">
     <rect>
      <x>670</x>
-     <y>130</y>
+     <y>170</y>
      <width>41</width>
      <height>21</height>
     </rect>
@@ -416,10 +426,10 @@
   <widget class="QGroupBox" name="fontGroupBox">
    <property name="geometry">
     <rect>
-     <x>670</x>
+     <x>600</x>
      <y>10</y>
-     <width>181</width>
-     <height>101</height>
+     <width>251</width>
+     <height>141</height>
     </rect>
    </property>
    <property name="title">
@@ -500,6 +510,102 @@
       <width>141</width>
       <height>21</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_20">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>R:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_21">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>110</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>G:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_22">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>110</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>B:</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="codeSpinBox1_R">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>110</y>
+      <width>51</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>255</number>
+    </property>
+    <property name="value">
+     <number>255</number>
+    </property>
+    <property name="displayIntegerBase">
+     <number>10</number>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="codeSpinBox1_3">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>110</y>
+      <width>51</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>255</number>
+    </property>
+    <property name="value">
+     <number>255</number>
+    </property>
+    <property name="displayIntegerBase">
+     <number>10</number>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="codeSpinBox1_G">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>110</y>
+      <width>51</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>255</number>
+    </property>
+    <property name="value">
+     <number>255</number>
+    </property>
+    <property name="displayIntegerBase">
+     <number>10</number>
     </property>
    </widget>
   </widget>
@@ -659,7 +765,7 @@
    <property name="geometry">
     <rect>
      <x>730</x>
-     <y>150</y>
+     <y>170</y>
      <width>121</width>
      <height>141</height>
     </rect>
