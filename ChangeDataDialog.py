@@ -27,16 +27,17 @@ class ChangeDataDialog(QDialog):
         self._fill_fields(passport_data, parameters_generate)
 
     def _fill_fields(self, passport_data, parameters_generate):
-        self.sexComboBox.addItem("ЖЕН.")
-        self.sexComboBox.addItem("МУЖ.")
         self.sexComboBox.setCurrentText(passport_data['sex'])
-        print(passport_data['sex'])
 
-        print(parameters_generate['fontComboBox'])
         for file in os.listdir(f'{os.path.abspath(os.curdir)}/fonts/'):
             if file != 'fonts.txt':
                 self.fontComboBox.addItem(file)
         self.fontComboBox.setCurrentText(parameters_generate['fontComboBox'])
+        self.codeSpinBox1_R.setValue(parameters_generate['color_text'][0])
+        self.codeSpinBox1_G.setValue(parameters_generate['color_text'][1])
+        self.codeSpinBox1_B.setValue(parameters_generate['color_text'][2])
+
+        self.blurCheckBox.setChecked(parameters_generate['upperCheckBox'])
 
         self.blurCheckBox.setChecked(parameters_generate['blurCheckBox'])
         self.crumpledCheckBox.setChecked(parameters_generate['crumpledCheckBox'])

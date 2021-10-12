@@ -4,6 +4,7 @@ from copy import deepcopy
 from datetime import datetime, date
 from random import choice, randint
 
+import numpy as np
 from PIL import Image, ImageFilter
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -222,7 +223,6 @@ class GenerateImg:
         else:
             return markup[0][0], markup[0][1]
 
-
     def _draw_watermark(self, img, count_watermark, path, random_point=False, paste_point=(0, 0),
                         resize_size=None):
         (w, h) = img.size
@@ -342,13 +342,26 @@ class GenerateImg:
                 img_photo = img_photo.resize(self._get_box_size(background_markup["photo"], Image.NEAREST))
                 img.paste(img_photo, self._get_place(background_markup["photo"]))
 
-            with Image.open(self.parameters_generate['images']['label_signature_1']) as img_photo:
-                img_photo = img_photo.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
-                img.paste(img_photo.convert('RGBA'), self._get_place(background_markup["signature"]))
+            with Image.open(self.parameters_generate['images']['label_signature_1']) as img_signature_1:
+                img_signature_1 = img_signature_1.convert('RGBA')
+                arr = np.array(np.asarray(img_signature_1))
+                r, g, b, a = np.rollaxis(arr, axis=-1)
+                mask = ((r == 255) & (g == 255) & (b == 255))
+                arr[mask, 3] = 0
+                img_signature_1 = Image.fromarray(arr, mode='RGBA')
+                th_blur = 20
+                #paste_mask = img_signature_1.split()[3].point(
+                    #lambda i: i * th_blur / 100.)
 
-            """with Image.open(self.parameters_generate['images']['label_signature_2']) as img_photo:
-                img_photo = img_photo.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
-                img.paste(img_photo.convert('RGBA'), self._get_place(background_markup["signature"]))"""
+                img_signature_1 = img_signature_1.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
+
+                paste_point = self._get_place(background_markup["signature"])
+                img = img.convert('RGBA')
+                img.paste(img_signature_1, paste_point)
+
+            """with Image.open(self.parameters_generate['images']['label_signature_2']) as img_signature_2:
+                img_signature_2 = img_signature_2.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
+                img.paste(img_signature_2.convert('RGBA'), self._get_place(background_markup["signature"]))"""
 
             img = self._overlay_artifacts(img)
 
