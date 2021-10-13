@@ -13,13 +13,13 @@ class ChangeDataDialog(QDialog):
 
         # self.setWindowIcon(QtGui.QIcon('Icons/results.ico'))
 
-        self.labelFoto.mousePressEvent = functools.partial(self._load_img, obj=self.labelFoto, name='labelFoto')
+        self.label_photo.mousePressEvent = functools.partial(self._load_img, obj=self.label_photo, name='label_photo')
         self.label_signature_1.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_1,
                                                                    name='label_signature_1')
         self.label_signature_2.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_2,
                                                                    name='label_signature_2')
 
-        self.imgs_dict = {'labelFoto': parameters_generate['images']['labelFoto'],
+        self.imgs_dict = {'label_photo': parameters_generate['images']['label_photo'],
                           'label_signature_1': parameters_generate['images']['label_signature_1'],
                           'label_signature_2': parameters_generate['images']['label_signature_2'],
                           'background': ['', {}]

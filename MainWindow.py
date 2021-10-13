@@ -41,7 +41,7 @@ class MainWindow(QMainWindow):
             'upperCheckBox': self._dialog.upperCheckBox.isChecked(),
             'color_text': (self._dialog.codeSpinBox1_R.value(), self._dialog.codeSpinBox1_G.value(),
                            self._dialog.codeSpinBox1_B.value()),
-            'images': {'labelFoto': self._dialog.imgs_dict['labelFoto'],
+            'images': {'label_photo': self._dialog.imgs_dict['label_photo'],
                        'label_signature_1': self._dialog.imgs_dict['label_signature_1'],
                        'label_signature_2': self._dialog.imgs_dict['label_signature_2'],
                        'background': self.generate.parameters_generate["images"]["background"],

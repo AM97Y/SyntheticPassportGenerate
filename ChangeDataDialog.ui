@@ -774,7 +774,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QLabel" name="labelFoto">
+  <widget class="QLabel" name="label_photo">
    <property name="geometry">
     <rect>
      <x>730</x>

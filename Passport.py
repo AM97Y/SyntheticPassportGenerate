@@ -80,7 +80,7 @@ class GenerateImg:
             'color_text': (0, 0, 0),
             'fontsizeSpinBox': 28,
             'fontblurSpinBox': 80,
-            'images': {'labelFoto': '',
+            'images': {'label_photo': '',
                        'label_signature_1': '',
                        'label_signature_2': '',
                        'background': [file_background, self._load_markup(file_background)]
@@ -107,9 +107,9 @@ class GenerateImg:
             elif key == 'fontsizeSpinBox':
                 self.parameters_generate[key] = randint(14, 30)
             elif key == 'images':
-                path = f'{os.path.abspath(os.curdir)}/Foto/'
+                path = f'{os.path.abspath(os.curdir)}/photo/'
                 path_blots = os.listdir(f'{path}')
-                self.parameters_generate[key]['labelFoto'] = path + choice(path_blots)
+                self.parameters_generate[key]['label_photo'] = path + choice(path_blots)
 
                 path = f'{os.path.abspath(os.curdir)}/signs/'
                 path_blots = os.listdir(f'{path}')
@@ -122,7 +122,7 @@ class GenerateImg:
                 self.parameters_generate[key] = (pix, pix, pix)
 
             """
-            'images': {'labelFoto': '',
+            'images': {'label_photo': '',
                        'label_signature_1': '',
                        'label_signature_2': '',
                        'background': ["file_background", self._load_markup("file_background")]
@@ -347,8 +347,8 @@ class GenerateImg:
                                        self._get_box_size(background_markup["sex"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["sex"]), img_text)
 
-            # Foto
-            with Image.open(self.parameters_generate['images']['labelFoto']) as img_photo:
+            # photo
+            with Image.open(self.parameters_generate['images']['label_photo']) as img_photo:
                 img_photo = img_photo.resize(self._get_box_size(background_markup["photo"], Image.NEAREST))
                 img.paste(img_photo, self._get_place(background_markup["photo"]))
 
