@@ -258,7 +258,7 @@ class GenerateImg:
             markup = self.parameters_generate["images"]["background"][1]['passport']
             img = self._draw_watermark(img, 1, path, paste_point=self._get_place(markup),
                                        resize_size=self._get_box_size(markup))
-            img = ImageOps.autocontrast(img.convert('RGB'), cutoff = 2, ignore = 2)
+            img = ImageOps.autocontrast(img.convert('RGB'), cutoff=2, ignore=2)
 
         if self.parameters_generate['blurCheckBox']:
             img = img.filter(ImageFilter.BLUR)
@@ -266,6 +266,15 @@ class GenerateImg:
         if self.parameters_generate['noiseCheckBox']:
             img = img.filter(ImageFilter.MinFilter(3))
 
+        return img
+
+    def _delete_signature_background(self, img):
+        img_signature_1 = img.convert('RGBA')
+        arr = np.array(np.asarray(img_signature_1))
+        r, g, b, a = np.rollaxis(arr, axis=-1)
+        mask = ((r == 255) & (g == 255) & (b == 255))
+        arr[mask, 3] = 0
+        img = Image.fromarray(arr, mode='RGBA')
         return img
 
     def create_image(self, passport_data):
@@ -344,21 +353,12 @@ class GenerateImg:
                 img.paste(img_photo, self._get_place(background_markup["photo"]))
 
             with Image.open(self.parameters_generate['images']['label_signature_1']) as img_signature_1:
-                img_signature_1 = img_signature_1.convert('RGBA')
-                arr = np.array(np.asarray(img_signature_1))
-                r, g, b, a = np.rollaxis(arr, axis=-1)
-                mask = ((r == 255) & (g == 255) & (b == 255))
-                arr[mask, 3] = 0
-                img_signature_1 = Image.fromarray(arr, mode='RGBA')
-                th_blur = 20
-                #paste_mask = img_signature_1.split()[3].point(
-                    #lambda i: i * th_blur / 100.)
-
-                img_signature_1 = img_signature_1.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
+                img_signature_1 = self._delete_signature_background(img_signature_1)
+                img_signature_1 = img_signature_1.resize(
+                    self._get_box_size(background_markup["signature"], Image.NEAREST))
 
                 paste_point = self._get_place(background_markup["signature"])
-                img = img.convert('RGBA')
-                img.paste(img_signature_1, paste_point)
+                img.paste(img_signature_1, paste_point, mask=img_signature_1)
 
             """with Image.open(self.parameters_generate['images']['label_signature_2']) as img_signature_2:
                 img_signature_2 = img_signature_2.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
@@ -367,3 +367,5 @@ class GenerateImg:
             img = self._overlay_artifacts(img)
 
         return img
+
+
