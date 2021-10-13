@@ -8,6 +8,7 @@ import numpy as np
 from PIL import Image, ImageFilter, ImageOps
 from PIL import ImageDraw
 from PIL import ImageFont
+from faker import Faker
 
 
 class Passport:
@@ -31,7 +32,8 @@ class Passport:
         self.passport_data.update(passport_data)
 
     def random_init(self):
-        diff = choice((14, 60))
+        diff = choice(range(14, 30))
+        fake = Faker()
         sex = choice(('МУЖ.', 'ЖЕН.'))
         self.passport_data['sex'] = sex
         for key, _ in self.passport_data.items():
@@ -42,18 +44,17 @@ class Passport:
             elif key == 'department_code':
                 self.passport_data[key] = [randint(100, 999), randint(100, 999)]
             elif key == 'date_birth':
-                year = randint(1900, datetime.now().year - diff)
-                # Проверить вхождение последнего числа
-                month = randint(1, 12)
-                # Сделать зависимость от месяца
-                day = randint(1, 28)
-                self.passport_data[key] = date(year, month, day)
+                start_date = date(year=1990, month=1, day=1)
+                end_date = date(year=datetime.now().year - diff, month=1, day=1)
+                # print(start_date, end_date)
+                self.passport_data[key] = fake.date_between(start_date=start_date, end_date=end_date)
             elif key == 'date_issue':
                 year = self.passport_data['date_birth'].year + diff
-                month = randint(1, 12)
-                # Сделать зависимость от месяца
-                day = randint(1, 28)
-                self.passport_data[key] = date(year, month, day)
+                start_date = date(year=year, month=1, day=1)
+                end_date = date(year=year, month=1, day=1)
+                # print(start_date, end_date)
+                self.passport_data[key] = fake.date_between(start_date=start_date, end_date=end_date)
+
             elif key != 'sex':
                 tmp_choices = []
                 # Сделать проверку на пол, мб прикрутить pymorphy
@@ -292,7 +293,7 @@ class GenerateImg:
 
             font_numbers = ImageFont.truetype(f'{os.path.abspath(os.curdir)}'
                                               f'/fonts/a_SeriferNr_Bold.ttf', 30)
-                                              # self.parameters_generate["fontsizeSpinBox"])
+            # self.parameters_generate["fontsizeSpinBox"])
             img_text = self._draw_text(" ".join([str(passport_data['series_passport']),
                                                  str(passport_data['number_passport'])]),
                                        font_numbers,
@@ -367,5 +368,3 @@ class GenerateImg:
             img = self._overlay_artifacts(img)
 
         return img
-
-
