@@ -117,9 +117,9 @@ class GenerateImg:
                 self.parameters_generate[key]['label_signature_2'] = path + choice(path_blots)
             elif key == 'upperCheckBox':
                 self.parameters_generate[key] = choice((True, False))
-            elif key == 'color_text':
-                pix = randint(120, 200)
-                self.parameters_generate[key] = (pix, pix, pix)
+            # elif key == 'color_text':
+            #    pix = randint(120, 200)
+            #    self.parameters_generate[key] = (pix, pix, pix)
 
             """
             'images': {'label_photo': '',
@@ -291,8 +291,8 @@ class GenerateImg:
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_place"]), img_text)
 
             font_numbers = ImageFont.truetype(f'{os.path.abspath(os.curdir)}'
-                                              f'/fonts/a_SeriferNr_Bold.ttf',
-                                              self.parameters_generate["fontsizeSpinBox"])
+                                              f'/fonts/a_SeriferNr_Bold.ttf', 30)
+                                              # self.parameters_generate["fontsizeSpinBox"])
             img_text = self._draw_text(" ".join([str(passport_data['series_passport']),
                                                  str(passport_data['number_passport'])]),
                                        font_numbers,
