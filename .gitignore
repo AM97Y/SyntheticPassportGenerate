@@ -1,0 +1,7 @@
+# Files
+
+
+#Folders
+.idea
+__pycache__
+output
