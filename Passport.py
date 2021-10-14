@@ -10,6 +10,9 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from faker import Faker
 
+from Sex import Sex
+from utils.path_utils import Paths
+
 
 class Passport:
     def __init__(self):
@@ -34,7 +37,7 @@ class Passport:
     def random_init(self):
         diff = choice(range(14, 30))
         fake = Faker()
-        sex = choice(('МУЖ.', 'ЖЕН.'))
+        sex = str(choice(list(Sex)))
         self.passport_data['sex'] = sex
         for key, _ in self.passport_data.items():
             if key == 'series_passport':
@@ -54,7 +57,6 @@ class Passport:
                 end_date = date(year=year, month=1, day=1)
                 # print(start_date, end_date)
                 self.passport_data[key] = fake.date_between(start_date=start_date, end_date=end_date)
-
             elif key != 'sex':
                 tmp_choices = []
                 # Сделать проверку на пол, мб прикрутить pymorphy
@@ -90,7 +92,7 @@ class GenerateImg:
         self.random_init()
 
     def random_init(self):
-        sex = choice(('МУЖ.', 'ЖЕН.'))
+        sex = str(choice(list(Sex)))
         for key, _ in self.parameters_generate.items():
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
                 self.parameters_generate[key] = choice((True, False))
@@ -186,9 +188,7 @@ class GenerateImg:
         else:
             color = self.parameters_generate['color_text']
         print(text, font, shape)
-        drawer.text((0, 0), text, fill=color, font=font,
-                    stroke_width=0,
-                    stroke_fill=(0, 0, 0))
+        drawer.text((0, 0), text, fill=color, font=font)
 
         return img_text
 

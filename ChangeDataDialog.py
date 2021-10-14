@@ -5,6 +5,8 @@ from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialog, QFileDialog
 
+from utils.path_utils import Paths
+
 
 class ChangeDataDialog(QDialog):
     def __init__(self, passport_data, parameters_generate):
@@ -29,7 +31,7 @@ class ChangeDataDialog(QDialog):
     def _fill_fields(self, passport_data, parameters_generate):
         self.sexComboBox.setCurrentText(passport_data['sex'])
 
-        for file in os.listdir(f'{os.path.abspath(os.curdir)}/fonts/'):
+        for file in os.listdir(Paths.fonts()):
             if file != 'fonts.txt':
                 self.fontComboBox.addItem(file)
         self.fontComboBox.setCurrentText(parameters_generate['fontComboBox'])

@@ -1,15 +1,22 @@
+import os
 from datetime import datetime
+from os.path import expanduser
 
+from IPython.external.qt_for_kernel import QtGui, QtCore
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
 from ChangeDataDialog import ChangeDataDialog
 from Passport import Passport, GenerateImg
+from utils.path_utils import Paths
+
+HOME = os.getenv("HOME")
 
 
 class MainWindow(QMainWindow):
+
     def __init__(self):
         QMainWindow.__init__(self)
         uic.loadUi('MainWindow.ui', self)
@@ -27,6 +34,8 @@ class MainWindow(QMainWindow):
 
         self._dialog = None
         self.output_path = './output'
+        self.generate_path = self.output_path
+        self.save_path = self.output_path
 
     def _update_passport(self):
         new_parameters_generate = {
@@ -74,11 +83,14 @@ class MainWindow(QMainWindow):
         self._create_image_passport()
 
     def _generate_path(self):
+        # self.generate_path = QFileDialog.getExistingDirectory(self, 'Search path gen', HOME, QFileDialog.ShowDirsOnly)
         for i in range(0, self.genSpinBox.value()):
             self.passport.random_init()
             self.generate.random_init()
             self.img = self.generate.create_image(self.passport.passport_data)
-            self.save()
+
+            img_filepath = Paths.outputs() / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
+            self.img.save(str(img_filepath))
 
     def _create_image_passport(self):
         self.img = self.generate.create_image(self.passport.passport_data)
@@ -90,8 +102,13 @@ class MainWindow(QMainWindow):
         # self.passportImg ДОБАВИТЬ СКРОЛИН И ЧТОБЫ ОКНО НЕ УВЕЛИЧИТЬ.
 
     def save(self):
+        """dirlist = QFileDialog.getExistingDirectory(self,"Выбрать папку",".")
+        self.save_path = QFileDialog.getOpenFileName(parent=self, options=QFileDialog.DontUseNativeDialog)# QFileDialog.getExistingDirectory(self, 'Search path save', HOME, QFileDialog.ShowDirsOnly)
+        print(dirlist, self.save_path)
         today = datetime.now()
-        self.img.save(f'{self.output_path}/{today.strftime("%Y-%m-%d-%H.%M.%S.%f")}.png')
+        self.img.save(f'{self.save_path}/{today.strftime("%Y-%m-%d-%H.%M.%S.%f")}.png"""
+        img_filepath = Paths.outputs() / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
+        self.img.save(str(img_filepath))
 
     def show_change_dialog(self):
         self._dialog = ChangeDataDialog(self.passport.passport_data, self.generate.parameters_generate)
