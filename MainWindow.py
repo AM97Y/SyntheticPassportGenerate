@@ -1,12 +1,10 @@
 import os
 from datetime import datetime
-from os.path import expanduser
 
-from IPython.external.qt_for_kernel import QtGui, QtCore
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PyQt5.QtWidgets import QMainWindow
 
 from ChangeDataDialog import ChangeDataDialog
 from Passport import Passport, GenerateImg
@@ -33,9 +31,6 @@ class MainWindow(QMainWindow):
         self.generate = GenerateImg()
 
         self._dialog = None
-        self.output_path = './output'
-        self.generate_path = self.output_path
-        self.save_path = self.output_path
 
     def _update_passport(self):
         new_parameters_generate = {
