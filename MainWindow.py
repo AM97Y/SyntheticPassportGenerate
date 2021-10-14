@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):
         self.changeButton.clicked.connect(self.show_change_dialog)
         self.saveButton.clicked.connect(self.save)
         self.generateButton.clicked.connect(self.show_generate)
+        self.generatePathButton.clicked.connect(self._generate_path)
 
         self.passport = Passport()
         self.generate = GenerateImg()
@@ -72,6 +73,13 @@ class MainWindow(QMainWindow):
         self.generate.random_init()
         self._create_image_passport()
 
+    def _generate_path(self):
+        for i in range(0, self.genSpinBox.value()):
+            self.passport.random_init()
+            self.generate.random_init()
+            self.img = self.generate.create_image(self.passport.passport_data)
+            self.save()
+
     def _create_image_passport(self):
         self.img = self.generate.create_image(self.passport.passport_data)
         qimage = ImageQt(self.img)
@@ -80,7 +88,6 @@ class MainWindow(QMainWindow):
             .scaledToWidth(self.passportImg.frameGeometry().height() - 400)
         self.passportImg.setPixmap(img)
         # self.passportImg ДОБАВИТЬ СКРОЛИН И ЧТОБЫ ОКНО НЕ УВЕЛИЧИТЬ.
-        self.show()
 
     def save(self):
         today = datetime.now()
