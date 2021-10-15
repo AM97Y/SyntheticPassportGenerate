@@ -5,6 +5,7 @@ from datetime import datetime, date
 from random import choice, randint
 
 import numpy as np
+import pandas as pd
 from PIL import Image, ImageFilter, ImageOps
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -58,9 +59,18 @@ class Passport:
                 end_date = date(year=year, month=1, day=1)
                 # print(start_date, end_date)
                 self.passport_data[key] = fake.date_between(start_date=start_date, end_date=end_date)
+
+            if key == 'first_name':
+                if self.passport_data['sex'] == "МУЖ.":
+                    df = pd.read_csv(Paths.data_passport() / 'male_names.csv', ';')
+                else:
+                    df = pd.read_csv(Paths.data_passport() / 'female_names.csv', ';')
+                tmp_choices = df['Name'].tolist()
+                self.passport_data[key] = choice(tmp_choices)
+                del tmp_choices
             elif key != 'sex':
                 tmp_choices = []
-                # Сделать проверку на пол, мб прикрутить pymorphy
+                # Сделать проверку на пол, мб прикрутить pymorphy или аналог
                 file = Paths.file_dataset(key)
                 if os.path.isfile(file):
                     with open(file, "r") as f:
