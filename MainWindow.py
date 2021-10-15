@@ -16,6 +16,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         uic.loadUi('MainWindow.ui', self)
+        self.setFixedSize(self.width(), self.height())
         # self.setFixedSize(self.width(), self.height())
         # self.setWindowIcon(QtGui.QIcon('Icons/thermometer.ico'))
         self.img = None

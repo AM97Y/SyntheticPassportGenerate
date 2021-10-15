@@ -12,6 +12,7 @@ class ChangeDataDialog(QDialog):
     def __init__(self, passport_data, parameters_generate):
         QDialog.__init__(self)
         uic.loadUi('ChangeDataDialog.ui', self)
+        self.setFixedSize(self.width(), self.height())
 
         # self.setWindowIcon(QtGui.QIcon('Icons/results.ico'))
 
