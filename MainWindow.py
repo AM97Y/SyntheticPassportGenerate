@@ -79,7 +79,8 @@ class MainWindow(QMainWindow):
 
     def _generate_path(self):
         # self.generate_path = QFileDialog.getExistingDirectory(self, 'Search path gen', HOME, QFileDialog.ShowDirsOnly)
-        for i in range(0, self.genSpinBox.value()):
+        count_examples = self.genSpinBox.value()
+        for i in range(0, count_examples):
             self.passport_content.random_init()
             self.passport_appearance.random_init()
 
@@ -88,6 +89,8 @@ class MainWindow(QMainWindow):
 
             img_filepath = Paths.outputs() / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
             self.img.save(str(img_filepath))
+            self.progressBar.setValue((i / count_examples) * 100)
+        self.progressBar.setValue(100)
 
     def _create_image_passport(self):
         self.img_creator = ImageCreator(self.passport_content.parameters, self.passport_appearance.parameters)
