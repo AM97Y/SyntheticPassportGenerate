@@ -10,6 +10,7 @@ from PIL import Image, ImageFilter, ImageOps
 from PIL import ImageDraw
 from PIL import ImageFont
 from faker import Faker
+from pymorphy2 import MorphAnalyzer
 
 from Sex import Sex
 from utils.path_utils import Paths
@@ -53,6 +54,7 @@ class PassportContent(Passport):
                        'background': [file_background, self._load_markup(file_background)]
                        }
         }
+        self.morph = MorphAnalyzer()
         self.random_init()
 
     def random_init(self):
@@ -110,8 +112,21 @@ class PassportContent(Passport):
                     with open(file, "r") as f:
                         for line in f:
                             tmp_choices.append(line.strip())
-                    self.parameters[key] = choice(tmp_choices)
+                    if key == 'address':
+                        self.parameters[key] = choice(tmp_choices)
+                    else:
+                        self.parameters[key] = self._gender_format(choice(tmp_choices), sex)
+
                 del tmp_choices
+
+    def _gender_format(self, text, sex):
+        print(text)
+        parsed = self.morph.parse(text)
+        if sex == "ЖЕН.":
+            gender = 'femn'
+        else:
+            gender = 'masc'
+        return (parsed[0].inflect({gender, 'nomn'}) or parsed[0]).word
 
     @staticmethod
     def _load_markup(file) -> dict:

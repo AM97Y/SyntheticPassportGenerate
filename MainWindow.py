@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
             'images': {'label_photo': self._dialog.imgs_dict['label_photo'],
                        'label_signature_1': self._dialog.imgs_dict['label_signature_1'],
                        'label_signature_2': self._dialog.imgs_dict['label_signature_2'],
-                       'background': self.passport_appearance.parameters["images"]["background"],
+                       'background': self.passport_content.parameters["images"]["background"],
                        },
         }
 
