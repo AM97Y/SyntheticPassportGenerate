@@ -110,7 +110,7 @@ class PassportContent(Passport):
                     if key == 'address':
                         self.parameters[key] = choice(tmp_choices)
                     else:
-                        self.parameters[key] = self._gender_format(choice(tmp_choices), sex)
+                        self.parameters[key] = self._gender_format(choice(tmp_choices), sex).title()
 
                 del tmp_choices
 
