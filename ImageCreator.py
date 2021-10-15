@@ -35,22 +35,6 @@ class ImageCreator:
         text = text.replace(' ', '\n')
         return text
 
-    def _draw_text(self, text, font, shape, number=False):
-        # text = self._get_hyphenated_str(text, font, shape[0])
-        if self.parameters_appearance['upperCheckBox']:
-            text = text.upper()
-
-        img_text = Image.new("RGBA", shape, (0, 0, 0, 0))
-        drawer = ImageDraw.Draw(img_text)
-        if number:
-            color = (130, 30, 30)
-        else:
-            color = self.parameters_appearance['color_text']
-        #  print(text, font, shape)
-        drawer.text((0, 0), text, fill=color, font=font)
-
-        return img_text
-
     @staticmethod
     def _get_box_size(markup_origin, number=False) -> tuple:
 
@@ -83,6 +67,22 @@ class ImageCreator:
             return markup[0][0] - (extra_space[1] - extra_space[0]), markup[0][1]
         else:
             return markup[0][0], markup[0][1]
+
+    def _draw_text(self, text, font, shape, number=False):
+        # text = self._get_hyphenated_str(text, font, shape[0])
+        if self.parameters_appearance['upperCheckBox']:
+            text = text.upper()
+
+        img_text = Image.new("RGBA", shape, (0, 0, 0, 0))
+        drawer = ImageDraw.Draw(img_text)
+        if number:
+            color = (130, 30, 30)
+        else:
+            color = self.parameters_appearance['color_text']
+        #  print(text, font, shape)
+        drawer.text((0, 0), text, fill=color, font=font)
+
+        return img_text
 
     def _draw_watermark(self, img, count_watermark, path, random_point=False, paste_point=(0, 0),
                         resize_size=None):
