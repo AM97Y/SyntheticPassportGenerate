@@ -35,6 +35,7 @@ class Passport:
         self.passport_data.update(passport_data)
 
     def random_init(self):
+        # Убрать цикл?
         diff = choice(range(14, 30))
         fake = Faker()
         sex = str(choice(list(Sex)))
@@ -60,8 +61,9 @@ class Passport:
             elif key != 'sex':
                 tmp_choices = []
                 # Сделать проверку на пол, мб прикрутить pymorphy
-                if os.path.isfile(f'{os.path.abspath(os.curdir)}/dataPassport/{key}.txt'):
-                    with open(f'{os.path.abspath(os.curdir)}/dataPassport/{key}.txt', "r") as f:
+                file = Paths.file_dataset(key)
+                if os.path.isfile(file):
+                    with open(file, "r") as f:
                         for line in f:
                             tmp_choices.append(line.strip())
 
@@ -89,10 +91,11 @@ class GenerateImg:
                        'background': [file_background, self._load_markup(file_background)]
                        }
         }
-        self.random_init()
+        self.random_init(['МУЖ.'])
 
-    def random_init(self):
-        sex = str(choice(list(Sex)))
+    def random_init(self, sex):
+        # Убрать цикл?
+        self.parameters_generate['sex'] = sex
         for key, _ in self.parameters_generate.items():
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
                 self.parameters_generate[key] = choice((True, False))
@@ -102,22 +105,24 @@ class GenerateImg:
                 self.parameters_generate[key] = randint(0, 100)
             elif key == 'fontComboBox':
                 fonts_list = []
-                with open(f'{os.path.abspath(os.curdir)}/fonts/fonts.txt', "r") as f:
-                    for line in f:
-                        fonts_list.append(line.strip().split('/')[-1])
-                    self.parameters_generate[key] = choice(fonts_list)
+                for file in os.listdir(Paths.fonts()):
+                    fonts_list.append(file)
+                self.parameters_generate[key] = choice(fonts_list)
                 del fonts_list
             elif key == 'fontsizeSpinBox':
                 self.parameters_generate[key] = randint(14, 30)
             elif key == 'images':
-                path = f'{os.path.abspath(os.curdir)}/photo/'
-                path_blots = os.listdir(f'{path}')
-                self.parameters_generate[key]['label_photo'] = path + choice(path_blots)
+                if sex == "МУЖ.":
+                    path = Paths.photo_male()
+                else:
+                    path = Paths.photo_female()
+                path_blots = os.listdir(path)
+                self.parameters_generate[key]['label_photo'] = path / choice(path_blots)
 
-                path = f'{os.path.abspath(os.curdir)}/signs/'
-                path_blots = os.listdir(f'{path}')
-                self.parameters_generate[key]['label_signature_1'] = path + choice(path_blots)
-                self.parameters_generate[key]['label_signature_2'] = path + choice(path_blots)
+                path_sign = Paths.signs()
+                path_blots = os.listdir(path_sign)
+                self.parameters_generate[key]['label_signature_1'] = path_sign / choice(path_blots)
+                self.parameters_generate[key]['label_signature_2'] = path_sign / choice(path_blots)
             elif key == 'upperCheckBox':
                 self.parameters_generate[key] = choice((True, False))
             # elif key == 'color_text':
@@ -136,10 +141,10 @@ class GenerateImg:
     def _load_markup(file) -> dict:
         # file_background сделать в json файл
         # Правильнее наоборот искать?
-        file_json = f'{os.path.abspath(os.curdir)}/background/{file.split(".")[-2]}.json'
+        file_json = file.split(".")[-2] + '.json'
         print(file_json)
-        if os.path.isfile(file_json):
-            with open(file_json, 'r') as f:
+        if os.path.isfile(Paths.backgrounds() / file_json):
+            with open(Paths.backgrounds() / file_json, 'r') as f:
                 data = json.load(f)
                 background_markup = {}
                 # background_markup = {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))
@@ -247,15 +252,15 @@ class GenerateImg:
     def _overlay_artifacts(self, img):
 
         count_watermark = self.parameters_generate['blotsnumSpinBox']
-        path = f'{os.path.abspath(os.curdir)}/dirty/'
+        path = Paths.dirty()
         img = self._draw_watermark(img, count_watermark, path)
 
         count_watermark = self.parameters_generate['flashnumSpinBox']
-        path = f'{os.path.abspath(os.curdir)}/glares/'
+        path = Paths.glares()
         img = self._draw_watermark(img, count_watermark, path)
 
         if self.parameters_generate['crumpledCheckBox']:
-            path = f'{os.path.abspath(os.curdir)}/crumpled paper/'
+            path = Paths.crumpled()
             markup = self.parameters_generate["images"]["background"][1]['passport']
             img = self._draw_watermark(img, 1, path, paste_point=self._get_place(markup),
                                        resize_size=self._get_box_size(markup))
@@ -279,21 +284,17 @@ class GenerateImg:
         return img
 
     def create_image(self, passport_data):
-        with Image.open(f'{os.path.abspath(os.curdir)}/background/'
-                        f'{self.parameters_generate["images"]["background"][0]}') as img:
+        with Image.open(Paths.backgrounds()/self.parameters_generate["images"]["background"][0]) as img:
             img = img.convert('RGBA')
             background_markup = self.parameters_generate["images"]["background"][1]
-            font = ImageFont.truetype(f'{os.path.abspath(os.curdir)}/fonts/'
-                                      f'{self.parameters_generate["fontComboBox"]}',
+            font = ImageFont.truetype(str(Paths.fonts() / self.parameters_generate["fontComboBox"]),
                                       self.parameters_generate["fontsizeSpinBox"])
 
             img_text = self._draw_text(passport_data['department'], font,
                                        self._get_box_size(background_markup["issue_place"]))
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_place"]), img_text)
 
-            font_numbers = ImageFont.truetype(f'{os.path.abspath(os.curdir)}'
-                                              f'/fonts/a_SeriferNr_Bold.ttf', 30)
-            # self.parameters_generate["fontsizeSpinBox"])
+            font_numbers = ImageFont.truetype(Paths.numbers_font(), 30)
             img_text = self._draw_text(" ".join([str(passport_data['series_passport']),
                                                  str(passport_data['number_passport'])]),
                                        font_numbers,

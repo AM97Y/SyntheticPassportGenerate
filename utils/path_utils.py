@@ -21,8 +21,40 @@ class Paths:
         return Paths.root() / 'fonts'
 
     @staticmethod
-    def datapassport():
+    def data_passport():
         return Paths.root() / 'dataPassport'
+
+    @staticmethod
+    def file_dataset(key):
+        return str(Paths.data_passport() / key / '.txt')
+
+    @staticmethod
+    def photo_male():
+        return Paths.root() / 'photo' / 'male'
+
+    @staticmethod
+    def photo_female():
+        return Paths.root() / 'photo' / 'female'
+
+    @staticmethod
+    def signs():
+        return Paths.root() / 'signs'
+
+    @staticmethod
+    def crumpled():
+        return Paths.root() / 'crumpled paper/'
+
+    @staticmethod
+    def glares():
+        return Paths.root() / 'glares'
+
+    @staticmethod
+    def dirty():
+        return Paths.root() / 'dirty'
+
+    @staticmethod
+    def numbers_font():
+        return str(Paths.fonts() / 'a_SeriferNr_Bold.ttf')
 
     @staticmethod
     def outputs():

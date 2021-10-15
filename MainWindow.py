@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 
 from PIL.ImageQt import ImageQt
@@ -9,8 +8,6 @@ from PyQt5.QtWidgets import QMainWindow
 from ChangeDataDialog import ChangeDataDialog
 from Passport import Passport, GenerateImg
 from utils.path_utils import Paths
-
-HOME = os.getenv("HOME")
 
 
 class MainWindow(QMainWindow):
@@ -74,14 +71,14 @@ class MainWindow(QMainWindow):
 
     def show_generate(self):
         self.passport.random_init()
-        self.generate.random_init()
+        self.generate.random_init(self.passport.passport_data['sex'])
         self._create_image_passport()
 
     def _generate_path(self):
         # self.generate_path = QFileDialog.getExistingDirectory(self, 'Search path gen', HOME, QFileDialog.ShowDirsOnly)
         for i in range(0, self.genSpinBox.value()):
             self.passport.random_init()
-            self.generate.random_init()
+            self.generate.random_init(self.passport.passport_data['sex'])
             self.img = self.generate.create_image(self.passport.passport_data)
 
             img_filepath = Paths.outputs() / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
