@@ -1,14 +1,9 @@
 import json
 import os
-from copy import deepcopy
 from datetime import datetime, date
 from random import choice, randint
 
-import numpy as np
 import pandas as pd
-from PIL import Image, ImageFilter, ImageOps
-from PIL import ImageDraw
-from PIL import ImageFont
 from faker import Faker
 from pymorphy2 import MorphAnalyzer
 
