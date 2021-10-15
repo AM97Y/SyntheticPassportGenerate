@@ -26,7 +26,7 @@ class Paths:
 
     @staticmethod
     def file_dataset(key):
-        return str(Paths.data_passport() / key / '.txt')
+        return str(Paths.data_passport() / str(key + '.txt'))
 
     @staticmethod
     def photo_male():
