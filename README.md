@@ -1,4 +1,7 @@
 # PyQt5_PassportsRF
+
+This program allows you to generate a dataset of passports.
+
 ## Installation
 
     1) Create virtual environment:
