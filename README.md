@@ -1,6 +1,6 @@
 # PyQt5_PassportsRF
 
-This program allows you to generate a dataset of passports.
+This program allows to generate dataset of passports.
 
 ## Installation
 
