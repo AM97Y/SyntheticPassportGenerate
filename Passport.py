@@ -15,11 +15,8 @@ class Passport:
     def __init__(self):
         self.parameters = {}
 
-    def random_init(self):
-        return self.parameters
-
-    """def random_init(self, sex):
-        return self.parameters"""
+    def random_init(self) -> None:
+        pass
 
     def update(self, passport_data) -> None:
         self.parameters.update(passport_data)
@@ -52,7 +49,7 @@ class PassportContent(Passport):
         self.morph = MorphAnalyzer()
         self.random_init()
 
-    def random_init(self):
+    def random_init(self) -> None:
         # Убрать цикл?
         diff = choice(range(14, 30))
         fake = Faker()
@@ -114,7 +111,7 @@ class PassportContent(Passport):
 
                 del tmp_choices
 
-    def _gender_format(self, text, sex):
+    def _gender_format(self, text, sex) -> str:
         print(text)
         parsed = self.morph.parse(text)
         if sex == "ЖЕН.":
@@ -165,7 +162,7 @@ class PassportAppearance(Passport):
         }
         self.random_init()
 
-    def random_init(self):
+    def random_init(self) -> None:
         # Убрать цикл?
         for key, _ in self.parameters.items():
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':

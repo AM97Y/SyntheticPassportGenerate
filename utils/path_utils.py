@@ -57,8 +57,8 @@ class Paths:
         return str(Paths.fonts() / 'a_SeriferNr_Bold.ttf')
 
     @staticmethod
-    def outputs():
-        return Paths.root() / 'output'
+    def outputs(save_path='output'):
+        return Paths.root() / save_path
 
     @staticmethod
     def _ensure_exists(path: Path) -> Path:

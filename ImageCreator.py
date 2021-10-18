@@ -68,7 +68,7 @@ class ImageCreator:
         else:
             return markup[0][0], markup[0][1]
 
-    def _draw_text(self, text, font, shape, number=False):
+    def _draw_text(self, text: str, font, shape, number=False):
         # text = self._get_hyphenated_str(text, font, shape[0])
         if self.parameters_appearance['upperCheckBox']:
             text = text.upper()
@@ -84,11 +84,11 @@ class ImageCreator:
 
         return img_text
 
-    def _draw_watermark(self, img, count_watermark, path, random_point=False, paste_point=(0, 0),
+    def _draw_watermark(self, img, count_watermark: int, path, random_point=False, paste_point=(0, 0),
                         resize_size=None):
         (w, h) = img.size
         if count_watermark > 0:
-            path_blots = os.listdir(f'{path}')
+            path_blots = os.listdir(path)
             for i in range(0, count_watermark):
                 with Image.open(f'{path}/{choice([x for x in path_blots])}') as img_watermark:
                     img_watermark = img_watermark.convert('RGBA')
