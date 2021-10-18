@@ -3,12 +3,13 @@ from datetime import datetime
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
 from ChangeDataDialog import ChangeDataDialog
 from Passport import PassportAppearance, PassportContent
 from ImageCreator import ImageCreator
 from utils.path_utils import Paths
+from MessageBox import MessageBox
 
 
 class MainWindow(QMainWindow):
@@ -105,13 +106,20 @@ class MainWindow(QMainWindow):
         # self.passport_contentImg ДОБАВИТЬ СКРОЛИН И ЧТОБЫ ОКНО НЕ УВЕЛИЧИТЬ.
 
     def save(self):
-        """dirlist = QFileDialog.getExistingDirectory(self,"Выбрать папку",".")
-        self.save_path = QFileDialog.getOpenFileName(parent=self, options=QFileDialog.DontUseNativeDialog)# QFileDialog.getExistingDirectory(self, 'Search path save', HOME, QFileDialog.ShowDirsOnly)
-        print(dirlist, self.save_path)
-        today = datetime.now()
-        self.img.save(f'{self.save_path}/{today.strftime("%Y-%m-%d-%H.%M.%S.%f")}.png"""
-        img_filepath = Paths.outputs() / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
-        self.img.save(str(img_filepath))
+        """
+        save_path = QFileDialog.getExistingDirectory(self, caption="Open Directory")
+        print('save_path: ', save_path)
+        img_file_path = Paths.outputs(save_path) / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
+        self.img.save(str(img_file_path))
+        """
+        save_path = QFileDialog.getExistingDirectory(self, caption="Open Directory")
+        print('save_path:', save_path)
+        img_file_path = Paths.outputs() / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
+        try:
+            self.img.save(str(img_file_path))
+        except AttributeError:
+            error_dialog = MessageBox()
+            error_dialog.showMessage('Изображение не сгенерированно     ')
 
     def show_change_dialog(self):
         self._dialog = ChangeDataDialog(self.passport_content.parameters, self.passport_appearance.parameters)

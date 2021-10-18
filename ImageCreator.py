@@ -2,12 +2,14 @@ import os
 from copy import deepcopy
 from random import choice, randint
 
+import PIL
 import numpy as np
 from PIL import Image, ImageFilter, ImageOps
 from PIL import ImageDraw
 from PIL import ImageFont
 
 from utils.path_utils import Paths
+from MessageBox import MessageBox
 
 
 class ImageCreator:
@@ -203,17 +205,24 @@ class ImageCreator:
             img.paste(img_text.convert('RGBA'), self._get_place(background_markup["sex"]), img_text)
 
             # photo
-            with Image.open(self.parameters_passport['images']['label_photo']) as img_photo:
-                img_photo = img_photo.resize(self._get_box_size(background_markup["photo"], Image.NEAREST))
-                img.paste(img_photo, self._get_place(background_markup["photo"]))
+            try:
+                with Image.open(self.parameters_passport['images']['label_photo']) as img_photo:
+                    img_photo = img_photo.resize(self._get_box_size(background_markup["photo"], Image.NEAREST))
+                    img.paste(img_photo, self._get_place(background_markup["photo"]))
+            except PIL.UnidentifiedImageError:
+                error_dialog = MessageBox()
+                error_dialog.showMessage('Фотогорафия не человека не является изображением')
+            try:
+                with Image.open(self.parameters_passport['images']['label_signature_1']) as img_signature_1:
+                    img_signature_1 = self._delete_signature_background(img_signature_1)
+                    img_signature_1 = img_signature_1.resize(
+                        self._get_box_size(background_markup["signature"], Image.NEAREST))
 
-            with Image.open(self.parameters_passport['images']['label_signature_1']) as img_signature_1:
-                img_signature_1 = self._delete_signature_background(img_signature_1)
-                img_signature_1 = img_signature_1.resize(
-                    self._get_box_size(background_markup["signature"], Image.NEAREST))
-
-                paste_point = self._get_place(background_markup["signature"])
-                img.paste(img_signature_1, paste_point, mask=img_signature_1)
+                    paste_point = self._get_place(background_markup["signature"])
+                    img.paste(img_signature_1, paste_point, mask=img_signature_1)
+            except PIL.UnidentifiedImageError:
+                error_dialog = MessageBox()
+                error_dialog.showMessage('Выбранная подпись не является изображением')
 
             """with Image.open(self.parameters_passport['images']['label_signature_2']) as img_signature_2:
                 img_signature_2 = img_signature_2.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))

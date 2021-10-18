@@ -27,7 +27,7 @@ class PassportContent(Passport):
 
         super().__init__()
         file_background = '8QfxS6biN-w.jpg'
-        # Временно, пото сделать тоже выбор или рандом
+        # Временно, потом сделать тоже выбор или рандом
         self.parameters = {
             'first_name': 'Иван',
             'second_name': 'Иванов',
@@ -98,7 +98,7 @@ class PassportContent(Passport):
                 self.parameters[key] = choice((True, False))
             elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                 tmp_choices = []
-                # Сделать проверку на пол, мб прикрутить pymorphy или аналог
+
                 file = Paths.file_dataset(key)
                 if os.path.isfile(file):
                     with open(file, "r") as f:
@@ -122,10 +122,7 @@ class PassportContent(Passport):
 
     @staticmethod
     def _load_markup(file) -> dict:
-        # file_background сделать в json файл
-        # Правильнее наоборот искать?
         file_json = file.split(".")[-2] + '.json'
-        # print(file_json)
         if os.path.isfile(Paths.backgrounds() / file_json):
             with open(Paths.backgrounds() / file_json, 'r') as f:
                 data = json.load(f)
