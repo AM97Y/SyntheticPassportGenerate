@@ -18,7 +18,6 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         uic.loadUi('MainWindow.ui', self)
         self.setFixedSize(self.width(), self.height())
-        # self.setFixedSize(self.width(), self.height())
         # self.setWindowIcon(QtGui.QIcon('Icons/thermometer.ico'))
         self.img = None
 
@@ -35,6 +34,10 @@ class MainWindow(QMainWindow):
         self._dialog = None
 
     def _update_passport(self):
+        """
+        Update passport data after changed.
+
+        """
         new_parameters_appearance = {
             'blurCheckBox': self._dialog.blurCheckBox.isChecked(),
             'crumpledCheckBox': self._dialog.crumpledCheckBox.isChecked(),
@@ -49,7 +52,6 @@ class MainWindow(QMainWindow):
             'color_text': (self._dialog.codeSpinBox1_R.value(), self._dialog.codeSpinBox1_G.value(),
                            self._dialog.codeSpinBox1_B.value()),
         }
-        print(self._dialog.upperCheckBox.isChecked())
         new_passport_content = {
             'first_name': self._dialog.nameLineEdit.text(),
             'second_name': self._dialog.surnameLineEdit1.text(),
@@ -75,11 +77,19 @@ class MainWindow(QMainWindow):
         self._create_image_passport()
 
     def show_generate(self):
+        """
+        Generate new passport image.
+        :return:
+        """
         self.passport_content.random_init()
         self.passport_appearance.random_init()
         self._create_image_passport()
 
     def _generate_path(self):
+        """
+        Generate path of passport images.
+
+        """
         # self.generate_path = QFileDialog.getExistingDirectory(self, 'Search path gen', HOME, QFileDialog.ShowDirsOnly)
         count_examples = self.genSpinBox.value()
         for i in range(0, count_examples):
@@ -94,7 +104,11 @@ class MainWindow(QMainWindow):
             self.progressBar.setValue((i / count_examples) * 100)
         self.progressBar.setValue(100)
 
-    def _create_image_passport(self):
+    def _create_image_passport(self) -> None:
+        """
+        Create image passport.
+
+        """
         self.img_creator = ImageCreator(self.passport_content.parameters, self.passport_appearance.parameters)
         self.img = self.img_creator.create_image()
 
@@ -103,9 +117,13 @@ class MainWindow(QMainWindow):
             .scaledToWidth(self.passportImg.frameGeometry().width() - 400) \
             .scaledToWidth(self.passportImg.frameGeometry().height() - 400)
         self.passportImg.setPixmap(img)
-        # self.passport_contentImg ДОБАВИТЬ СКРОЛИН И ЧТОБЫ ОКНО НЕ УВЕЛИЧИТЬ.
+        # self.passportImg ДОБАВИТЬ СКРОЛИН И ЧТОБЫ ОКНО НЕ УВЕЛИЧИТЬ.
 
-    def save(self):
+    def save(self) -> None:
+        """
+        Save created images.
+
+        """
         """
         save_path = QFileDialog.getExistingDirectory(self, caption="Open Directory")
         print('save_path: ', save_path)
@@ -121,7 +139,11 @@ class MainWindow(QMainWindow):
             error_dialog = MessageBox()
             error_dialog.showMessage('Изображение не сгенерированно     ')
 
-    def show_change_dialog(self):
+    def show_change_dialog(self) -> None:
+        """
+        Call ChangeDataDialog.
+
+        """
         self._dialog = ChangeDataDialog(self.passport_content.parameters, self.passport_appearance.parameters)
         self._dialog.buttonBox.accepted.connect(self._update_passport)
         self._dialog.show()

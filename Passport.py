@@ -50,6 +50,11 @@ class PassportContent(Passport):
         self.random_init()
 
     def random_init(self) -> None:
+        """
+        This function randomly fills in the content of the passport.
+
+        """
+
         # Убрать цикл?
         diff = choice(range(14, 30))
         fake = Faker()
@@ -112,7 +117,6 @@ class PassportContent(Passport):
                 del tmp_choices
 
     def _gender_format(self, text, sex) -> str:
-        print(text)
         parsed = self.morph.parse(text)
         if sex == "ЖЕН.":
             gender = 'femn'
@@ -122,6 +126,11 @@ class PassportContent(Passport):
 
     @staticmethod
     def _load_markup(file) -> dict:
+        """
+        Loading the background markup
+        :param file: File of background.
+        :return: Background.
+        """
         file_json = file.split(".")[-2] + '.json'
         if os.path.isfile(Paths.backgrounds() / file_json):
             with open(Paths.backgrounds() / file_json, 'r') as f:
@@ -160,14 +169,20 @@ class PassportAppearance(Passport):
         self.random_init()
 
     def random_init(self) -> None:
+        """
+        This function randomly fills in the appearance( of the passport.
+
+        """
         # Убрать цикл?
         for key, _ in self.parameters.items():
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
                 self.parameters[key] = choice((True, False))
             elif key == 'blotsnumSpinBox' or key == 'flashnumSpinBox':
                 self.parameters[key] = randint(0, 4)
-            elif key == 'blurFlashnumBlotsnum' or key == 'fontblurSpinBox':
-                self.parameters[key] = randint(0, 100)
+            elif key == 'blurFlashnumBlotsnum':
+                self.parameters[key] = randint(0, 50)
+            elif key == 'fontblurSpinBox':
+                self.parameters[key] = randint(50, 100)
             elif key == 'fontComboBox':
                 fonts_list = []
                 for file in os.listdir(Paths.fonts()):

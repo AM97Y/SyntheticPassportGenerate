@@ -13,7 +13,6 @@ class ChangeDataDialog(QDialog):
         QDialog.__init__(self)
         uic.loadUi('ChangeDataDialog.ui', self)
         self.setFixedSize(self.width(), self.height())
-
         # self.setWindowIcon(QtGui.QIcon('Icons/results.ico'))
 
         self.label_photo.mousePressEvent = functools.partial(self._load_img, obj=self.label_photo, name='label_photo')
@@ -29,7 +28,11 @@ class ChangeDataDialog(QDialog):
                           }
         self._fill_fields(passport_content, parameters_appearance)
 
-    def _fill_fields(self, passport_content, parameters_appearance):
+    def _fill_fields(self, passport_content: dict, parameters_appearance: dict) -> None:
+        """
+        Filling in the fields.
+
+        """
         self.sexComboBox.setCurrentText(passport_content['sex'])
 
         for file in os.listdir(Paths.fonts()):
@@ -74,7 +77,13 @@ class ChangeDataDialog(QDialog):
         self.fontsizeSpinBox.setValue(parameters_appearance['fontsizeSpinBox'])
         self.fontblurSpinBox.setValue(parameters_appearance['fontblurSpinBox'])
 
-    def _load_img(self, event, obj, name: str):
+    def _load_img(self, event, obj, name: str) -> None:
+        """
+        This function loads thumbnails of the selected images.
+        :param event: Event.
+        :param obj: Event object.
+        :param name: Name image in imgs_dict.
+        """
         image_path = QFileDialog.getExistingDirectory(self, 'Search image', '')
 
         if os.path.isfile(image_path):

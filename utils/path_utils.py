@@ -5,7 +5,7 @@ import rootpath
 
 class Paths:
     """
-    Class for easy access to necessary directories of current repositories
+    Class for easy access to necessary directories of current repositories.
     """
 
     @staticmethod
