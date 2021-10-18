@@ -96,7 +96,7 @@ class PassportContent(Passport):
                 self.parameters[key]['label_signature_2'] = path_sign / choice(path_blots)
             elif key == 'upperCheckBox':
                 self.parameters[key] = choice((True, False))
-            elif key == 'second_name' or key == 'patronymic_name' or key == 'address':
+            elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                 tmp_choices = []
                 # Сделать проверку на пол, мб прикрутить pymorphy или аналог
                 file = Paths.file_dataset(key)
@@ -104,7 +104,7 @@ class PassportContent(Passport):
                     with open(file, "r") as f:
                         for line in f:
                             tmp_choices.append(line.strip())
-                    if key == 'address':
+                    if key == 'address' or key == 'department':
                         self.parameters[key] = choice(tmp_choices)
                     else:
                         self.parameters[key] = self._gender_format(choice(tmp_choices), sex).title()
