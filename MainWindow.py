@@ -101,20 +101,12 @@ class MainWindow(QMainWindow):
         Save created images.
 
         """
-        """
-        save_path = QFileDialog.getExistingDirectory(self, caption="Open Directory")
-        print('save_path: ', save_path)
-        img_file_path = Paths.outputs(save_path) / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
-        self.img.save(str(img_file_path))
-        """
-        save_path = QFileDialog.getExistingDirectory(self, caption="Open Directory")
-        print('save_path:', save_path)
         img_file_path = Paths.outputs() / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
         try:
             self.img.save(str(img_file_path))
         except AttributeError:
             error_dialog = MessageBox()
-            error_dialog.showMessage('Изображение не сгенерированно     ')
+            error_dialog.showMessage('Изображение не сгенерированно')
 
     def show_change_dialog(self) -> None:
         """
