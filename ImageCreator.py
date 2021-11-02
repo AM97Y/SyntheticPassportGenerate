@@ -101,12 +101,14 @@ class ImageCreator:
         if self.parameters_appearance['flashnumSpinBox'] > 0:
             count_watermark = self.parameters_appearance['flashnumSpinBox']
             image_cv = convert_from_image_to_cv2(img)
-            transform = A.Compose([A.RandomSunFlare(flare_roi=(0.1, 0.1, 0.5, 0.5),
-                                                    num_flare_circles_lower=count_watermark,
-                                                    num_flare_circles_upper=count_watermark + 1,
-                                                    src_radius=100, p=1)])
-            img = convert_from_cv2_to_image(transform(image=image_cv)["image"])
+            for _ in range(count_watermark):
 
+                transform = A.Compose([A.RandomSunFlare(num_flare_circles_lower=0,
+                                                        num_flare_circles_upper=1,
+                                                        src_radius=400,
+                                                        p=1)])
+                image_cv = transform(image=image_cv)["image"]
+            img = convert_from_cv2_to_image(image_cv)
         return img
 
     def create_image(self):
