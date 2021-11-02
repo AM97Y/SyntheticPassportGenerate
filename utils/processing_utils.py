@@ -1,3 +1,8 @@
+import cv2
+import numpy as np
+from PIL import Image
+
+
 def get_hyphenated_str(text, font, width_img) -> str:
     """
     Transform the string into text with line breaks.
@@ -10,8 +15,8 @@ def get_hyphenated_str(text, font, width_img) -> str:
     width, height = font.getsize(text)
     if font.getsize(text)[0] >= width_img:
         result = [i for i, chr in enumerate(text) if chr == ' ']
-        #if not result:
-            # print('Error get_hyphenated_str') print -> Exception
+        # if not result:
+        # print('Error get_hyphenated_str') print -> Exception
 
         for index, pos in enumerate(result):
             if text[pos - 1] == ',':
@@ -22,3 +27,13 @@ def get_hyphenated_str(text, font, width_img) -> str:
 
     text = text.replace(' ', '\n')
     return text
+
+
+def convert_from_cv2_to_image(img: np.ndarray) -> Image:
+    return Image.fromarray(cv2.cvtColor(img, cv2.COLOR_RGB2RGBA))
+    #return Image.fromarray(img)
+
+
+def convert_from_image_to_cv2(img: Image) -> np.ndarray:
+    return cv2.cvtColor(np.array(img), cv2.COLOR_RGBA2RGB)
+    #return np.asarray(img)
