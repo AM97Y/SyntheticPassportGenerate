@@ -85,9 +85,8 @@ class ChangeDataDialog(QDialog):
         Filling images.
 
         """
-        print(image_path)
-        qimage = ImageQt(Image.open(image_path))
-        img = QPixmap.fromImage(qimage) \
+        q_image = ImageQt(Image.open(image_path))
+        img = QPixmap.fromImage(q_image) \
             .scaledToWidth(obj.frameGeometry().width()) \
             .scaledToWidth(obj.frameGeometry().width())
         obj.setPixmap(img)
