@@ -2,6 +2,7 @@ from datetime import datetime
 
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
+from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
@@ -99,9 +100,14 @@ class MainWindow(QMainWindow):
         Save created images.
 
         """
-        img_file_path = Paths.outputs() / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
+        file = f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
+        img_file_path = Paths.outputs() / file
         try:
             self.img.save(str(img_file_path))
+            self.label.setText('Save file ' + file)
+            # timer = QTimer()
+            # timer.start(2147483647)
+            # self.label.setText('')
         except AttributeError:
             error_dialog = MessageBox()
             error_dialog.showMessage('Изображение не сгенерированно')
