@@ -2,13 +2,17 @@ import os
 from random import choice, randint
 
 import PIL
+import cv2
+import numpy as np
 from PIL import Image, ImageFilter, ImageOps
 from PIL import ImageDraw
 from PIL import ImageFont
+import albumentations as A
 
 from MessageBox import MessageBox
 from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw, delete_white_background
 from utils.path_utils import Paths
+from utils.processing_utils import convert_from_image_to_cv2, convert_from_cv2_to_image
 
 
 class ImageCreator:
@@ -81,10 +85,6 @@ class ImageCreator:
         path = Paths.dirty()
         img = self._draw_watermark(img, count_watermark, path)
 
-        count_watermark = self.parameters_appearance['flashnumSpinBox']
-        path = Paths.glares()
-        img = self._draw_watermark(img, count_watermark, path)
-
         if self.parameters_appearance['crumpledCheckBox']:
             path = Paths.crumpled()
             markup = self.parameters_passport["images"]["background"][1]['passport']
@@ -97,6 +97,15 @@ class ImageCreator:
 
         if self.parameters_appearance['noiseCheckBox']:
             img = img.filter(ImageFilter.MinFilter(3))
+
+        if self.parameters_appearance['flashnumSpinBox'] > 0:
+            count_watermark = self.parameters_appearance['flashnumSpinBox']
+            image_cv = convert_from_image_to_cv2(img)
+            transform = A.Compose([A.RandomSunFlare(flare_roi=(0.1, 0.1, 0.5, 0.5),
+                                                    num_flare_circles_lower=count_watermark,
+                                                    num_flare_circles_upper=count_watermark + 1,
+                                                    src_radius=100, p=1)])
+            img = convert_from_cv2_to_image(transform(image=image_cv)["image"])
 
         return img
 
