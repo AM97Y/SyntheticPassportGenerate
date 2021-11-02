@@ -17,11 +17,7 @@ class ChangeDataDialog(QDialog):
         self.setFixedSize(self.width(), self.height())
         # self.setWindowIcon(QtGui.QIcon('Icons/results.ico'))
 
-        self.label_photo.mousePressEvent = functools.partial(self._load_img, obj=self.label_photo, name='label_photo')
-        self.label_signature_1.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_1,
-                                                                   name='label_signature_1')
-        self.label_signature_2.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_2,
-                                                                   name='label_signature_2')
+        self._connect_signals_slots()
 
         self.imgs_dict = {'label_photo': passport_content['images']['label_photo'],
                           'label_signature_1': passport_content['images']['label_signature_1'],
@@ -80,7 +76,8 @@ class ChangeDataDialog(QDialog):
 
         self.show()
 
-    def _fill_img(self, image_path, obj):
+    @staticmethod
+    def _fill_img(image_path, obj):
         """
         Filling images.
 
@@ -109,3 +106,10 @@ class ChangeDataDialog(QDialog):
             obj.setPixmap(img)
 
         self.show()
+
+    def _connect_signals_slots(self):
+        self.label_photo.mousePressEvent = functools.partial(self._load_img, obj=self.label_photo, name='label_photo')
+        self.label_signature_1.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_1,
+                                                                   name='label_signature_1')
+        self.label_signature_2.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_2,
+                                                                   name='label_signature_2')

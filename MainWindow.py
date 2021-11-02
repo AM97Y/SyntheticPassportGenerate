@@ -21,9 +21,7 @@ class MainWindow(QMainWindow):
         # self.setWindowIcon(QtGui.QIcon('Icons/thermometer.ico'))
         self.img = None
 
-        self.changeButton.clicked.connect(self.show_change_dialog)
-        self.saveButton.clicked.connect(self.save)
-        self.generateButton.clicked.connect(self.show_generate)
+        self._connect_signals_slots()
 
         self.passport_content = PassportContent()
         self.passport_appearance = PassportAppearance()
@@ -116,3 +114,8 @@ class MainWindow(QMainWindow):
         self._dialog = ChangeDataDialog(self.passport_content.parameters, self.passport_appearance.parameters)
         self._dialog.buttonBox.accepted.connect(self._update_passport)
         self._dialog.show()
+
+    def _connect_signals_slots(self):
+        self.changeButton.clicked.connect(self.show_change_dialog)
+        self.saveButton.clicked.connect(self.save)
+        self.generateButton.clicked.connect(self.show_generate)
