@@ -1,3 +1,7 @@
+import numpy as np
+from PIL import Image
+
+
 def get_box_size_to_draw(markup: dict, number=False) -> tuple:
     """
     This function returns the size of  box by 4 coordinates.
@@ -31,3 +35,18 @@ def get_box_corner_to_draw(markup, number=False) -> tuple:
         return markup[0][0] - (extra_space[1] - extra_space[0]), markup[0][1]
     else:
         return markup[0][0], markup[0][1]
+
+
+def delete_white_background(img):
+    """
+    This function removes the white background on signs.
+    :param img: Image.
+    :return: Changed image.
+    """
+    img_signature_1 = img.convert('RGBA')
+    arr = np.array(np.asarray(img_signature_1))
+    r, g, b, a = np.rollaxis(arr, axis=-1)
+    mask = ((r == 255) & (g == 255) & (b == 255))
+    arr[mask, 3] = 0
+    img = Image.fromarray(arr, mode='RGBA')
+    return img

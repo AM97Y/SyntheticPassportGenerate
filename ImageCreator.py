@@ -1,16 +1,14 @@
 import os
-from copy import deepcopy
 from random import choice, randint
 
 import PIL
-import numpy as np
 from PIL import Image, ImageFilter, ImageOps
 from PIL import ImageDraw
 from PIL import ImageFont
 
-from utils.path_utils import Paths
-from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw
 from MessageBox import MessageBox
+from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw, delete_white_background
+from utils.path_utils import Paths
 
 
 class ImageCreator:
@@ -102,21 +100,6 @@ class ImageCreator:
 
         return img
 
-    @staticmethod
-    def _delete_white_background(img):
-        """
-        This function removes the white background on signs.
-        :param img: Image.
-        :return: Changed image.
-        """
-        img_signature_1 = img.convert('RGBA')
-        arr = np.array(np.asarray(img_signature_1))
-        r, g, b, a = np.rollaxis(arr, axis=-1)
-        mask = ((r == 255) & (g == 255) & (b == 255))
-        arr[mask, 3] = 0
-        img = Image.fromarray(arr, mode='RGBA')
-        return img
-
     def create_image(self):
         """
         This function generates a passport image.
@@ -196,7 +179,7 @@ class ImageCreator:
                 error_dialog.showMessage('Фотогорафия не человека не является изображением')
             try:
                 with Image.open(self.parameters_passport['images']['label_signature_1']) as img_signature_1:
-                    img_signature_1 = self._delete_white_background(img_signature_1)
+                    img_signature_1 = delete_white_background(img_signature_1)
                     img_signature_1 = img_signature_1.resize(
                         get_box_size_to_draw(background_markup["signature"], Image.NEAREST))
 
