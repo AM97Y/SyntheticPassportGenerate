@@ -9,6 +9,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 from utils.path_utils import Paths
+from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw
 from MessageBox import MessageBox
 
 
@@ -16,66 +17,6 @@ class ImageCreator:
     def __init__(self, parameters_passport, parameters_appearance):
         self.parameters_passport = parameters_passport
         self.parameters_appearance = parameters_appearance
-
-    @staticmethod
-    def _get_hyphenated_str(text, font, width_img) -> str:
-        """
-        This function changes the line break in the text to fit into images.
-        :param text: Text to change.
-        :param font: Read font.
-        :param width_img: Width image.
-        :return: Edited text.
-        """
-
-        width, height = font.getsize(text)
-        if font.getsize(text)[0] >= width_img:
-            result = [i for i, chr in enumerate(text) if chr == ' ']
-            if not result:
-                print('Error _get_hyphenated_str')
-
-            for index, pos in enumerate(result):
-                if text[pos - 1] == ',':
-                    text = "\n".join([text[:pos], text[pos + 1:]])
-
-                    if font.getsize(text[pos + 3:])[0] < width_img:
-                        return text
-
-        text = text.replace(' ', '\n')
-        return text
-
-    @staticmethod
-    def _get_box_size(markup: dict, number=False) -> tuple:
-        """
-        This function returns the size of  box by 4 coordinates.
-        :param markup: Background markup of entity.
-        :param number: Is it a number or not.
-        :return: Width and height of the box.
-        """
-
-        left_upper_point = markup[0]
-        right_upper_point = markup[1]
-        down_point = markup[3]
-        if number:
-            x = down_point[1] - left_upper_point[1]
-            y = x
-        else:
-            x = right_upper_point[0] - left_upper_point[0]
-            y = down_point[1] - left_upper_point[1]
-        return x, y
-
-    def _get_place(self, markup, number=False) -> tuple:
-        """
-        Returns the coordinate of corner box to draw.
-        :param markup: Background markup  of entity.
-        :param number: Is it a number or not.
-        :return: Coordinate of corner box.
-        """
-        if number:
-            # Чтобы от этого избавиться, надо найти как вставлять по вернему левому углу.
-            extra_space = self._get_box_size(markup)
-            return markup[0][0] - (extra_space[1] - extra_space[0]), markup[0][1]
-        else:
-            return markup[0][0], markup[0][1]
 
     def _draw_text(self, text: str, font, shape, number=False):
         """
@@ -86,7 +27,7 @@ class ImageCreator:
         :param number: Is it a number or not.
         :return: Changed image.
         """
-        # text = self._get_hyphenated_str(text, font, shape[0])
+        # text = get_hyphenated_str(text, font, shape[0])
         if self.parameters_appearance['upperCheckBox']:
             text = text.upper()
 
@@ -149,8 +90,8 @@ class ImageCreator:
         if self.parameters_appearance['crumpledCheckBox']:
             path = Paths.crumpled()
             markup = self.parameters_passport["images"]["background"][1]['passport']
-            img = self._draw_watermark(img, 1, path, paste_point=self._get_place(markup),
-                                       resize_size=self._get_box_size(markup))
+            img = self._draw_watermark(img, 1, path, paste_point=get_box_corner_to_draw(markup),
+                                       resize_size=get_box_size_to_draw(markup))
             img = ImageOps.autocontrast(img.convert('RGB'), cutoff=2, ignore=2)
 
         if self.parameters_appearance['blurCheckBox']:
@@ -162,7 +103,7 @@ class ImageCreator:
         return img
 
     @staticmethod
-    def _delete_signature_background(img):
+    def _delete_white_background(img):
         """
         This function removes the white background on signs.
         :param img: Image.
@@ -188,84 +129,86 @@ class ImageCreator:
                                       self.parameters_appearance["fontsizeSpinBox"])
 
             img_text = self._draw_text(self.parameters_passport['department'], font,
-                                       self._get_box_size(background_markup["issue_place"]))
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_place"]), img_text)
+                                       get_box_size_to_draw(background_markup["issue_place"]))
+            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["issue_place"]), img_text)
 
             font_numbers = ImageFont.truetype(Paths.numbers_font(), 30)
             img_text = self._draw_text(" ".join([str(self.parameters_passport['series_passport']),
                                                  str(self.parameters_passport['number_passport'])]),
                                        font_numbers,
-                                       self._get_box_size(background_markup["number_group1"], number=True),
+                                       get_box_size_to_draw(background_markup["number_group1"], number=True),
                                        number=True)
             img_text = img_text.rotate(270)
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group1"], number=True),
+            img.paste(img_text.convert('RGBA'),
+                      get_box_corner_to_draw(background_markup["number_group1"], number=True),
                       img_text)
 
             img_text = self._draw_text(" ".join([str(self.parameters_passport['series_passport']),
                                                  str(self.parameters_passport['number_passport'])]),
                                        font_numbers,
-                                       self._get_box_size(background_markup["number_group2"], number=True),
+                                       get_box_size_to_draw(background_markup["number_group2"], number=True),
                                        number=True)
 
             img_text = img_text.rotate(270)
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["number_group2"], number=True),
+            img.paste(img_text.convert('RGBA'),
+                      get_box_corner_to_draw(background_markup["number_group2"], number=True),
                       img_text)
 
             img_text = self._draw_text(self.parameters_passport['second_name'], font,
-                                       self._get_box_size(background_markup["surname"]))
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["surname"]), img_text)
+                                       get_box_size_to_draw(background_markup["surname"]))
+            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["surname"]), img_text)
 
             img_text = self._draw_text(self.parameters_passport['first_name'], font,
-                                       self._get_box_size(background_markup["name"]))
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["name"]), img_text)
+                                       get_box_size_to_draw(background_markup["name"]))
+            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["name"]), img_text)
 
             img_text = self._draw_text(self.parameters_passport['patronymic_name'], font,
-                                       self._get_box_size(background_markup["patronymic"]))
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["patronymic"]), img_text)
+                                       get_box_size_to_draw(background_markup["patronymic"]))
+            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["patronymic"]), img_text)
 
             img_text = self._draw_text(self.parameters_passport['address'], font,
-                                       self._get_box_size(background_markup["birth_place"]))
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["birth_place"]), img_text)
+                                       get_box_size_to_draw(background_markup["birth_place"]))
+            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["birth_place"]), img_text)
 
             img_text = self._draw_text("-".join(map(str, self.parameters_passport['department_code'])), font,
-                                       self._get_box_size(background_markup["code"]))
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["code"]), img_text)
+                                       get_box_size_to_draw(background_markup["code"]))
+            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["code"]), img_text)
 
             img_text = self._draw_text(self.parameters_passport['date_birth'].strftime("%m.%d.%Y"), font,
-                                       self._get_box_size(background_markup["birth_date"]))
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["birth_date"]), img_text)
+                                       get_box_size_to_draw(background_markup["birth_date"]))
+            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["birth_date"]), img_text)
 
             img_text = self._draw_text(self.parameters_passport['date_issue'].strftime("%m.%d.%Y"), font,
-                                       self._get_box_size(background_markup["issue_date"]))
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["issue_date"]), img_text)
+                                       get_box_size_to_draw(background_markup["issue_date"]))
+            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["issue_date"]), img_text)
 
             img_text = self._draw_text(self.parameters_passport['sex'], font,
-                                       self._get_box_size(background_markup["sex"]))
-            img.paste(img_text.convert('RGBA'), self._get_place(background_markup["sex"]), img_text)
+                                       get_box_size_to_draw(background_markup["sex"]))
+            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["sex"]), img_text)
 
             # photo
             try:
                 with Image.open(self.parameters_passport['images']['label_photo']) as img_photo:
-                    img_photo = img_photo.resize(self._get_box_size(background_markup["photo"], Image.NEAREST))
-                    img.paste(img_photo, self._get_place(background_markup["photo"]))
+                    img_photo = img_photo.resize(get_box_size_to_draw(background_markup["photo"], Image.NEAREST))
+                    img.paste(img_photo, get_box_corner_to_draw(background_markup["photo"]))
             except PIL.UnidentifiedImageError:
                 error_dialog = MessageBox()
                 error_dialog.showMessage('Фотогорафия не человека не является изображением')
             try:
                 with Image.open(self.parameters_passport['images']['label_signature_1']) as img_signature_1:
-                    img_signature_1 = self._delete_signature_background(img_signature_1)
+                    img_signature_1 = self._delete_white_background(img_signature_1)
                     img_signature_1 = img_signature_1.resize(
-                        self._get_box_size(background_markup["signature"], Image.NEAREST))
+                        get_box_size_to_draw(background_markup["signature"], Image.NEAREST))
 
-                    paste_point = self._get_place(background_markup["signature"])
+                    paste_point = get_box_corner_to_draw(background_markup["signature"])
                     img.paste(img_signature_1, paste_point, mask=img_signature_1)
             except PIL.UnidentifiedImageError:
                 error_dialog = MessageBox()
                 error_dialog.showMessage('Выбранная подпись не является изображением')
 
             """with Image.open(self.parameters_passport['images']['label_signature_2']) as img_signature_2:
-                img_signature_2 = img_signature_2.resize(self._get_box_size(background_markup["signature"], Image.NEAREST))
-                img.paste(img_signature_2.convert('RGBA'), self._get_place(background_markup["signature"]))"""
+                img_signature_2 = img_signature_2.resize(get_box_size_to_draw(background_markup["signature"], Image.NEAREST))
+                img.paste(img_signature_2.convert('RGBA'), get_box_corner_to_draw(background_markup["signature"]))"""
 
             img = self._overlay_artifacts(img)
 
