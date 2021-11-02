@@ -162,7 +162,7 @@ class PassportAppearance(Passport):
             'blurFlashnumBlotsnum': 30,
             'fontComboBox': '',
             'upperCheckBox': True,
-            'color_text': (0, 0, 0),
+            'color_text': (0),
             'fontsizeSpinBox': 28,
             'fontblurSpinBox': 80,
         }

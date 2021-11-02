@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>720</x>
-     <y>320</y>
+     <y>330</y>
      <width>141</width>
      <height>31</height>
     </rect>
@@ -341,32 +341,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLineEdit" name="birthplaceLineEdit1">
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>200</y>
-     <width>291</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_12">
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>180</y>
-     <width>151</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Место рождения:</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_16">
    <property name="geometry">
     <rect>
@@ -404,7 +378,7 @@
    <property name="geometry">
     <rect>
      <x>730</x>
-     <y>170</y>
+     <y>190</y>
      <width>121</width>
      <height>141</height>
     </rect>
@@ -413,7 +387,7 @@
   <widget class="QLabel" name="label_17">
    <property name="geometry">
     <rect>
-     <x>670</x>
+     <x>730</x>
      <y>170</y>
      <width>41</width>
      <height>21</height>
@@ -429,7 +403,7 @@
      <x>610</x>
      <y>10</y>
      <width>251</width>
-     <height>151</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="title">
@@ -472,12 +446,12 @@
      <rect>
       <x>80</x>
       <y>50</y>
-      <width>91</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Размытость:</string>
+     <string>Насыщиность</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="fontblurSpinBox">
@@ -512,102 +486,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_20">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>120</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>R:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_21">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>120</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>G:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_22">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>120</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>B:</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="codeSpinBox1_R">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>120</y>
-      <width>51</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-    <property name="value">
-     <number>255</number>
-    </property>
-    <property name="displayIntegerBase">
-     <number>10</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="codeSpinBox1_B">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>120</y>
-      <width>51</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-    <property name="value">
-     <number>255</number>
-    </property>
-    <property name="displayIntegerBase">
-     <number>10</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="codeSpinBox1_G">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>120</y>
-      <width>51</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-    <property name="value">
-     <number>255</number>
-    </property>
-    <property name="displayIntegerBase">
-     <number>10</number>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="upperCheckBox">
     <property name="geometry">
      <rect>
@@ -626,7 +504,7 @@
    <property name="geometry">
     <rect>
      <x>300</x>
-     <y>250</y>
+     <y>210</y>
      <width>401</width>
      <height>91</height>
     </rect>
@@ -778,7 +656,7 @@
    <property name="geometry">
     <rect>
      <x>730</x>
-     <y>170</y>
+     <y>190</y>
      <width>121</width>
      <height>141</height>
     </rect>

@@ -39,9 +39,6 @@ class ChangeDataDialog(QDialog):
             if file != 'fonts.txt':
                 self.fontComboBox.addItem(file)
         self.fontComboBox.setCurrentText(parameters_appearance['fontComboBox'])
-        self.codeSpinBox1_R.setValue(parameters_appearance['color_text'][0])
-        self.codeSpinBox1_G.setValue(parameters_appearance['color_text'][1])
-        self.codeSpinBox1_B.setValue(parameters_appearance['color_text'][2])
 
         self.upperCheckBox.setChecked(parameters_appearance['upperCheckBox'])
 
@@ -54,8 +51,6 @@ class ChangeDataDialog(QDialog):
         self.surnameLineEdit1.setText(passport_content['second_name'])
         self.nameLineEdit.setText(passport_content['first_name'])
         self.patronymicLineEdit.setText(passport_content['patronymic_name'])
-
-        self.birthplaceLineEdit1.setText(passport_content['address'])
 
         self.serieSpinBox.setValue(passport_content['series_passport'])
         self.numberSpinBox.setValue(passport_content['number_passport'])

@@ -49,14 +49,12 @@ class MainWindow(QMainWindow):
             'fontsizeSpinBox': self._dialog.fontsizeSpinBox.value(),
             'fontblurSpinBox': self._dialog.fontblurSpinBox.value(),
             'upperCheckBox': self._dialog.upperCheckBox.isChecked(),
-            'color_text': (self._dialog.codeSpinBox1_R.value(), self._dialog.codeSpinBox1_G.value(),
-                           self._dialog.codeSpinBox1_B.value()),
+            'color_text': (255-int((255.0 * (self._dialog.fontblurSpinBox.value()/100)))),
         }
         new_passport_content = {
             'first_name': self._dialog.nameLineEdit.text(),
             'second_name': self._dialog.surnameLineEdit1.text(),
             'patronymic_name': self._dialog.patronymicLineEdit.text(),
-            'address': self._dialog.birthplaceLineEdit1.text(),
             'series_passport': self._dialog.serieSpinBox.value(),
             'number_passport': self._dialog.numberSpinBox.value(),
             'department_code': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
