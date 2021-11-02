@@ -1,9 +1,11 @@
 import functools
 import os
 
+from PIL.ImageQt import ImageQt
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialog, QFileDialog
+from PIL import Image
 
 from utils.path_utils import Paths
 
@@ -72,6 +74,12 @@ class ChangeDataDialog(QDialog):
         self.fontsizeSpinBox.setValue(parameters_appearance['fontsizeSpinBox'])
         self.fontblurSpinBox.setValue(parameters_appearance['fontblurSpinBox'])
 
+        self._draw_img(self.imgs_dict['label_photo'], self.label_photo)
+        self._draw_img(self.imgs_dict['label_signature_1'], self.label_signature_1)
+        self._draw_img(self.imgs_dict['label_signature_1'], self.label_signature_1)
+
+        self.show()
+
     def _load_img(self, event, obj, name: str) -> None:
         """
         This function loads thumbnails of the selected images.
@@ -79,12 +87,24 @@ class ChangeDataDialog(QDialog):
         :param obj: Event object.
         :param name: Name image in imgs_dict.
         """
-        image_path = QFileDialog.getExistingDirectory(self, 'Search image', '')
 
+        image_path = QFileDialog.getExistingDirectory(self, 'Search image', '')
         if os.path.isfile(image_path):
             self.imgs_dict.update({name: image_path})
+            self.draw_img(image_path, obj)
             img = QPixmap(image_path) \
                 .scaledToWidth(obj.frameGeometry().width()) \
                 .scaledToWidth(obj.frameGeometry().height())
             obj.setPixmap(img)
+
         self.show()
+
+    def _draw_img(self, image_path, obj):
+        print(image_path)
+        qimage = ImageQt(Image.open(image_path))
+        img = QPixmap.fromImage(qimage) \
+            .scaledToWidth(obj.frameGeometry().width()) \
+            .scaledToWidth(obj.frameGeometry().width())
+        obj.setPixmap(img)
+        self.show()
+

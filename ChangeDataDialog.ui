@@ -655,10 +655,10 @@
   <widget class="QLabel" name="label_photo">
    <property name="geometry">
     <rect>
-     <x>730</x>
-     <y>190</y>
-     <width>121</width>
-     <height>141</height>
+     <x>740</x>
+     <y>200</y>
+     <width>101</width>
+     <height>121</height>
     </rect>
    </property>
    <property name="text">
@@ -668,10 +668,10 @@
   <widget class="QLabel" name="label_signature_1">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>240</y>
-     <width>111</width>
-     <height>111</height>
+     <x>20</x>
+     <y>250</y>
+     <width>91</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="text">
@@ -681,10 +681,10 @@
   <widget class="QLabel" name="label_signature_2">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>240</y>
-     <width>111</width>
-     <height>111</height>
+     <x>170</x>
+     <y>250</y>
+     <width>91</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="text">

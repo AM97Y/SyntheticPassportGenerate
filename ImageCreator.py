@@ -95,7 +95,8 @@ class ImageCreator:
         if number:
             color = (130, 30, 30)
         else:
-            color = self.parameters_appearance['color_text']
+            color = (self.parameters_appearance['color_text'], self.parameters_appearance['color_text'],
+                     self.parameters_appearance['color_text'])
         drawer.text((0, 0), text, fill=color, font=font)
 
         return img_text
