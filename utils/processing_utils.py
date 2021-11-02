@@ -1,6 +1,6 @@
 def get_hyphenated_str(text, font, width_img) -> str:
     """
-    This function changes the line break in the text to fit into images.
+    Transform the string into text with line breaks.
     :param text: Text to change.
     :param font: Read font.
     :param width_img: Width image.
@@ -10,8 +10,8 @@ def get_hyphenated_str(text, font, width_img) -> str:
     width, height = font.getsize(text)
     if font.getsize(text)[0] >= width_img:
         result = [i for i, chr in enumerate(text) if chr == ' ']
-        if not result:
-            print('Error get_hyphenated_str')
+        #if not result:
+            # print('Error get_hyphenated_str') print -> Exception
 
         for index, pos in enumerate(result):
             if text[pos - 1] == ',':

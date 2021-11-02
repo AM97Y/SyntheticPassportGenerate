@@ -28,7 +28,7 @@ def init_argparse():
     parser.add_argument(
         '--count',
         nargs='?',
-        help='Count img',
+        help='Count imgs',
         default=2,
         type=int)
 

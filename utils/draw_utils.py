@@ -4,9 +4,9 @@ from PIL import Image
 
 def get_box_size_to_draw(markup: dict, number=False) -> tuple:
     """
-    This function returns the size of  box by 4 coordinates.
+    Get box size to draw the text insides.
     :param markup: Background markup of entity.
-    :param number: Is it a number or not.
+    :param number: True if it is needed to draw a number.
     :return: Width and height of the box.
     """
 
@@ -14,19 +14,19 @@ def get_box_size_to_draw(markup: dict, number=False) -> tuple:
     right_upper_point = markup[1]
     down_point = markup[3]
     if number:
-        x = down_point[1] - left_upper_point[1]
-        y = x
+        width = down_point[1] - left_upper_point[1]
+        height = width
     else:
-        x = right_upper_point[0] - left_upper_point[0]
-        y = down_point[1] - left_upper_point[1]
-    return x, y
+        width = right_upper_point[0] - left_upper_point[0]
+        height = down_point[1] - left_upper_point[1]
+    return width, height
 
 
 def get_box_corner_to_draw(markup, number=False) -> tuple:
     """
     Returns the coordinate of corner box to draw.
     :param markup: Background markup  of entity.
-    :param number: Is it a number or not.
+    :param number: True if it is needed to draw a number.
     :return: Coordinate of corner box.
     """
     if number:
@@ -39,7 +39,7 @@ def get_box_corner_to_draw(markup, number=False) -> tuple:
 
 def delete_white_background(img):
     """
-    This function removes the white background on signs.
+    Remove the white background on the image.
     :param img: Image.
     :return: Changed image.
     """

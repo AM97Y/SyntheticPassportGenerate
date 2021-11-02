@@ -58,7 +58,7 @@ class Paths:
 
     @staticmethod
     def outputs(save_path='output'):
-        return Paths.root() / save_path
+        return Paths._ensure_exists(Paths.root() / save_path)
 
     @staticmethod
     def _ensure_exists(path: Path) -> Path:

@@ -24,7 +24,6 @@ class MainWindow(QMainWindow):
         self.changeButton.clicked.connect(self.show_change_dialog)
         self.saveButton.clicked.connect(self.save)
         self.generateButton.clicked.connect(self.show_generate)
-        self.generatePathButton.clicked.connect(self._generate_path)
 
         self.passport_content = PassportContent()
         self.passport_appearance = PassportAppearance()
@@ -49,7 +48,7 @@ class MainWindow(QMainWindow):
             'fontsizeSpinBox': self._dialog.fontsizeSpinBox.value(),
             'fontblurSpinBox': self._dialog.fontblurSpinBox.value(),
             'upperCheckBox': self._dialog.upperCheckBox.isChecked(),
-            'color_text': (255-int((255.0 * (self._dialog.fontblurSpinBox.value()/100)))),
+            'color_text': (255 - int((255.0 * (self._dialog.fontblurSpinBox.value() / 100)))),
         }
         new_passport_content = {
             'first_name': self._dialog.nameLineEdit.text(),
@@ -83,25 +82,6 @@ class MainWindow(QMainWindow):
         self.passport_appearance.random_init()
         self._create_image_passport()
 
-    def _generate_path(self):
-        """
-        Generate path of passport images.
-
-        """
-        # self.generate_path = QFileDialog.getExistingDirectory(self, 'Search path gen', HOME, QFileDialog.ShowDirsOnly)
-        count_examples = self.genSpinBox.value()
-        for i in range(0, count_examples):
-            self.passport_content.random_init()
-            self.passport_appearance.random_init()
-
-            self.img_creator = ImageCreator(self.passport_content.parameters, self.passport_appearance.parameters)
-            self.img = self.img_creator.create_image()
-
-            img_filepath = Paths.outputs() / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
-            self.img.save(str(img_filepath))
-            self.progressBar.setValue((i / count_examples) * 100)
-        self.progressBar.setValue(100)
-
     def _create_image_passport(self) -> None:
         """
         Create image passport.
@@ -115,7 +95,6 @@ class MainWindow(QMainWindow):
             .scaledToWidth(self.passportImg.frameGeometry().width() - 400) \
             .scaledToWidth(self.passportImg.frameGeometry().height() - 400)
         self.passportImg.setPixmap(img)
-        # self.passportImg ДОБАВИТЬ СКРОЛИН И ЧТОБЫ ОКНО НЕ УВЕЛИЧИТЬ.
 
     def save(self) -> None:
         """

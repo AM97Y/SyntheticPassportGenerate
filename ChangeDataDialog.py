@@ -74,11 +74,23 @@ class ChangeDataDialog(QDialog):
         self.fontsizeSpinBox.setValue(parameters_appearance['fontsizeSpinBox'])
         self.fontblurSpinBox.setValue(parameters_appearance['fontblurSpinBox'])
 
-        self._draw_img(self.imgs_dict['label_photo'], self.label_photo)
-        self._draw_img(self.imgs_dict['label_signature_1'], self.label_signature_1)
-        self._draw_img(self.imgs_dict['label_signature_1'], self.label_signature_1)
+        self._fill_img(self.imgs_dict['label_photo'], self.label_photo)
+        self._fill_img(self.imgs_dict['label_signature_1'], self.label_signature_1)
+        self._fill_img(self.imgs_dict['label_signature_1'], self.label_signature_1)
 
         self.show()
+
+    def _fill_img(self, image_path, obj):
+        """
+        Filling images.
+
+        """
+        print(image_path)
+        qimage = ImageQt(Image.open(image_path))
+        img = QPixmap.fromImage(qimage) \
+            .scaledToWidth(obj.frameGeometry().width()) \
+            .scaledToWidth(obj.frameGeometry().width())
+        obj.setPixmap(img)
 
     def _load_img(self, event, obj, name: str) -> None:
         """
@@ -98,13 +110,3 @@ class ChangeDataDialog(QDialog):
             obj.setPixmap(img)
 
         self.show()
-
-    def _draw_img(self, image_path, obj):
-        print(image_path)
-        qimage = ImageQt(Image.open(image_path))
-        img = QPixmap.fromImage(qimage) \
-            .scaledToWidth(obj.frameGeometry().width()) \
-            .scaledToWidth(obj.frameGeometry().width())
-        obj.setPixmap(img)
-        self.show()
-

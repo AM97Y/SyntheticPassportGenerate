@@ -106,7 +106,7 @@ class PassportContent(Passport):
 
                 file = Paths.file_dataset(key)
                 if os.path.isfile(file):
-                    with open(file, "r") as f:
+                    with open(file, "r", encoding='utf-8') as f:
                         for line in f:
                             tmp_choices.append(line.strip())
                     if key == 'address' or key == 'department':
@@ -162,7 +162,7 @@ class PassportAppearance(Passport):
             'blurFlashnumBlotsnum': 30,
             'fontComboBox': '',
             'upperCheckBox': True,
-            'color_text': (0),
+            'color_text': 0,
             'fontsizeSpinBox': 28,
             'fontblurSpinBox': 80,
         }
