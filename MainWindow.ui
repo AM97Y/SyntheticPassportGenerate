@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1283</width>
-    <height>1041</height>
+    <width>1282</width>
+    <height>1025</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,33 +76,18 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>870</x>
-      <y>990</y>
-      <width>401</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1283</width>
+     <width>1282</width>
      <height>22</height>
     </rect>
    </property>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <resources/>
  <connections/>

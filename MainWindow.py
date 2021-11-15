@@ -104,7 +104,7 @@ class MainWindow(QMainWindow):
         img_file_path = Paths.outputs() / file
         try:
             self.img.save(str(img_file_path))
-            self.label.setText('Save file ' + file)
+            self.statusBar.showMessage('Save file ' + file)
             # timer = QTimer()
             # timer.start(2147483647)
             # self.label.setText('')
