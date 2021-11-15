@@ -182,14 +182,14 @@ class ImageCreator:
 
             # photo
             try:
-                with Image.open(self.parameters_passport['images']['label_photo']) as img_photo:
+                with Image.open(self.parameters_passport['images']['photoLabel']) as img_photo:
                     img_photo = img_photo.resize(get_box_size_to_draw(background_markup["photo"], Image.NEAREST))
                     img.paste(img_photo, get_box_corner_to_draw(background_markup["photo"]))
             except PIL.UnidentifiedImageError:
                 error_dialog = MessageBox()
                 error_dialog.showMessage('Фотогорафия не человека не является изображением')
             try:
-                with Image.open(self.parameters_passport['images']['label_signature_1']) as img_signature_1:
+                with Image.open(self.parameters_passport['images']['officersignLabel']) as img_signature_1:
                     img_signature_1 = delete_white_background(img_signature_1)
                     img_signature_1 = img_signature_1.resize(
                         get_box_size_to_draw(background_markup["signature"], Image.NEAREST))
@@ -200,7 +200,7 @@ class ImageCreator:
                 error_dialog = MessageBox()
                 error_dialog.showMessage('Выбранная подпись не является изображением')
 
-            """with Image.open(self.parameters_passport['images']['label_signature_2']) as img_signature_2:
+            """with Image.open(self.parameters_passport['images']['ownersignLabel']) as img_signature_2:
                 img_signature_2 = img_signature_2.resize(get_box_size_to_draw(background_markup["signature"], Image.NEAREST))
                 img.paste(img_signature_2.convert('RGBA'), get_box_corner_to_draw(background_markup["signature"]))"""
 

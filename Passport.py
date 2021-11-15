@@ -40,9 +40,9 @@ class PassportContent(Passport):
             'date_birth': datetime.now(),
             'date_issue': datetime.now(),
             'sex': 'МУЖ.',
-            'images': {'label_photo': '',
-                       'label_signature_1': '',
-                       'label_signature_2': '',
+            'images': {'photoLabel': '',
+                       'officersignLabel': '',
+                       'ownersignLabel': '',
                        'background': [file_background, self._load_markup(file_background)]
                        }
         }
@@ -93,12 +93,12 @@ class PassportContent(Passport):
                 else:
                     path = Paths.photo_female()
                 path_blots = os.listdir(path)
-                self.parameters[key]['label_photo'] = path / choice(path_blots)
+                self.parameters[key]['photoLabel'] = path / choice(path_blots)
 
                 path_sign = Paths.signs()
                 path_blots = os.listdir(path_sign)
-                self.parameters[key]['label_signature_1'] = path_sign / choice(path_blots)
-                self.parameters[key]['label_signature_2'] = path_sign / choice(path_blots)
+                self.parameters[key]['officersignLabel'] = path_sign / choice(path_blots)
+                self.parameters[key]['ownersignLabel'] = path_sign / choice(path_blots)
             elif key == 'upperCheckBox':
                 self.parameters[key] = choice((True, False))
             elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
@@ -109,7 +109,7 @@ class PassportContent(Passport):
                     with open(file, "r", encoding='utf-8') as f:
                         for line in f:
                             tmp_choices.append(line.strip())
-                    if key == 'address' or key == 'department':
+                    if  key == 'department':
                         self.parameters[key] = choice(tmp_choices)
                     else:
                         self.parameters[key] = self._gender_format(choice(tmp_choices), sex).title()

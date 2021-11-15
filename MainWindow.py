@@ -51,12 +51,12 @@ class MainWindow(QMainWindow):
         }
         new_passport_content = {
             'first_name': self._dialog.nameLineEdit.text(),
-            'second_name': self._dialog.surnameLineEdit1.text(),
+            'second_name': self._dialog.surnameLineEdit.text(),
             'patronymic_name': self._dialog.patronymicLineEdit.text(),
             'series_passport': self._dialog.serieSpinBox.value(),
             'number_passport': self._dialog.numberSpinBox.value(),
             'department_code': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
-            'department': self._dialog.organizationLineEdit1.text(),
+            'department': self._dialog.organizationLineEdit.text(),
             'date_issue': self._dialog.issueDateEdit.date().currentDate().toPyDate(),
             'date_birth': self._dialog.birthDateEdit.date().currentDate().toPyDate(),
             'sex': self._dialog.sexComboBox.currentText(),

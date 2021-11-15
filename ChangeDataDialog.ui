@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>883</width>
-    <height>367</height>
+    <height>361</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -132,7 +132,7 @@
     <number>10</number>
    </property>
   </widget>
-  <widget class="QLineEdit" name="organizationLineEdit1">
+  <widget class="QLineEdit" name="organizationLineEdit">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -229,7 +229,7 @@
     <string>Фамилия:</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="surnameLineEdit1">
+  <widget class="QLineEdit" name="surnameLineEdit">
    <property name="geometry">
     <rect>
      <x>300</x>
@@ -580,7 +580,7 @@
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>200</x>
       <y>30</y>
       <width>71</width>
       <height>20</height>
@@ -593,7 +593,7 @@
    <widget class="QLabel" name="label_18">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>200</x>
       <y>60</y>
       <width>71</width>
       <height>20</height>
@@ -652,7 +652,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QLabel" name="label_photo">
+  <widget class="QLabel" name="photoLabel">
    <property name="geometry">
     <rect>
      <x>740</x>
@@ -665,7 +665,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="label_signature_1">
+  <widget class="QLabel" name="officersignLabel">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -678,7 +678,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="label_signature_2">
+  <widget class="QLabel" name="ownersignLabel">
    <property name="geometry">
     <rect>
      <x>170</x>

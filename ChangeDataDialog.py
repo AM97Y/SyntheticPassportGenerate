@@ -19,9 +19,9 @@ class ChangeDataDialog(QDialog):
 
         self._connect_signals_slots()
 
-        self.imgs_dict = {'label_photo': passport_content['images']['label_photo'],
-                          'label_signature_1': passport_content['images']['label_signature_1'],
-                          'label_signature_2': passport_content['images']['label_signature_2'],
+        self.imgs_dict = {'photoLabel': passport_content['images']['photoLabel'],
+                          'officersignLabel': passport_content['images']['officersignLabel'],
+                          'ownersignLabel': passport_content['images']['ownersignLabel'],
                           'background': ['', {}]
                           }
         self._fill_fields(passport_content, parameters_appearance)
@@ -44,9 +44,9 @@ class ChangeDataDialog(QDialog):
         self.crumpledCheckBox.setChecked(parameters_appearance['crumpledCheckBox'])
         self.noiseCheckBox.setChecked(parameters_appearance['noiseCheckBox'])
 
-        self.organizationLineEdit1.setText(passport_content['department'])
+        self.organizationLineEdit.setText(passport_content['department'])
 
-        self.surnameLineEdit1.setText(passport_content['second_name'])
+        self.surnameLineEdit.setText(passport_content['second_name'])
         self.nameLineEdit.setText(passport_content['first_name'])
         self.patronymicLineEdit.setText(passport_content['patronymic_name'])
 
@@ -70,9 +70,9 @@ class ChangeDataDialog(QDialog):
         self.fontsizeSpinBox.setValue(parameters_appearance['fontsizeSpinBox'])
         self.fontblurSpinBox.setValue(parameters_appearance['fontblurSpinBox'])
 
-        self._fill_img(self.imgs_dict['label_photo'], self.label_photo)
-        self._fill_img(self.imgs_dict['label_signature_1'], self.label_signature_1)
-        self._fill_img(self.imgs_dict['label_signature_1'], self.label_signature_1)
+        self._fill_img(self.imgs_dict['photoLabel'], self.photoLabel)
+        self._fill_img(self.imgs_dict['officersignLabel'], self.officersignLabel)
+        self._fill_img(self.imgs_dict['ownersignLabel'], self.ownersignLabel)
 
         self.show()
 
@@ -108,8 +108,8 @@ class ChangeDataDialog(QDialog):
         self.show()
 
     def _connect_signals_slots(self):
-        self.label_photo.mousePressEvent = functools.partial(self._load_img, obj=self.label_photo, name='label_photo')
-        self.label_signature_1.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_1,
-                                                                   name='label_signature_1')
-        self.label_signature_2.mousePressEvent = functools.partial(self._load_img, obj=self.label_signature_2,
-                                                                   name='label_signature_2')
+        self.photoLabel.mousePressEvent = functools.partial(self._load_img, obj=self.photoLabel, name='photoLabel')
+        self.officersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.officersignLabel,
+                                                                   name='officersignLabel')
+        self.ownersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.ownersignLabel,
+                                                                   name='ownersignLabel')
