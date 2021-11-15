@@ -91,15 +91,15 @@ class ChangeDataDialog(QDialog):
     def _load_img(self, event, obj, name: str) -> None:
         """
         This function loads thumbnails of the selected images.
-        :param event: Event.
-        :param obj: Event object.
+        :param event: Event clicking: QMouseEvent.
+        :param obj: Object by clicking on which there was a disposal.
         :param name: Name image in imgs_dict.
         """
 
         image_path = QFileDialog.getExistingDirectory(self, 'Search image', '')
         if os.path.isfile(image_path):
             self.imgs_dict.update({name: image_path})
-            self.draw_img(image_path, obj)
+            # self.draw_img(image_path, obj)
             img = QPixmap(image_path) \
                 .scaledToWidth(obj.frameGeometry().width()) \
                 .scaledToWidth(obj.frameGeometry().height())
@@ -110,6 +110,6 @@ class ChangeDataDialog(QDialog):
     def _connect_signals_slots(self):
         self.photoLabel.mousePressEvent = functools.partial(self._load_img, obj=self.photoLabel, name='photoLabel')
         self.officersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.officersignLabel,
-                                                                   name='officersignLabel')
+                                                                  name='officersignLabel')
         self.ownersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.ownersignLabel,
-                                                                   name='ownersignLabel')
+                                                                name='ownersignLabel')
