@@ -10,6 +10,7 @@ from ChangeDataDialog import ChangeDataDialog
 from Passport import PassportAppearance, PassportContent
 from ImageCreator import ImageCreator
 from utils.path_utils import Paths
+from utils.qt_utils import add_pixmap_to_widget
 from MessageBox import MessageBox
 
 
@@ -90,10 +91,8 @@ class MainWindow(QMainWindow):
         self.img = self.img_creator.create_image()
 
         qimage = ImageQt(self.img)
-        img = QPixmap.fromImage(qimage) \
-            .scaledToWidth(self.passportImg.frameGeometry().width() - 400) \
-            .scaledToWidth(self.passportImg.frameGeometry().height() - 400)
-        self.passportImg.setPixmap(img)
+        add_pixmap_to_widget(QPixmap.fromImage(qimage), self.passportImg)
+
 
     def save(self) -> None:
         """

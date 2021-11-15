@@ -619,8 +619,8 @@
    <widget class="QSpinBox" name="blurFlashnumBlotsnum">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>60</y>
+      <x>330</x>
+      <y>50</y>
       <width>51</width>
       <height>22</height>
      </rect>
@@ -642,7 +642,7 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>30</y>
+      <y>20</y>
       <width>91</width>
       <height>31</height>
      </rect>

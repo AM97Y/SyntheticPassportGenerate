@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QDialog, QFileDialog
 from PIL import Image
 
 from utils.path_utils import Paths
+from utils.qt_utils import add_pixmap_to_widget
 
 
 class ChangeDataDialog(QDialog):
@@ -83,10 +84,7 @@ class ChangeDataDialog(QDialog):
 
         """
         q_image = ImageQt(Image.open(image_path))
-        img = QPixmap.fromImage(q_image) \
-            .scaledToWidth(obj.frameGeometry().width()) \
-            .scaledToWidth(obj.frameGeometry().width())
-        obj.setPixmap(img)
+        add_pixmap_to_widget(QPixmap.fromImage(q_image), obj)
 
     def _load_img(self, event, obj, name: str) -> None:
         """
@@ -100,18 +98,12 @@ class ChangeDataDialog(QDialog):
         else:
             dir = str(Paths.signs())
         filters = 'Images (*.png *.xpm *.jpg)'
-        print(dir)
+
         image_path = QFileDialog.getOpenFileName(self, f"{name} image", directory=dir,
                                                  filter=filters)[0]
-        print(image_path)
         if os.path.isfile(image_path):
             self.imgs_dict.update({name: image_path})
-
-            img = QPixmap(image_path) \
-                .scaledToWidth(obj.frameGeometry().width()) \
-                .scaledToWidth(obj.frameGeometry().height())
-            obj.setPixmap(img)
-
+            add_pixmap_to_widget(QPixmap(image_path), obj)
         self.show()
 
     def _connect_signals_slots(self):

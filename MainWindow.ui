@@ -66,10 +66,10 @@
    <widget class="QLabel" name="passportImg">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1261</width>
-      <height>911</height>
+      <x>350</x>
+      <y>50</y>
+      <width>561</width>
+      <height>831</height>
      </rect>
     </property>
     <property name="text">
