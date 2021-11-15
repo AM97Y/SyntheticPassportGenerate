@@ -29,12 +29,16 @@ class Paths:
         return str(Paths.data_passport() / str(key + '.txt'))
 
     @staticmethod
+    def photo():
+        return Paths.root() / 'photo'
+
+    @staticmethod
     def photo_male():
-        return Paths.root() / 'photo' / 'male'
+        return Paths.photo() / 'male'
 
     @staticmethod
     def photo_female():
-        return Paths.root() / 'photo' / 'female'
+        return Paths.photo() / 'female'
 
     @staticmethod
     def signs():

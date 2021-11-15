@@ -95,11 +95,15 @@ class ChangeDataDialog(QDialog):
         :param obj: Object by clicking on which there was a disposal.
         :param name: Name image in imgs_dict.
         """
-
-        image_path = QFileDialog.getExistingDirectory(self, 'Search image', '')
+        dir = str(Paths.photo())
+        filters = 'Images (*.png *.xpm *.jpg)'
+        print(dir)
+        image_path = QFileDialog.getOpenFileName(self, f"{name} image", directory=dir,
+                                                 filter=filters)[0]
+        print(image_path)
         if os.path.isfile(image_path):
             self.imgs_dict.update({name: image_path})
-            # self.draw_img(image_path, obj)
+
             img = QPixmap(image_path) \
                 .scaledToWidth(obj.frameGeometry().width()) \
                 .scaledToWidth(obj.frameGeometry().height())
