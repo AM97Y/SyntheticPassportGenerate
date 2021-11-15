@@ -60,9 +60,9 @@ class MainWindow(QMainWindow):
             'date_issue': self._dialog.issueDateEdit.date().currentDate().toPyDate(),
             'date_birth': self._dialog.birthDateEdit.date().currentDate().toPyDate(),
             'sex': self._dialog.sexComboBox.currentText(),
-            'images': {'label_photo': self._dialog.imgs_dict['label_photo'],
-                       'label_signature_1': self._dialog.imgs_dict['label_signature_1'],
-                       'label_signature_2': self._dialog.imgs_dict['label_signature_2'],
+            'images': {'photoLabel': self._dialog.imgs_dict['photoLabel'],
+                       'officersignLabel': self._dialog.imgs_dict['officersignLabel'],
+                       'ownersignLabel': self._dialog.imgs_dict['ownersignLabel'],
                        'background': self.passport_content.parameters["images"]["background"],
                        },
         }
