@@ -3,6 +3,7 @@ import os
 from datetime import datetime, date
 from random import choice, randint
 
+import numpy as np
 import pandas as pd
 from faker import Faker
 from pymorphy2 import MorphAnalyzer
@@ -173,19 +174,19 @@ class PassportAppearance(Passport):
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
                 self.parameters[key] = choice((True, False))
             elif key == 'blotsnumSpinBox' or key == 'flashnumSpinBox':
-                self.parameters[key] = randint(0, 4)
+                self.parameters[key] = np.random.poisson(0.5)
             elif key == 'blurFlashnumBlotsnum':
                 self.parameters[key] = randint(0, 50)
             elif key == 'fontblurSpinBox':
                 self.parameters[key] = randint(50, 100)
             elif key == 'fontComboBox':
                 fonts_list = []
-                for file in os.listdir(Paths.fonts()):
+                for file in Resources.fonts():
                     fonts_list.append(file)
                 self.parameters[key] = choice(fonts_list)
                 del fonts_list
             elif key == 'fontsizeSpinBox':
-                self.parameters[key] = randint(14, 30)
+                self.parameters[key] = randint(25, 40)
             # elif key == 'color_text':
             #    pix = randint(120, 200)
             #    self.parameters[key] = (pix, pix, pix)
