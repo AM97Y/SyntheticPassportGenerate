@@ -46,7 +46,6 @@ class MainWindow(QMainWindow):
             'fontComboBox': self._dialog.fontComboBox.currentText(),
             'fontsizeSpinBox': self._dialog.fontsizeSpinBox.value(),
             'fontblurSpinBox': self._dialog.fontblurSpinBox.value(),
-            'upperCheckBox': self._dialog.upperCheckBox.isChecked(),
             'color_text': (255 - int((255.0 * (self._dialog.fontblurSpinBox.value() / 100)))),
         }
         new_passport_content = {

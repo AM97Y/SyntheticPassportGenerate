@@ -403,7 +403,7 @@
      <x>610</x>
      <y>10</y>
      <width>251</width>
-     <height>131</height>
+     <height>101</height>
     </rect>
    </property>
    <property name="title">
@@ -484,19 +484,6 @@
       <width>231</width>
       <height>21</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="upperCheckBox">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>100</y>
-      <width>161</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Все буквы заглавные</string>
     </property>
    </widget>
   </widget>

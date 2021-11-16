@@ -40,7 +40,6 @@ class ChangeDataDialog(QDialog):
                                      passport_content_params['images']['officersignLabel'],
                                      passport_content_params['images']['ownersignLabel']]
 
-
     def _connect_signals_slots(self):
         self.photoLabel.mousePressEvent = functools.partial(self._load_img, obj=self.photoLabel, name='photoLabel')
         self.officersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.officersignLabel,
@@ -114,7 +113,6 @@ class ChangeDataDialog(QDialog):
         self.fontComboBox.setCurrentText(passport_appearance_params['fontComboBox'])
         self.fontsizeSpinBox.setValue(passport_appearance_params['fontsizeSpinBox'])
         self.fontblurSpinBox.setValue(passport_appearance_params['fontblurSpinBox'])
-        self.upperCheckBox.setChecked(passport_appearance_params['upperCheckBox'])
 
     def _fill_img(self, image_path: Union[str, ImageQt], obj):
         """

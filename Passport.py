@@ -97,8 +97,6 @@ class PassportContent(Passport):
                 path_sign = Resources.signs()
                 self.parameters[key]['officersignLabel'] = choice(path_sign)
                 self.parameters[key]['ownersignLabel'] =  choice(path_sign)
-            elif key == 'upperCheckBox':
-                self.parameters[key] = choice((True, False))
             elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                 tmp_choices = []
 
@@ -159,7 +157,6 @@ class PassportAppearance(Passport):
             'flashnumSpinBox': 1,
             'blurFlashnumBlotsnum': 30,
             'fontComboBox': '',
-            'upperCheckBox': True,
             'color_text': 0,
             'fontsizeSpinBox': 28,
             'fontblurSpinBox': 80,
