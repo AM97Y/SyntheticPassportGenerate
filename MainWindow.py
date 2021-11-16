@@ -2,7 +2,6 @@ from datetime import datetime
 
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
-from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
@@ -21,13 +20,13 @@ class MainWindow(QMainWindow):
         uic.loadUi('MainWindow.ui', self)
         self.setFixedSize(self.width(), self.height())
         # self.setWindowIcon(QtGui.QIcon('Icons/thermometer.ico'))
-        self.img = None
 
         self._connect_signals_slots()
 
         self.passport_content = PassportContent()
         self.passport_appearance = PassportAppearance()
 
+        self.img = None
         self.img_creator = None
 
         self._dialog = None
@@ -61,11 +60,10 @@ class MainWindow(QMainWindow):
             'date_issue': self._dialog.issueDateEdit.date().currentDate().toPyDate(),
             'date_birth': self._dialog.birthDateEdit.date().currentDate().toPyDate(),
             'sex': self._dialog.sexComboBox.currentText(),
-            'images': {'photoLabel': self._dialog.imgs_dict['photoLabel'],
-                       'officersignLabel': self._dialog.imgs_dict['officersignLabel'],
-                       'ownersignLabel': self._dialog.imgs_dict['ownersignLabel'],
-                       'background': self.passport_content.parameters["images"]["background"],
-                       },
+            'images': {
+                **self._dialog.images_content,
+                'background': self.passport_content.parameters["images"]["background"],
+            }
         }
 
         self.passport_content.update(new_passport_content)
@@ -92,7 +90,6 @@ class MainWindow(QMainWindow):
 
         qimage = ImageQt(self.img)
         add_pixmap_to_widget(QPixmap.fromImage(qimage), self.passportImg)
-
 
     def save(self) -> None:
         """

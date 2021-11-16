@@ -1,5 +1,6 @@
 import functools
 import os
+from typing import Union
 
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
@@ -12,7 +13,7 @@ from utils.qt_utils import add_pixmap_to_widget
 
 
 class ChangeDataDialog(QDialog):
-    def __init__(self, passport_content, parameters_appearance):
+    def __init__(self, passport_content_params: dict, passport_appearance_params: dict):
         QDialog.__init__(self)
         uic.loadUi('ChangeDataDialog.ui', self)
         self.setFixedSize(self.width(), self.height())
@@ -20,75 +21,121 @@ class ChangeDataDialog(QDialog):
 
         self._connect_signals_slots()
 
-        self.imgs_dict = {'photoLabel': passport_content['images']['photoLabel'],
-                          'officersignLabel': passport_content['images']['officersignLabel'],
-                          'ownersignLabel': passport_content['images']['ownersignLabel'],
+        self.imgs_dict = {'photoLabel': passport_content_params['images']['photoLabel'],
+                          'officersignLabel': passport_content_params['images']['officersignLabel'],
+                          'ownersignLabel': passport_content_params['images']['ownersignLabel'],
                           'background': ['', {}]
                           }
-        self._fill_fields(passport_content, parameters_appearance)
 
-    def _fill_fields(self, passport_content: dict, parameters_appearance: dict) -> None:
+        self._fill_first_passport_page_fields(passport_content_params)
+        self._fill_second_passport_page_fields(passport_content_params)
+        self._fill_artifacts_fields(passport_appearance_params)
+        self._fill_fonts_fields(passport_appearance_params)
+
+        self._fill_img(passport_content_params['images']['photoLabel'], self.photoLabel)
+        self._fill_img(passport_content_params['images']['officersignLabel'], self.officersignLabel)
+        self._fill_img(passport_content_params['images']['ownersignLabel'], self.ownersignLabel)
+
+        self._image_content_paths = [passport_content_params['images']['photoLabel'],
+                                     passport_content_params['images']['officersignLabel'],
+                                     passport_content_params['images']['ownersignLabel']]
+
+
+    def _connect_signals_slots(self):
+        self.photoLabel.mousePressEvent = functools.partial(self._load_img, obj=self.photoLabel, name='photoLabel')
+        self.officersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.officersignLabel,
+                                                                  name='officersignLabel')
+        self.ownersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.ownersignLabel,
+                                                                name='ownersignLabel')
+
+    def _fill_first_passport_page_fields(self, passport_content_params: dict) -> None:
         """
-        Filling in the fields.
+        Fill window fields which concerns data of the first passport page
 
+        :param passport_content_params:
         """
-        self.sexComboBox.setCurrentText(passport_content['sex'])
 
+        # First passport page
+        self.serieSpinBox.setValue(passport_content_params['series_passport'])
+        self.numberSpinBox.setValue(passport_content_params['number_passport'])
+        self.organizationLineEdit.setText(passport_content_params['department'])
+        self.issueDateEdit.setDate(passport_content_params['date_issue'])
+        self.codeSpinBox1.setValue(passport_content_params['department_code'][0])
+        self.codeSpinBox2.setValue(passport_content_params['department_code'][1])
+
+    def _fill_second_passport_page_fields(self, passport_content_params: dict) -> None:
+        """
+        Fill window fields which concerns data of the second passport page
+
+        :param passport_content_params:
+        """
+        self.surnameLineEdit.setText(passport_content_params['second_name'])
+        self.nameLineEdit.setText(passport_content_params['first_name'])
+        self.patronymicLineEdit.setText(passport_content_params['patronymic_name'])
+        self.sexComboBox.setCurrentText(passport_content_params['sex'])
+        self.birthDateEdit.setDate(passport_content_params['date_birth'])
+
+    def _fill_artifacts_fields(self, passport_appearance_params: dict) -> None:
+        """
+        Fill fields of GroupBox with artifacts data
+
+        :param passport_appearance_params:
+        """
+
+        self.blurCheckBox.setChecked(passport_appearance_params['blurCheckBox'])
+        self.crumpledCheckBox.setChecked(passport_appearance_params['crumpledCheckBox'])
+        self.noiseCheckBox.setChecked(passport_appearance_params['noiseCheckBox'])
+        self.blotsnumSpinBox.setValue(passport_appearance_params['blotsnumSpinBox'])
+        self.flashnumSpinBox.setValue(passport_appearance_params['flashnumSpinBox'])
+        self.blurFlashnumBlotsnum.setValue(passport_appearance_params['blurFlashnumBlotsnum'])
+
+    def _fill_artifacts_fields(self, passport_appearance_params: dict) -> None:
+        """
+        Fill fields of GroupBox with artifacts data
+
+        :param passport_appearance_params:
+        """
+        self.blurCheckBox.setChecked(passport_appearance_params['blurCheckBox'])
+        self.crumpledCheckBox.setChecked(passport_appearance_params['crumpledCheckBox'])
+        self.noiseCheckBox.setChecked(passport_appearance_params['noiseCheckBox'])
+        self.blotsnumSpinBox.setValue(passport_appearance_params['blotsnumSpinBox'])
+        self.flashnumSpinBox.setValue(passport_appearance_params['flashnumSpinBox'])
+        self.blurFlashnumBlotsnum.setValue(passport_appearance_params['blurFlashnumBlotsnum'])
+
+    def _fill_fonts_fields(self, passport_appearance_params: dict) -> None:
+        """
+        Fill fields of GroupBox with fonts data
+
+        :param passport_appearance_params:
+        """
         for file in os.listdir(Paths.fonts()):
             if file != 'fonts.txt':
                 self.fontComboBox.addItem(file)
-        self.fontComboBox.setCurrentText(parameters_appearance['fontComboBox'])
+        self.fontComboBox.setCurrentText(passport_appearance_params['fontComboBox'])
+        self.fontsizeSpinBox.setValue(passport_appearance_params['fontsizeSpinBox'])
+        self.fontblurSpinBox.setValue(passport_appearance_params['fontblurSpinBox'])
+        self.upperCheckBox.setChecked(passport_appearance_params['upperCheckBox'])
 
-        self.upperCheckBox.setChecked(parameters_appearance['upperCheckBox'])
-
-        self.blurCheckBox.setChecked(parameters_appearance['blurCheckBox'])
-        self.crumpledCheckBox.setChecked(parameters_appearance['crumpledCheckBox'])
-        self.noiseCheckBox.setChecked(parameters_appearance['noiseCheckBox'])
-
-        self.organizationLineEdit.setText(passport_content['department'])
-
-        self.surnameLineEdit.setText(passport_content['second_name'])
-        self.nameLineEdit.setText(passport_content['first_name'])
-        self.patronymicLineEdit.setText(passport_content['patronymic_name'])
-
-        self.serieSpinBox.setValue(passport_content['series_passport'])
-        self.numberSpinBox.setValue(passport_content['number_passport'])
-
-        self.issueDateEdit.setDate(passport_content['date_issue'])
-
-        self.codeSpinBox1.setValue(passport_content['department_code'][0])
-        self.codeSpinBox2.setValue(passport_content['department_code'][1])
-
-        self.sexComboBox.setCurrentText(passport_content['sex'])
-
-        self.birthDateEdit.setDate(passport_content['date_birth'])
-
-        self.blotsnumSpinBox.setValue(parameters_appearance['blotsnumSpinBox'])
-        self.flashnumSpinBox.setValue(parameters_appearance['flashnumSpinBox'])
-        self.blurFlashnumBlotsnum.setValue(parameters_appearance['blurFlashnumBlotsnum'])
-
-        # self.fontComboBox.setCurrentText(parameters_appearance['fontComboBox'])
-        self.fontsizeSpinBox.setValue(parameters_appearance['fontsizeSpinBox'])
-        self.fontblurSpinBox.setValue(parameters_appearance['fontblurSpinBox'])
-
-        self._fill_img(self.imgs_dict['photoLabel'], self.photoLabel)
-        self._fill_img(self.imgs_dict['officersignLabel'], self.officersignLabel)
-        self._fill_img(self.imgs_dict['ownersignLabel'], self.ownersignLabel)
-
-        self.show()
-
-    @staticmethod
-    def _fill_img(image_path, obj):
+    def _fill_img(self, image_path: Union[str, ImageQt], obj):
         """
         Filling images.
 
+        :param image_path:
+        :param obj:
+        :return:
         """
         q_image = ImageQt(Image.open(image_path))
         add_pixmap_to_widget(QPixmap.fromImage(q_image), obj)
 
+    @property
+    def images_content(self) -> dict:
+        return dict(zip(['photoLabel', 'officersignLabel', 'ownersignLabel', 'background'],
+                        self._image_content_paths + [['', {}]]))
+
     def _load_img(self, event, obj, name: str) -> None:
         """
-        This function loads thumbnails of the selected images.
+        Load thumbnails of selected images.
+
         :param event: Event clicking: QMouseEvent.
         :param obj: Object by clicking on which there was a disposal.
         :param name: Name image in imgs_dict.
@@ -102,13 +149,6 @@ class ChangeDataDialog(QDialog):
         image_path = QFileDialog.getOpenFileName(self, f"{name} image", directory=dir,
                                                  filter=filters)[0]
         if os.path.isfile(image_path):
-            self.imgs_dict.update({name: image_path})
+            self._images_content.update({name: image_path})
             add_pixmap_to_widget(QPixmap(image_path), obj)
         self.show()
-
-    def _connect_signals_slots(self):
-        self.photoLabel.mousePressEvent = functools.partial(self._load_img, obj=self.photoLabel, name='photoLabel')
-        self.officersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.officersignLabel,
-                                                                  name='officersignLabel')
-        self.ownersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.ownersignLabel,
-                                                                name='ownersignLabel')
