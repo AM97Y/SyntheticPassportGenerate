@@ -5,6 +5,6 @@ class MessageBox(QWidget):
     def __init__(self):
         super().__init__()
 
-    def showMessage(self, text: str):
+    def show_message(self, text: str):
         QMessageBox.about(self, "Error", text)
         self.show()

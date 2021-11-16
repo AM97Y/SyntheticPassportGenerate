@@ -38,6 +38,10 @@ class Paths:
     def fonts():
         return Paths.root() / 'fonts'
 
+    @staticmethod
+    def signs():
+        return Paths.root() / 'signs'
+
 
 class Resources:
     """
@@ -65,7 +69,7 @@ class Resources:
 
     @staticmethod
     def signs():
-        signs_path = Paths.root() / 'signs'
+        signs_path = Paths.signs()
         return [str(signs_path / img) for img in os.listdir(signs_path)]
 
     @staticmethod

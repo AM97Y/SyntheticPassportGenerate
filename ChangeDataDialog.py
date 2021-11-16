@@ -21,12 +21,6 @@ class ChangeDataDialog(QDialog):
 
         self._connect_signals_slots()
 
-        self.imgs_dict = {'photoLabel': passport_content_params['images']['photoLabel'],
-                          'officersignLabel': passport_content_params['images']['officersignLabel'],
-                          'ownersignLabel': passport_content_params['images']['ownersignLabel'],
-                          'background': ['', {}]
-                          }
-
         self._fill_first_passport_page_fields(passport_content_params)
         self._fill_second_passport_page_fields(passport_content_params)
         self._fill_artifacts_fields(passport_appearance_params)
@@ -114,7 +108,8 @@ class ChangeDataDialog(QDialog):
         self.fontsizeSpinBox.setValue(passport_appearance_params['fontsizeSpinBox'])
         self.fontblurSpinBox.setValue(passport_appearance_params['fontblurSpinBox'])
 
-    def _fill_img(self, image_path: Union[str, ImageQt], obj):
+    @staticmethod
+    def _fill_img(image_path: Union[str, ImageQt], obj):
         """
         Filling images.
 

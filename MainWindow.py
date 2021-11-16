@@ -23,11 +23,11 @@ class MainWindow(QMainWindow):
 
         self._connect_signals_slots()
 
-        self.passport_content = PassportContent()
-        self.passport_appearance = PassportAppearance()
+        self._passport_content = PassportContent()
+        self._passport_appearance = PassportAppearance()
 
-        self.img = None
-        self.img_creator = None
+        self._img = None
+        self._img_creator = None
 
         self._dialog = None
 
@@ -61,12 +61,12 @@ class MainWindow(QMainWindow):
             'sex': self._dialog.sexComboBox.currentText(),
             'images': {
                 **self._dialog.images_content,
-                'background': self.passport_content.parameters["images"]["background"],
+                'background': self._passport_content.parameters["images"]["background"],
             }
         }
 
-        self.passport_content.update(new_passport_content)
-        self.passport_appearance.update(new_parameters_appearance)
+        self._passport_content.update(new_passport_content)
+        self._passport_appearance.update(new_parameters_appearance)
 
         self._create_image_passport()
 
@@ -75,8 +75,8 @@ class MainWindow(QMainWindow):
         Generate new passport image.
         :return:
         """
-        self.passport_content.random_init()
-        self.passport_appearance.random_init()
+        self._passport_content.random_init()
+        self._passport_appearance.random_init()
         self._create_image_passport()
 
     def _create_image_passport(self) -> None:
@@ -84,10 +84,10 @@ class MainWindow(QMainWindow):
         Create image passport.
 
         """
-        self.img_creator = ImageCreator(self.passport_content.parameters, self.passport_appearance.parameters)
-        self.img = self.img_creator.create_image()
+        self._img_creator = ImageCreator(self._passport_content.parameters, self._passport_appearance.parameters)
+        self._img = self._img_creator.create_image()
 
-        qimage = ImageQt(self.img)
+        qimage = ImageQt(self._img)
         add_pixmap_to_widget(QPixmap.fromImage(qimage), self.passportImg)
 
     def save(self) -> None:
@@ -98,21 +98,21 @@ class MainWindow(QMainWindow):
         file = f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
         img_file_path = Paths.outputs() / file
         try:
-            self.img.save(str(img_file_path))
+            self._img.save(str(img_file_path))
             self.statusBar.showMessage('Save file ' + file)
             # timer = QTimer()
             # timer.start(2147483647)
             # self.label.setText('')
         except AttributeError:
             error_dialog = MessageBox()
-            error_dialog.showMessage('Изображение не сгенерированно')
+            error_dialog.show_message('Изображение не сгенерированно')
 
     def show_change_dialog(self) -> None:
         """
         Call ChangeDataDialog.
 
         """
-        self._dialog = ChangeDataDialog(self.passport_content.parameters, self.passport_appearance.parameters)
+        self._dialog = ChangeDataDialog(self._passport_content.parameters, self._passport_appearance.parameters)
         self._dialog.buttonBox.accepted.connect(self._update_passport)
         self._dialog.show()
 

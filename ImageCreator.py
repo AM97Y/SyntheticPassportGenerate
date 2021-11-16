@@ -1,10 +1,6 @@
-import os
-from random import choice, randint
-
 import PIL
-from PIL import Image, ImageFilter, ImageOps, ImageFont
-
 import albumentations as A
+from PIL import Image, ImageFilter, ImageOps, ImageFont
 
 from MessageBox import MessageBox
 from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw, delete_white_background, get_text_image, \

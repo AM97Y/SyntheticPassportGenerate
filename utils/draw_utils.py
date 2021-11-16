@@ -1,5 +1,4 @@
 from random import randint, choice
-
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from typing import Tuple
