@@ -186,7 +186,7 @@ class PassportAppearance(Passport):
                 self.parameters[key] = choice(fonts_list)
                 del fonts_list
             elif key == 'fontsizeSpinBox':
-                self.parameters[key] = randint(25, 40)
+                self.parameters[key] = int(np.random.normal(35))
             # elif key == 'color_text':
             #    pix = randint(120, 200)
             #    self.parameters[key] = (pix, pix, pix)
