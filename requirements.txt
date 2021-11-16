@@ -1,6 +1,6 @@
 albumentations==1.0.3
 argparse
-opencv-python==4.1.2
+opencv-python==4.1.2.30
 Faker==9.3.1
 Pillow==8.3.2
 PyQt5==5.15.4
