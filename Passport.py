@@ -8,7 +8,7 @@ from faker import Faker
 from pymorphy2 import MorphAnalyzer
 
 from Sex import Sex
-from utils.path_utils import Paths
+from utils.path_utils import Paths, Resources
 
 
 class Passport:
@@ -89,27 +89,25 @@ class PassportContent(Passport):
                 del tmp_choices
             elif key == 'images':
                 if sex == "МУЖ.":
-                    path = Paths.photo_male()
+                    path = Resources.photo_male()
                 else:
-                    path = Paths.photo_female()
-                path_blots = os.listdir(path)
-                self.parameters[key]['photoLabel'] = path / choice(path_blots)
+                    path = Resources.photo_female()
+                self.parameters[key]['photoLabel'] = choice(path)
 
-                path_sign = Paths.signs()
-                path_blots = os.listdir(path_sign)
-                self.parameters[key]['officersignLabel'] = path_sign / choice(path_blots)
-                self.parameters[key]['ownersignLabel'] = path_sign / choice(path_blots)
+                path_sign = Resources.signs()
+                self.parameters[key]['officersignLabel'] = choice(path_sign)
+                self.parameters[key]['ownersignLabel'] =  choice(path_sign)
             elif key == 'upperCheckBox':
                 self.parameters[key] = choice((True, False))
             elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                 tmp_choices = []
 
-                file = Paths.file_dataset(key)
+                file = Resources.dataset(key)
                 if os.path.isfile(file):
                     with open(file, "r", encoding='utf-8') as f:
                         for line in f:
                             tmp_choices.append(line.strip())
-                    if  key == 'department':
+                    if key == 'department':
                         self.parameters[key] = choice(tmp_choices)
                     else:
                         self.parameters[key] = self._gender_format(choice(tmp_choices), sex).title()

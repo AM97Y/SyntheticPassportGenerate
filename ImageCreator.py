@@ -7,8 +7,9 @@ from PIL import Image, ImageFilter, ImageOps, ImageFont
 import albumentations as A
 
 from MessageBox import MessageBox
-from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw, delete_white_background, get_text_image
-from utils.path_utils import Paths
+from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw, delete_white_background, get_text_image, \
+    draw_watermark
+from utils.path_utils import Paths, Resources
 from utils.processing_utils import convert_from_image_to_cv2, convert_from_cv2_to_image
 
 
@@ -16,37 +17,6 @@ class ImageCreator:
     def __init__(self, passport_content_params: dict, passport_appearance_params: dict):
         self._passport_content_params = passport_content_params
         self._passport_appearance_params = passport_appearance_params
-
-    def _draw_watermark(self, img, count_watermark: int, path, random_point=False, paste_point=(0, 0),
-                        resize_size=None):
-        """
-        TDraws watermarks with the specified transparency level on the image.
-
-        :param img: Image.
-        :param count_watermark: Number of watermarks.
-        :param path: The folder where watermarks.
-        :param random_point: Set the coordinate of the location or choose randomly.
-        :param paste_point: If you set the coordinate, then what.
-        :param resize_size: New watermark sizes.
-        :return: Changed image..
-        """
-        (w, h) = img.size
-        if count_watermark > 0:
-            path_blots = os.listdir(path)
-            for i in range(0, count_watermark):
-                with Image.open(f'{path}/{choice([x for x in path_blots])}') as img_watermark:
-                    img_watermark = img_watermark.convert('RGBA')
-                    if random_point:
-                        paste_point = (randint(0, w), randint(0, h))
-
-                    if resize_size is not None:
-                        img_watermark = img_watermark.resize(resize_size, Image.NEAREST)
-
-                    paste_mask = img_watermark.split()[3].point(
-                        lambda i: i * self._passport_appearance_params['blurFlashnumBlotsnum'] / 100.)
-
-                    img.paste(img_watermark, paste_point, mask=paste_mask)
-        return img.convert('RGBA')
 
     def _overlay_artifacts(self, img):
         """
@@ -56,14 +26,22 @@ class ImageCreator:
         """
 
         count_watermark = self._passport_appearance_params['blotsnumSpinBox']
-        path = Paths.dirty()
-        img = self._draw_watermark(img, count_watermark, path)
+        files = Resources.dirty()
+        img = draw_watermark(img=img, count_watermark=count_watermark, files=files,
+                             blur=self._passport_appearance_params['blurFlashnumBlotsnum'],
+                             params={"paste_point": None,
+                                     "resize_size": None,
+                                     }
+                             )
 
         if self._passport_appearance_params['crumpledCheckBox']:
-            path = Paths.crumpled()
+            files = Resources.crumpled()
             markup = self._passport_content_params["images"]["background"][1]['passport']
-            img = self._draw_watermark(img, 1, path, paste_point=get_box_corner_to_draw(markup),
-                                       resize_size=get_box_size_to_draw(markup))
+            img = draw_watermark(img=img, count_watermark=1, files=files,
+                                 blur=self._passport_appearance_params['blurFlashnumBlotsnum'],
+                                 params={"paste_point": get_box_corner_to_draw(markup),
+                                         "resize_size": get_box_size_to_draw(markup),
+                                         })
             img = ImageOps.autocontrast(img.convert('RGB'), cutoff=2, ignore=2)
 
         if self._passport_appearance_params['blurCheckBox']:
@@ -96,7 +74,7 @@ class ImageCreator:
             fonts = {
                 'text': ImageFont.truetype(font=str(Paths.fonts() / self._passport_appearance_params["fontComboBox"]),
                                            size=self._passport_appearance_params["fontsizeSpinBox"]),
-                'serie_number': ImageFont.truetype(Paths.numbers_font(), 46)}
+                'serie_number': ImageFont.truetype(Resources.numbers_font(), 46)}
             font_colors = {'black': (self._passport_appearance_params['color_text'],) * 3, 'red': (130, 30, 30)}
 
             img_text = get_text_image(text=self._passport_content_params['department'].upper(),
@@ -165,7 +143,7 @@ class ImageCreator:
             img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["birth_place"]), img_text)
 
             series_number_text = " ".join([str(self._passport_content_params['series_passport']),
-                                                     str(self._passport_content_params['number_passport'])])
+                                           str(self._passport_content_params['number_passport'])])
             img_text = get_text_image(text=series_number_text,
                                       font=fonts['serie_number'],
                                       size=get_box_size_to_draw(background_markup["number_group1"], number=True),
