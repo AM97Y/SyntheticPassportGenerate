@@ -6,10 +6,10 @@ from random import choice, randint
 import numpy as np
 import pandas as pd
 from faker import Faker
-from pymorphy2 import MorphAnalyzer
 
 from Sex import Sex
 from utils.path_utils import Paths, Resources
+from utils.processing_utils import gender_format
 
 
 class Passport:
@@ -47,7 +47,6 @@ class PassportContent(Passport):
                        'background': [file_background, self._load_markup(file_background)]
                        }
         }
-        self.morph = MorphAnalyzer()
         self.random_init()
 
     def random_init(self) -> None:
@@ -97,7 +96,7 @@ class PassportContent(Passport):
 
                 path_sign = Resources.signs()
                 self.parameters[key]['officersignLabel'] = choice(path_sign)
-                self.parameters[key]['ownersignLabel'] =  choice(path_sign)
+                self.parameters[key]['ownersignLabel'] = choice(path_sign)
             elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                 tmp_choices = []
 
@@ -109,17 +108,9 @@ class PassportContent(Passport):
                     if key == 'department':
                         self.parameters[key] = choice(tmp_choices)
                     else:
-                        self.parameters[key] = self._gender_format(choice(tmp_choices), sex).title()
+                        self.parameters[key] = gender_format(choice(tmp_choices), sex).title()
 
                 del tmp_choices
-
-    def _gender_format(self, text, sex) -> str:
-        parsed = self.morph.parse(text)
-        if sex == "ЖЕН.":
-            gender = 'femn'
-        else:
-            gender = 'masc'
-        return (parsed[0].inflect({gender, 'nomn'}) or parsed[0]).word
 
     @staticmethod
     def _load_markup(file) -> dict:
@@ -176,9 +167,9 @@ class PassportAppearance(Passport):
             elif key == 'blotsnumSpinBox' or key == 'flashnumSpinBox':
                 self.parameters[key] = np.random.poisson(0.5)
             elif key == 'blurFlashnumBlotsnum':
-                self.parameters[key] = randint(0, 50)
+                self.parameters[key] = int(np.random.normal(35))
             elif key == 'fontblurSpinBox':
-                self.parameters[key] = randint(50, 100)
+                self.parameters[key] = randint(65, 100)
             elif key == 'fontComboBox':
                 fonts_list = []
                 for file in Resources.fonts():
