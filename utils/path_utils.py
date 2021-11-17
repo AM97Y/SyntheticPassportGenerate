@@ -89,3 +89,8 @@ class Resources:
     @staticmethod
     def numbers_font():
         return str(Paths.fonts() / 'a_SeriferNr_Bold.ttf')
+
+    @staticmethod
+    def background():
+        backgrounds_path = Paths.backgrounds()
+        return [str(backgrounds_path / img) for img in os.listdir(backgrounds_path) if img.split('.')[-1] != 'json']

@@ -1,4 +1,3 @@
-import json
 import os
 from datetime import datetime, date
 from random import choice, randint
@@ -9,7 +8,7 @@ from faker import Faker
 
 from Sex import Sex
 from utils.path_utils import Paths, Resources
-from utils.processing_utils import gender_format
+from utils.processing_utils import gender_format, load_markup
 
 
 class Passport:
@@ -31,8 +30,6 @@ class PassportContent(Passport):
     def __init__(self):
 
         super().__init__()
-        file_background = '8QfxS6biN-w.jpg'
-        # Временно, потом сделать тоже выбор или рандом
         self._parameters = {
             'first_name': 'Иван',
             'second_name': 'Иванов',
@@ -48,7 +45,7 @@ class PassportContent(Passport):
             'images': {'photoLabel': '',
                        'officersignLabel': '',
                        'ownersignLabel': '',
-                       'background': [file_background, self._load_markup(file_background)]
+                       'background': ['', {}]
                        }
         }
         self.random_init()
@@ -59,7 +56,7 @@ class PassportContent(Passport):
 
         """
 
-        # Убрать цикл?
+        # FIXED: Remove the cycle.
         diff = choice(range(14, 30))
         fake = Faker()
         sex = str(choice(list(Sex)))
@@ -101,9 +98,12 @@ class PassportContent(Passport):
                 path_sign = Resources.signs()
                 self._parameters[key]['officersignLabel'] = choice(path_sign)
                 self._parameters[key]['ownersignLabel'] = choice(path_sign)
+                path_background = Resources.background()
+                background = choice(path_background)
+                print(background)
+                self._parameters[key]['background'] = [background, load_markup(background)]
             elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                 tmp_choices = []
-
                 file = Resources.dataset(key)
                 if os.path.isfile(file):
                     with open(file, "r", encoding='utf-8') as f:
@@ -115,30 +115,6 @@ class PassportContent(Passport):
                         self._parameters[key] = gender_format(choice(tmp_choices), sex).title()
 
                 del tmp_choices
-
-    @staticmethod
-    def _load_markup(file) -> dict:
-        """
-        Loading the background markup
-        :param file: File of background.
-        :return: Background.
-        """
-        file_json = file.split(".")[-2] + '.json'
-        if os.path.isfile(Paths.backgrounds() / file_json):
-            with open(Paths.backgrounds() / file_json, 'r') as f:
-                data = json.load(f)
-                background_markup = {}
-                # background_markup = {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))
-                #                     for elem in self.parameters["images"]["background"][1]["shapes"]}
-
-                for elem in data["shapes"]:
-                    # Берем только первое вхождение, надо обсудить issue_place.
-                    if background_markup.get(elem['label'], None) is None:
-                        background_markup.update(
-                            {elem['label']: list(map(lambda x: [abs(int(x[0])), abs(int(x[1]))], elem['points']))})
-
-                return background_markup
-        return {}
 
 
 class PassportAppearance(Passport):
@@ -161,10 +137,10 @@ class PassportAppearance(Passport):
 
     def random_init(self) -> None:
         """
-        This function randomly fills in the appearance( of the passport.
+        This function randomly fills in the appearance of the passport.
 
         """
-        # Убрать цикл?
+        # FIXED: Remove the cycle.
         for key, _ in self._parameters.items():
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
                 self._parameters[key] = choice((True, False))
