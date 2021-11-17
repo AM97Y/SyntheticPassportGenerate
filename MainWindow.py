@@ -9,7 +9,7 @@ from ChangeDataDialog import ChangeDataDialog
 from Passport import PassportAppearance, PassportContent
 from ImageCreator import ImageCreator
 from utils.path_utils import Paths
-from utils.qt_utils import add_pixmap_to_widget
+from utils.qt_utils import add_pixmap_to_widget, get_data
 from MessageBox import MessageBox
 
 
@@ -56,8 +56,8 @@ class MainWindow(QMainWindow):
             'number_passport': self._dialog.numberSpinBox.value(),
             'department_code': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
             'department': self._dialog.organizationLineEdit.text(),
-            'date_issue': self._get_data(self._dialog.issueDateEdit),
-            'date_birth': self._get_data(self._dialog.birthDateEdit),
+            'date_issue': get_data(self._dialog.issueDateEdit),
+            'date_birth': get_data(self._dialog.birthDateEdit),
             'sex': self._dialog.sexComboBox.currentText(),
             'images': {
                 **self._dialog.images_content,
@@ -69,14 +69,10 @@ class MainWindow(QMainWindow):
         self._passport_appearance.update(new_parameters_appearance)
         self._create_image_passport()
 
-    @staticmethod
-    def _get_data(obj: QDateEdit):
-        return datetime(obj.date().year(), obj.date().month(), obj.date().day())
-
     def show_generate(self):
         """
         Generate new passport image.
-        :return:
+
         """
         self._passport_content.random_init()
         self._passport_appearance.random_init()
@@ -119,7 +115,11 @@ class MainWindow(QMainWindow):
         self._dialog.buttonBox.accepted.connect(self._update_passport)
         self._dialog.show()
 
-    def _connect_signals_slots(self):
+    def _connect_signals_slots(self) -> None:
+        """
+        Connect signals slots.
+
+        """
         self.changeButton.clicked.connect(self.show_change_dialog)
         self.saveButton.clicked.connect(self.save)
         self.generateButton.clicked.connect(self.show_generate)

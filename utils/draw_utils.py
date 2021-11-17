@@ -35,8 +35,8 @@ def get_box_corner_to_draw(markup: list, number: bool = False) -> tuple:
     """
 
     if number:
-        # Чтобы от этого избавиться, надо найти как вставлять по вернему левому углу.
-        extra_space = get_box_size_to_draw(markup)
+        # FIXED: To get rid of this, you need to find how to insert in the upper left corner.
+        extra_space = get_box_size_to_draw(markup=markup)
         return markup[0][0] - (extra_space[1] - extra_space[0]), markup[0][1]
     else:
         return markup[0][0], markup[0][1]
@@ -45,6 +45,7 @@ def get_box_corner_to_draw(markup: list, number: bool = False) -> tuple:
 def delete_white_background(img: Image) -> Image:
     """
     Remove the white background on the image.
+
     :param img: Image.
     :return: Changed image.
     """
@@ -59,19 +60,20 @@ def delete_white_background(img: Image) -> Image:
 
 def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[int, int, int]) -> Image:
     """
-        This function draws text in background.
-        :param size:
-        :param color:
-        :param text: Drawing text.
-        :param font: Read font.
-        :return: Changed image.
+    This function draws text in background.
+
+    :param size:
+    :param color:
+    :param text: Drawing text.
+    :param font: Read font.
+    :return: Changed image.
         """
     # text = get_hyphenated_str(text, font, shape[0])
     text = text.upper()
 
     img_text = Image.new("RGBA", size, (0, 0, 0, 0))
-    drawer = ImageDraw.Draw(img_text)
-    drawer.text((0, 0), text, fill=color, font=font)
+    drawer = ImageDraw.Draw(im=img_text)
+    drawer.text(xy=(0, 0), text=text, fill=color, font=font)
 
     return img_text
 
@@ -101,9 +103,9 @@ def draw_watermark(img: Image, count_watermark: int, files: list, blur: int, par
                     else:
                         paste_point = (randint(0, w), randint(0, h))
                     if params['resize_size'] is not None:
-                        img_watermark = img_watermark.resize(params['resize_size'], Image.NEAREST)
+                        img_watermark = img_watermark.resize(size=params['resize_size'], resample=Image.NEAREST)
 
                 paste_mask = img_watermark.split()[3].point(lambda i: i * blur / 100.)
-                img.paste(img_watermark, paste_point, mask=paste_mask)
+                img.paste(im=img_watermark, box=paste_point, mask=paste_mask)
 
     return img.convert('RGBA')

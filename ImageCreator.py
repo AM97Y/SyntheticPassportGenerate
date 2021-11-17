@@ -17,6 +17,7 @@ class ImageCreator:
     def _overlay_artifacts(self, img: Image) -> Image:
         """
         This function calls draw of watermarks.
+
         :param img: Image.
         :return: Changed image.
         """
@@ -75,93 +76,93 @@ class ImageCreator:
 
             img_text = get_text_image(text=self._passport_content_params['department'].upper(),
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["issue_place"]),
+                                      size=get_box_size_to_draw(markup=background_markup["issue_place"]),
                                       color=font_colors['black'])
 
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["issue_place"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["issue_place"]), mask=img_text)
 
             # Add info to the first passport page
             # Add organization issued the passport to passport background
             img_text = get_text_image(text=self._passport_content_params['department'].upper(),
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["issue_place"]),
+                                      size=get_box_size_to_draw(markup=background_markup["issue_place"]),
                                       color=font_colors['black'])
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["issue_place"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["issue_place"]), mask=img_text)
             # Add issue date to passport background
 
             img_text = get_text_image(text=self._passport_content_params['date_issue'].strftime("%m.%d.%Y"),
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["issue_date"]),
+                                      size=get_box_size_to_draw(markup=background_markup["issue_date"]),
                                       color=font_colors['black'])
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["issue_date"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["issue_date"]), mask=img_text)
             # Add department code to passport background
             img_text = get_text_image(text="-".join(map(str, self._passport_content_params['department_code'])),
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["code"]),
+                                      size=get_box_size_to_draw(markup=background_markup["code"]),
                                       color=font_colors['black'])
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["code"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["code"]), mask=img_text)
 
             # Add info to the second passport page
             # Add surname to passport background
             img_text = get_text_image(text=self._passport_content_params['second_name'].upper(),
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["surname"]),
+                                      size=get_box_size_to_draw(markup=background_markup["surname"]),
                                       color=font_colors['black'])
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["surname"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["surname"]), mask=img_text)
             # Add name to passport background
             img_text = get_text_image(text=self._passport_content_params['first_name'].upper(),
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["name"]),
+                                      size=get_box_size_to_draw(markup=background_markup["name"]),
                                       color=font_colors['black'])
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["name"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["name"]), mask=img_text)
             # Add patronymic to passport background
             img_text = get_text_image(text=self._passport_content_params['patronymic_name'].upper(),
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["patronymic"]),
+                                      size=get_box_size_to_draw(markup=background_markup["patronymic"]),
                                       color=font_colors['black'])
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["patronymic"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["patronymic"]), mask=img_text)
             # Add sex to passport background
             img_text = get_text_image(text=self._passport_content_params['sex'],
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["sex"]),
+                                      size=get_box_size_to_draw(markup=background_markup["sex"]),
                                       color=font_colors['black'])
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["sex"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["sex"]), mask=img_text)
             # Add birth date to passport background
             img_text = get_text_image(text=self._passport_content_params['date_birth'].strftime("%m.%d.%Y"),
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["birth_date"]),
+                                      size=get_box_size_to_draw(markup=background_markup["birth_date"]),
                                       color=font_colors['black'])
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["birth_date"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["birth_date"]), mask=img_text)
             # Add birth place to passport background
             img_text = get_text_image(text=self._passport_content_params['address'].upper(),
                                       font=fonts['text'],
-                                      size=get_box_size_to_draw(background_markup["birth_place"]),
+                                      size=get_box_size_to_draw(markup=background_markup["birth_place"]),
                                       color=font_colors['black'])
-            img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["birth_place"]), img_text)
+            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["birth_place"]), mask=img_text)
 
             series_number_text = " ".join([str(self._passport_content_params['series_passport']),
                                            str(self._passport_content_params['number_passport'])])
             img_text = get_text_image(text=series_number_text,
                                       font=fonts['serie_number'],
-                                      size=get_box_size_to_draw(background_markup["number_group1"], number=True),
+                                      size=get_box_size_to_draw(markup=background_markup["number_group1"], number=True),
                                       color=font_colors['red']).rotate(270)
-            img.paste(img_text.convert('RGBA'),
-                      get_box_corner_to_draw(background_markup["number_group1"], number=True),
-                      img_text)
+            img.paste(im=img_text,
+                      box=get_box_corner_to_draw(markup=background_markup["number_group1"], number=True),
+                      mask=img_text)
 
             img_text = get_text_image(text=series_number_text,
                                       font=fonts['serie_number'],
-                                      size=get_box_size_to_draw(background_markup["number_group2"], number=True),
+                                      size=get_box_size_to_draw(markup=background_markup["number_group2"], number=True),
                                       color=font_colors['red']).rotate(270)
-            img.paste(img_text.convert('RGBA'),
-                      get_box_corner_to_draw(background_markup["number_group2"], number=True),
-                      img_text)
+            img.paste(im=img_text,
+                      box=get_box_corner_to_draw(markup=background_markup["number_group2"], number=True),
+                      mask=img_text)
 
             # photo
             try:
                 with Image.open(self._passport_content_params['images']['photoLabel']) as img_photo:
-                    img_photo = img_photo.resize(get_box_size_to_draw(background_markup["photo"], Image.NEAREST))
-                    img.paste(img_photo, get_box_corner_to_draw(background_markup["photo"]))
+                    img_photo = img_photo.resize(get_box_size_to_draw(markup=background_markup["photo"]), Image.NEAREST)
+                    img.paste(im=img_photo, box=get_box_corner_to_draw(background_markup["photo"]))
             except PIL.UnidentifiedImageError:
                 error_dialog = MessageBox()
                 error_dialog.show_message('Фотогорафия человека не является изображением')
@@ -169,10 +170,10 @@ class ImageCreator:
             try:
                 with Image.open(self._passport_content_params['images']['officersignLabel']) as img_signature_1:
                     img_signature_1 = delete_white_background(img_signature_1).resize(
-                        get_box_size_to_draw(background_markup["signature"], Image.NEAREST))
+                        get_box_size_to_draw(markup=background_markup["signature"]), Image.NEAREST)
 
-                    paste_point = get_box_corner_to_draw(background_markup["signature"])
-                    img.paste(img_signature_1, paste_point, mask=img_signature_1)
+                    paste_point = get_box_corner_to_draw(markup=background_markup["signature"])
+                    img.paste(im=img_signature_1, box=paste_point, mask=img_signature_1)
             except PIL.UnidentifiedImageError:
                 error_dialog = MessageBox()
                 error_dialog.show_message('Выбранная подпись не является изображением.')
@@ -180,7 +181,7 @@ class ImageCreator:
             # Add signature of owner
             """with Image.open(self._passport_content_params['images']['ownersignLabel']) as img_signature_2:
                 img_signature_2 = img_signature_2.resize(get_box_size_to_draw(background_markup["signature"], Image.NEAREST))
-                img.paste(img_signature_2.convert('RGBA'), get_box_corner_to_draw(background_markup["signature"]))"""
+                img.paste(img_signature_2, get_box_corner_to_draw(background_markup["signature"]))"""
 
             img = self._overlay_artifacts(img)
 

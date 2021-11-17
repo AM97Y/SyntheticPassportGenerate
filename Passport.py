@@ -71,15 +71,12 @@ class PassportContent(Passport):
             elif key == 'date_birth':
                 start_date = date(year=1990, month=1, day=1)
                 end_date = date(year=datetime.now().year - diff, month=1, day=1)
-                # print(start_date, end_date)
                 self._parameters[key] = fake.date_between(start_date=start_date, end_date=end_date)
             elif key == 'date_issue':
                 year = self._parameters['date_birth'].year + diff
                 start_date = date(year=year, month=1, day=1)
                 end_date = date(year=year, month=1, day=1)
-                # print(start_date, end_date)
                 self._parameters[key] = fake.date_between(start_date=start_date, end_date=end_date)
-
             if key == 'first_name':
                 if self._parameters['sex'] == "МУЖ.":
                     df = pd.read_csv(Paths.data_passport() / 'male_names.csv', ';')
