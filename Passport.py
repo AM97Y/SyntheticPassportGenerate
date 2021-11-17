@@ -95,13 +95,13 @@ class PassportContent(Passport):
                     path = Resources.photo_female()
                 self._parameters[key]['photoLabel'] = choice(path)
 
-                path_sign = Resources.signs()
-                self._parameters[key]['officersignLabel'] = choice(path_sign)
-                self._parameters[key]['ownersignLabel'] = choice(path_sign)
-                path_background = Resources.background()
-                background = choice(path_background)
-                print(background)
-                self._parameters[key]['background'] = [background, load_markup(background)]
+                path_signs = Resources.signs()
+                self._parameters[key]['officersignLabel'] = choice(path_signs)
+                self._parameters[key]['ownersignLabel'] = choice(path_signs)
+
+                path_backgrounds = Resources.background()
+                background = choice(path_backgrounds)
+                self._parameters[key]['background'] = [background, load_markup(file=background)]
             elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                 tmp_choices = []
                 file = Resources.dataset(key)
@@ -112,7 +112,7 @@ class PassportContent(Passport):
                     if key == 'department':
                         self._parameters[key] = choice(tmp_choices)
                     else:
-                        self._parameters[key] = gender_format(choice(tmp_choices), sex).title()
+                        self._parameters[key] = gender_format(text=choice(tmp_choices), sex=sex).title()
 
                 del tmp_choices
 

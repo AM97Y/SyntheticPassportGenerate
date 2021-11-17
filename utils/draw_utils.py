@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 from typing import Tuple
 
 
-def get_box_size_to_draw(markup: dict, number=False) -> tuple:
+def get_box_size_to_draw(markup: list, number: bool = False) -> tuple:
     """
     Get box size to draw the text insides.
 
@@ -25,7 +25,7 @@ def get_box_size_to_draw(markup: dict, number=False) -> tuple:
     return width, height
 
 
-def get_box_corner_to_draw(markup, number=False) -> tuple:
+def get_box_corner_to_draw(markup: list, number: bool = False) -> tuple:
     """
     Returns the coordinate of corner box to draw
 
@@ -42,7 +42,7 @@ def get_box_corner_to_draw(markup, number=False) -> tuple:
         return markup[0][0], markup[0][1]
 
 
-def delete_white_background(img):
+def delete_white_background(img: Image) -> Image:
     """
     Remove the white background on the image.
     :param img: Image.
@@ -76,16 +76,17 @@ def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[in
     return img_text
 
 
-def draw_watermark(img, count_watermark: int, files, blur, params = None):
+def draw_watermark(img: Image, count_watermark: int, files: list, blur: int, params: dict = None) -> Image:
     """
     TDraws watermarks with the specified transparency level on the image.
 
-    :param img: Image.
+    :param params:
+                   paste_point: New watermark sizes.
+                   paste_point: If you set the coordinate, then what.
+    :param blur: Blur
+    :param files: List files watermarks.
+    :param img: Edited Image.
     :param count_watermark: Number of watermarks.
-    :param path: The folder where watermarks.
-    :param random_point: Set the coordinate of the location or choose randomly.
-    :param paste_point: If you set the coordinate, then what.
-    :param resize_size: New watermark sizes.
     :return: Changed image..
     """
     (w, h) = img.size

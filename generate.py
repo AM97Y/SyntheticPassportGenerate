@@ -18,7 +18,7 @@ def generate_path(count_examples, output):
         passport_content.random_init()
         passport_appearance.random_init()
 
-        img_creator = ImageCreator(passport_content.parameters, passport_appearance.parameters)
+        img_creator = ImageCreator(passport_content.content, passport_appearance.content)
         img = img_creator.create_image()
 
         img_filepath = Paths.outputs(output) / f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'

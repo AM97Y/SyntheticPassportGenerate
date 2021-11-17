@@ -14,7 +14,7 @@ class ImageCreator:
         self._passport_content_params = passport_content_params
         self._passport_appearance_params = passport_appearance_params
 
-    def _overlay_artifacts(self, img):
+    def _overlay_artifacts(self, img: Image) -> Image:
         """
         This function calls draw of watermarks.
         :param img: Image.
@@ -23,12 +23,12 @@ class ImageCreator:
 
         count_watermark = self._passport_appearance_params['blotsnumSpinBox']
         files = Resources.dirty()
-        img = draw_watermark(img=img, count_watermark=count_watermark, files=files,
+        img = draw_watermark(img=img, count_watermark=count_watermark,
+                             files=files,
                              blur=self._passport_appearance_params['blurFlashnumBlotsnum'],
                              params={"paste_point": None,
                                      "resize_size": None,
-                                     }
-                             )
+                                     })
 
         if self._passport_appearance_params['crumpledCheckBox']:
             files = Resources.crumpled()
@@ -38,27 +38,27 @@ class ImageCreator:
                                  params={"paste_point": get_box_corner_to_draw(markup),
                                          "resize_size": get_box_size_to_draw(markup),
                                          })
-            img = ImageOps.autocontrast(img.convert('RGB'), cutoff=2, ignore=2)
+            img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
 
         if self._passport_appearance_params['blurCheckBox']:
             img = img.filter(ImageFilter.BLUR)
 
         if self._passport_appearance_params['noiseCheckBox']:
-            img = img.filter(ImageFilter.MinFilter(3))
+            img = img.filter(ImageFilter.MinFilter(size=3))
 
         if self._passport_appearance_params['flashnumSpinBox'] > 0:
             count_watermark = self._passport_appearance_params['flashnumSpinBox']
-            image_cv = convert_from_image_to_cv2(img)
+            image_cv = convert_from_image_to_cv2(img=img)
             for _ in range(count_watermark):
                 transform = A.Compose([A.RandomSunFlare(num_flare_circles_lower=0,
                                                         num_flare_circles_upper=1,
                                                         src_radius=400,
                                                         p=1)])
                 image_cv = transform(image=image_cv)["image"]
-            img = convert_from_cv2_to_image(image_cv)
+            img = convert_from_cv2_to_image(img=image_cv)
         return img
 
-    def create_image(self):
+    def create_image(self) -> Image:
         """
         This function generates a passport image.
         :return: Image passport.
@@ -88,6 +88,7 @@ class ImageCreator:
                                       color=font_colors['black'])
             img.paste(img_text.convert('RGBA'), get_box_corner_to_draw(background_markup["issue_place"]), img_text)
             # Add issue date to passport background
+
             img_text = get_text_image(text=self._passport_content_params['date_issue'].strftime("%m.%d.%Y"),
                                       font=fonts['text'],
                                       size=get_box_size_to_draw(background_markup["issue_date"]),
@@ -163,7 +164,7 @@ class ImageCreator:
                     img.paste(img_photo, get_box_corner_to_draw(background_markup["photo"]))
             except PIL.UnidentifiedImageError:
                 error_dialog = MessageBox()
-                error_dialog.showMessage('Фотогорафия не человека не является изображением')
+                error_dialog.show_message('Фотогорафия человека не является изображением')
             # Add signature of officer
             try:
                 with Image.open(self._passport_content_params['images']['officersignLabel']) as img_signature_1:
@@ -174,7 +175,7 @@ class ImageCreator:
                     img.paste(img_signature_1, paste_point, mask=img_signature_1)
             except PIL.UnidentifiedImageError:
                 error_dialog = MessageBox()
-                error_dialog.showMessage('Выбранная подпись не является изображением.')
+                error_dialog.show_message('Выбранная подпись не является изображением.')
 
             # Add signature of owner
             """with Image.open(self._passport_content_params['images']['ownersignLabel']) as img_signature_2:
