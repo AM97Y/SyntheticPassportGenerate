@@ -3,7 +3,7 @@ from datetime import datetime
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDateEdit
 
 from ChangeDataDialog import ChangeDataDialog
 from Passport import PassportAppearance, PassportContent
@@ -56,19 +56,22 @@ class MainWindow(QMainWindow):
             'number_passport': self._dialog.numberSpinBox.value(),
             'department_code': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
             'department': self._dialog.organizationLineEdit.text(),
-            'date_issue': self._dialog.issueDateEdit.date().currentDate().toPyDate(),
-            'date_birth': self._dialog.birthDateEdit.date().currentDate().toPyDate(),
+            'date_issue': self._get_data(self._dialog.issueDateEdit),
+            'date_birth': self._get_data(self._dialog.birthDateEdit),
             'sex': self._dialog.sexComboBox.currentText(),
             'images': {
                 **self._dialog.images_content,
-                'background': self._passport_content.parameters["images"]["background"],
+                'background': self._passport_content.content["images"]["background"],
             }
         }
 
         self._passport_content.update(new_passport_content)
         self._passport_appearance.update(new_parameters_appearance)
-
         self._create_image_passport()
+
+    @staticmethod
+    def _get_data(obj: QDateEdit):
+        return datetime(obj.date().year(), obj.date().month(), obj.date().day())
 
     def show_generate(self):
         """
@@ -84,7 +87,7 @@ class MainWindow(QMainWindow):
         Create image passport.
 
         """
-        self._img_creator = ImageCreator(self._passport_content.parameters, self._passport_appearance.parameters)
+        self._img_creator = ImageCreator(self._passport_content.content, self._passport_appearance.content)
         self._img = self._img_creator.create_image()
 
         qimage = ImageQt(self._img)
@@ -112,7 +115,7 @@ class MainWindow(QMainWindow):
         Call ChangeDataDialog.
 
         """
-        self._dialog = ChangeDataDialog(self._passport_content.parameters, self._passport_appearance.parameters)
+        self._dialog = ChangeDataDialog(self._passport_content.content, self._passport_appearance.content)
         self._dialog.buttonBox.accepted.connect(self._update_passport)
         self._dialog.show()
 
