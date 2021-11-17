@@ -14,13 +14,17 @@ from utils.processing_utils import gender_format
 
 class Passport:
     def __init__(self):
-        self.parameters = {}
+        self._parameters = {}
 
     def random_init(self) -> None:
         pass
 
-    def update(self, passport_data) -> None:
-        self.parameters.update(passport_data)
+    @property
+    def content(self) -> dict:
+        return self._parameters
+
+    def update(self, passport_data: dict) -> None:
+        self._parameters.update(passport_data)
 
 
 class PassportContent(Passport):
@@ -29,7 +33,7 @@ class PassportContent(Passport):
         super().__init__()
         file_background = '8QfxS6biN-w.jpg'
         # Временно, потом сделать тоже выбор или рандом
-        self.parameters = {
+        self._parameters = {
             'first_name': 'Иван',
             'second_name': 'Иванов',
             'patronymic_name': 'Иванович',
@@ -59,44 +63,44 @@ class PassportContent(Passport):
         diff = choice(range(14, 30))
         fake = Faker()
         sex = str(choice(list(Sex)))
-        self.parameters['sex'] = sex
-        for key, _ in self.parameters.items():
+        self._parameters['sex'] = sex
+        for key, _ in self._parameters.items():
             if key == 'series_passport':
-                self.parameters[key] = randint(1000, 9999)
+                self._parameters[key] = randint(1000, 9999)
             elif key == 'number_passport':
-                self.parameters[key] = randint(100000, 999999)
+                self._parameters[key] = randint(100000, 999999)
             elif key == 'department_code':
-                self.parameters[key] = [randint(100, 999), randint(100, 999)]
+                self._parameters[key] = [randint(100, 999), randint(100, 999)]
             elif key == 'date_birth':
                 start_date = date(year=1990, month=1, day=1)
                 end_date = date(year=datetime.now().year - diff, month=1, day=1)
                 # print(start_date, end_date)
-                self.parameters[key] = fake.date_between(start_date=start_date, end_date=end_date)
+                self._parameters[key] = fake.date_between(start_date=start_date, end_date=end_date)
             elif key == 'date_issue':
-                year = self.parameters['date_birth'].year + diff
+                year = self._parameters['date_birth'].year + diff
                 start_date = date(year=year, month=1, day=1)
                 end_date = date(year=year, month=1, day=1)
                 # print(start_date, end_date)
-                self.parameters[key] = fake.date_between(start_date=start_date, end_date=end_date)
+                self._parameters[key] = fake.date_between(start_date=start_date, end_date=end_date)
 
             if key == 'first_name':
-                if self.parameters['sex'] == "МУЖ.":
+                if self._parameters['sex'] == "МУЖ.":
                     df = pd.read_csv(Paths.data_passport() / 'male_names.csv', ';')
                 else:
                     df = pd.read_csv(Paths.data_passport() / 'female_names.csv', ';')
                 tmp_choices = df['Name'].tolist()
-                self.parameters[key] = choice(tmp_choices)
+                self._parameters[key] = choice(tmp_choices)
                 del tmp_choices
             elif key == 'images':
                 if sex == "МУЖ.":
                     path = Resources.photo_male()
                 else:
                     path = Resources.photo_female()
-                self.parameters[key]['photoLabel'] = choice(path)
+                self._parameters[key]['photoLabel'] = choice(path)
 
                 path_sign = Resources.signs()
-                self.parameters[key]['officersignLabel'] = choice(path_sign)
-                self.parameters[key]['ownersignLabel'] = choice(path_sign)
+                self._parameters[key]['officersignLabel'] = choice(path_sign)
+                self._parameters[key]['ownersignLabel'] = choice(path_sign)
             elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                 tmp_choices = []
 
@@ -106,9 +110,9 @@ class PassportContent(Passport):
                         for line in f:
                             tmp_choices.append(line.strip())
                     if key == 'department':
-                        self.parameters[key] = choice(tmp_choices)
+                        self._parameters[key] = choice(tmp_choices)
                     else:
-                        self.parameters[key] = gender_format(choice(tmp_choices), sex).title()
+                        self._parameters[key] = gender_format(choice(tmp_choices), sex).title()
 
                 del tmp_choices
 
@@ -141,7 +145,7 @@ class PassportAppearance(Passport):
     def __init__(self):
         super().__init__()
 
-        self.parameters = {
+        self._parameters = {
             'blurCheckBox': True,
             'crumpledCheckBox': True,
             'noiseCheckBox': True,
@@ -161,20 +165,20 @@ class PassportAppearance(Passport):
 
         """
         # Убрать цикл?
-        for key, _ in self.parameters.items():
+        for key, _ in self._parameters.items():
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
-                self.parameters[key] = choice((True, False))
+                self._parameters[key] = choice((True, False))
             elif key == 'blotsnumSpinBox' or key == 'flashnumSpinBox':
-                self.parameters[key] = np.random.poisson(0.5)
+                self._parameters[key] = np.random.poisson(0.5)
             elif key == 'blurFlashnumBlotsnum':
-                self.parameters[key] = int(np.random.normal(35))
+                self._parameters[key] = int(np.random.normal(35))
             elif key == 'fontblurSpinBox':
-                self.parameters[key] = randint(65, 100)
+                self._parameters[key] = randint(65, 100)
             elif key == 'fontComboBox':
                 fonts_list = []
                 for file in Resources.fonts():
                     fonts_list.append(file)
-                self.parameters[key] = choice(fonts_list)
+                self._parameters[key] = choice(fonts_list)
                 del fonts_list
             elif key == 'fontsizeSpinBox':
-                self.parameters[key] = int(np.random.normal(35))
+                self._parameters[key] = int(np.random.normal(35))
