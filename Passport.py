@@ -82,7 +82,7 @@ class PassportContent(Passport):
                     df = pd.read_csv(Paths.data_passport() / 'male_names.csv', ';')
                 else:
                     df = pd.read_csv(Paths.data_passport() / 'female_names.csv', ';')
-                tmp_choices = df['Name'].tolist()
+                tmp_choices = df[df.PeoplesCount > 1000]['Name'].tolist()
                 self._parameters[key] = choice(tmp_choices)
                 del tmp_choices
             elif key == 'images':
