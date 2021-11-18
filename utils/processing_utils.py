@@ -77,3 +77,61 @@ def load_markup(file: str) -> dict:
 
             return background_markup
     return {}
+
+def load_data():
+    diff = choice(range(14, 30))
+    fake = Faker()
+    sex = str(choice(list(Sex)))
+    self._parameters['sex'] = sex
+    for key, _ in self._parameters.items():
+        if key == 'series_passport':
+            self._parameters[key] = randint(1000, 9999)
+        elif key == 'number_passport':
+            self._parameters[key] = randint(100000, 999999)
+        elif key == 'department_code':
+            self._parameters[key] = [randint(100, 999), randint(100, 999)]
+        elif key == 'date_birth':
+            start_date = date(year=1990, month=1, day=1)
+            end_date = date(year=datetime.now().year - diff, month=1, day=1)
+            self._parameters[key] = fake.date_between(start_date=start_date, end_date=end_date)
+        elif key == 'date_issue':
+            year = self._parameters['date_birth'].year + diff
+            start_date = date(year=year, month=1, day=1)
+            end_date = date(year=year, month=1, day=1)
+            self._parameters[key] = fake.date_between(start_date=start_date, end_date=end_date)
+        if key == 'first_name':
+            if self._parameters['sex'] == "МУЖ.":
+                df = pd.read_csv(Paths.data_passport() / 'male_names.csv', ';')
+            else:
+                df = pd.read_csv(Paths.data_passport() / 'female_names.csv', ';')
+            tmp_choices = df[df.PeoplesCount > 1000]['Name'].tolist()
+            self._parameters[key] = choice(tmp_choices)
+            del tmp_choices
+        elif key == 'images':
+            if sex == "МУЖ.":
+                path = Resources.photo_male()
+            else:
+                path = Resources.photo_female()
+            self._parameters[key]['photoLabel'] = choice(path)
+
+            path_signs = Resources.signs()
+            self._parameters[key]['officersignLabel'] = choice(path_signs)
+            self._parameters[key]['ownersignLabel'] = choice(path_signs)
+
+            path_backgrounds = Resources.background()
+            background = choice(path_backgrounds)
+            self._parameters[key]['background'] = [background, load_markup(file=background)]
+        elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
+            tmp_choices = []
+            file = Resources.dataset(key)
+            if os.path.isfile(file):
+                with open(file, "r", encoding='utf-8') as f:
+                    for line in f:
+                        tmp_choices.append(line.strip())
+                if key == 'department':
+                    self._parameters[key] = choice(tmp_choices)
+                else:
+                    self._parameters[key] = gender_format(text=choice(tmp_choices), sex=sex).title()
+
+            del tmp_choices
+    return {}

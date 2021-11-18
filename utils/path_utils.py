@@ -94,3 +94,10 @@ class Resources:
     def background() -> list:
         backgrounds_path = Paths.backgrounds()
         return [str(backgrounds_path / img) for img in os.listdir(backgrounds_path) if img.split('.')[-1] != 'json']
+
+    @staticmethod
+    def driver(browser='Firefox') -> str:
+        if browser == 'Firefox':
+            return str(Paths.root() / 'geckodriver')
+        elif browser == 'Chrome':
+            return str(Paths.root() / '!!!')
