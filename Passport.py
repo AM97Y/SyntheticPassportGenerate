@@ -61,7 +61,8 @@ class PassportContent(Passport):
             print('online')
             self._parameters = get_data(data=self._parameters, browser='Firefox', path_driver=Resources.driver())
             self._init_img()
-        except:
+        except Exception:
+            print(Exception)
             # Offline data
             print('offline')
             # Age of obtaining a passport.
@@ -112,16 +113,19 @@ class PassportContent(Passport):
         Random init images.
 
         """
+        # Person photo
         if self._parameters['sex'] == "МУЖ.":
             path = Resources.photo_male()
         else:
             path = Resources.photo_female()
         self._parameters['images']['photoLabel'] = choice(path)
 
+        # Signs images.
         path_signs = Resources.signs()
         self._parameters['images']['officersignLabel'] = choice(path_signs)
         self._parameters['images']['ownersignLabel'] = choice(path_signs)
 
+        # Background with markup.
         path_backgrounds = Resources.background()
         background = choice(path_backgrounds)
         self._parameters['images']['background'] = [background, load_markup(file=background)]
