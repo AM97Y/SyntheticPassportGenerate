@@ -62,16 +62,15 @@ def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[in
     """
     This function draws text in background.
 
-    :param size:
-    :param color:
+    :param size: Size img.
+    :param color: Color text.
     :param text: Drawing text.
     :param font: Read font.
     :return: Changed image.
         """
     # text = get_hyphenated_str(text, font, shape[0])
     text = text.upper()
-
-    img_text = Image.new("RGBA", size, (0, 0, 0, 0))
+    img_text = Image.new(mode="RGBA", size=size, color=(0, 0, 0, 0))
     drawer = ImageDraw.Draw(im=img_text)
     drawer.text(xy=(0, 0), text=text, fill=color, font=font)
 
@@ -83,13 +82,13 @@ def draw_watermark(img: Image, count_watermark: int, files: list, blur: int, par
     TDraws watermarks with the specified transparency level on the image.
 
     :param params:
-                   paste_point: New watermark sizes.
-                   paste_point: If you set the coordinate, then what.
+               paste_point: New watermark sizes.
+               paste_point: If you set the coordinate, then what.
     :param blur: Blur
     :param files: List files watermarks.
     :param img: Edited Image.
     :param count_watermark: Number of watermarks.
-    :return: Changed image..
+    :return: Changed image.
     """
     (w, h) = img.size
 
@@ -97,13 +96,12 @@ def draw_watermark(img: Image, count_watermark: int, files: list, blur: int, par
         for i in range(0, count_watermark):
             with Image.open(choice(files)) as img_watermark:
                 img_watermark = img_watermark.convert('RGBA')
-                if params:
-                    if params['paste_point']:
-                        paste_point = params['paste_point']
-                    else:
-                        paste_point = (randint(0, w), randint(0, h))
-                    if params['resize_size'] is not None:
-                        img_watermark = img_watermark.resize(size=params['resize_size'], resample=Image.NEAREST)
+                if params['paste_point']:
+                    paste_point = params['paste_point']
+                else:
+                    paste_point = (randint(0, w), randint(0, h))
+                if params['resize_size'] is not None:
+                    img_watermark = img_watermark.resize(size=params['resize_size'], resample=Image.NEAREST)
 
                 paste_mask = img_watermark.split()[3].point(lambda i: i * blur / 100.)
                 img.paste(im=img_watermark, box=paste_point, mask=paste_mask)

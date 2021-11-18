@@ -8,7 +8,7 @@ from faker import Faker
 
 from Sex import Sex
 from utils.path_utils import Paths, Resources
-from utils.processing_utils import gender_format, load_markup, load_data
+from utils.processing_utils import gender_format, load_markup, load_names
 from utils.request import get_data
 
 
@@ -32,16 +32,16 @@ class PassportContent(Passport):
 
         super().__init__()
         self._parameters = {
-            'first_name': 'Иван',
-            'second_name': 'Иванов',
-            'patronymic_name': 'Иванович',
-            'address': 'Г. Ярославль, улица Строителей 77',
-            'series_passport': 1102,
-            'number_passport': 123685,
-            'department_code': [888, 999],
-            'department': 'УВД',
-            'date_birth': datetime.now(),
-            'date_issue': datetime.now(),
+            'first_name': '',
+            'second_name': '',
+            'patronymic_name': '',
+            'address': '',
+            'series_passport': 1,
+            'number_passport': 1,
+            'department_code': [0, 0],
+            'department': '',
+            'date_birth': '',
+            'date_issue': '',
             'sex': 'МУЖ.',
             'images': {'photoLabel': '',
                        'officersignLabel': '',
@@ -58,15 +58,16 @@ class PassportContent(Passport):
         """
         try:
             # Online data
-            self._parameters = get_data(browser='Firefox', path_driver=Resources.driver())
             print('online')
+            self._parameters = get_data(data=self._parameters, browser='Firefox', path_driver=Resources.driver())
             self._init_img()
         except:
-            # Ofline data
-            print('ofline')
-            # FIXED: Remove the cycle.
+            # Offline data
+            print('offline')
+            # Age of obtaining a passport.
             diff = choice(range(14, 30))
             fake = Faker()
+            # Sex of person.
             sex = str(choice(list(Sex)))
             self._parameters['sex'] = sex
             for key, _ in self._parameters.items():
@@ -86,30 +87,31 @@ class PassportContent(Passport):
                     end_date = date(year=year, month=1, day=1)
                     self._parameters[key] = fake.date_between(start_date=start_date, end_date=end_date)
                 if key == 'first_name':
-                    if self._parameters['sex'] == "МУЖ.":
-                        df = pd.read_csv(Paths.data_passport() / 'male_names.csv', ';')
-                    else:
-                        df = pd.read_csv(Paths.data_passport() / 'female_names.csv', ';')
-                    tmp_choices = df[df.PeoplesCount > 1000]['Name'].tolist()
+                    tmp_choices = load_names(sex=self._parameters['sex'])
                     self._parameters[key] = choice(tmp_choices)
                     del tmp_choices
                 elif key == 'images':
                     self._init_img()
                 elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                     tmp_choices = []
+
                     file = Resources.dataset(key)
                     if os.path.isfile(file):
                         with open(file, "r", encoding='utf-8') as f:
                             for line in f:
                                 tmp_choices.append(line.strip())
+
                         if key == 'department':
                             self._parameters[key] = choice(tmp_choices)
                         else:
-                            self._parameters[key] = gender_format(text=choice(tmp_choices), sex=sex).title()
-
+                            self._parameters[key] = gender_format(text=choice(tmp_choices), sex=sex)
                     del tmp_choices
 
     def _init_img(self) -> None:
+        """
+        Random init images.
+
+        """
         if self._parameters['sex'] == "МУЖ.":
             path = Resources.photo_male()
         else:
@@ -166,7 +168,6 @@ class PassportAppearance(Passport):
                 del fonts_list
             elif key == 'fontsizeSpinBox':
                 self._parameters[key] = int(np.random.normal(35))
-
 
     def init_img(self):
         pass

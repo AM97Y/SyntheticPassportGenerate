@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
-from datetime import datetime
-import pandas as pd
 
-from utils.path_utils import Paths
+from utils.processing_utils import get_sex
 
 URL: str = 'https://www.random1.ru/generator-pasportnyh-dannyh'
 NAMES: dict = {
@@ -22,13 +22,14 @@ NAMES: dict = {
 }
 
 
-def get_data(browser: str, path_driver: str) -> dict:
+def get_data(data: dict, browser: str, path_driver: str) -> dict:
     """
-    This function returns a dict with unique downloaded data from requests.
-    browser: type browser - Chrome or Firefox.
-    path_driver: driver location.
-    number_requests: number requests from https://www.random1.ru/generator-pasportnyh-dannyh.
-    return: Dict with unique downloaded data from requests.
+    This function returns a dict with unique downloaded data from request.
+
+    :param data: Passport content.
+    :param browser: Type browser - Chrome or Firefox.
+    :param path_driver: Driver location.
+    :return: Passport content with unique downloaded data from requests.
     """
 
     if browser == 'Firefox':
@@ -42,29 +43,12 @@ def get_data(browser: str, path_driver: str) -> dict:
     else:
         raise ValueError('use browser Chrome or Firefox')
 
-    data = {'first_name': '',
-            'second_name': '',
-            'patronymic_name': '',
-            'address': '',
-            'series_passport': 0,
-            'number_passport': 0,
-            'department_code': [0, 0],
-            'department': '',
-            'date_birth': '',
-            'date_issue': '',
-            'sex': '',
-            'images': {'photoLabel': '',
-                       'officersignLabel': '',
-                       'ownersignLabel': '',
-                       'background': ['', {}]
-                       }
-            }
     driver.get(URL)
     # Extract passport data generated on the web page.
     for name in NAMES:
         value = driver.find_element_by_xpath(f'//input[@id="{name}"]').get_attribute('value')
-        # Information about accommodation is divided into the city and the address itself
         if name == 'Address':
+            # Information about accommodation is divided into the city and the address itself.
             city = value.split(",")[1]
             data.update({'address': city})
         elif name == 'PasportNum':
@@ -78,13 +62,8 @@ def get_data(browser: str, path_driver: str) -> dict:
         else:
             data.update({NAMES[name]: value})
     data.update({'sex': get_sex(data['first_name'])})
+
+    del driver
     return data
 
 
-def get_sex(name: str) -> str:
-    df = pd.read_csv(Paths.data_passport() / 'male_names.csv', ';')
-    if df.loc[df.Name == name].count()['Name'] > 0:
-        sex = "МУЖ."
-    else:
-        sex = "ЖЕН."
-    return sex
