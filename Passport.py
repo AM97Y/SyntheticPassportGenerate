@@ -3,12 +3,12 @@ from datetime import datetime, date
 from random import choice, randint
 
 import numpy as np
-import pandas as pd
 from faker import Faker
 
 from Sex import Sex
-from utils.path_utils import Paths, Resources
-from utils.processing_utils import gender_format, load_markup, load_names
+from utils.name_utils import gender_format, load_names
+from utils.path_utils import Resources
+from utils.processing_utils import load_markup
 from utils.request import get_data
 
 

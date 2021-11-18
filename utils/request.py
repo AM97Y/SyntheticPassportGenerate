@@ -6,7 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
-from utils.processing_utils import get_sex
+from utils.name_utils import get_sex
 
 URL: str = 'https://www.random1.ru/generator-pasportnyh-dannyh'
 NAMES: dict = {
