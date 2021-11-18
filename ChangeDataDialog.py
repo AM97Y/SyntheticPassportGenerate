@@ -128,7 +128,7 @@ class ChangeDataDialog(QDialog):
             dir = str(Paths.photo())
         else:
             dir = str(Paths.signs())
-        filters = 'Images (*.png *.xpm *.jpg)'
+        filters = 'Images (*.png *.xpm *.jpg *.bmp *.tiff)'
 
         image_path = QFileDialog.getOpenFileName(self, caption=f"{name} image", directory=dir,
                                                  filter=filters)[0]
