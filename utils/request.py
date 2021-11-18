@@ -58,7 +58,7 @@ def get_data(data: dict, browser: str, path_driver: str) -> dict:
         elif name == "PasportDate" or name == "DateOfBirth":
             data.update({NAMES[name]: datetime.strptime(str(value), "%d.%m.%Y")})
         elif name == 'PasportCode':
-            data.update({NAMES[name]: value.split('-')})
+            data.update({NAMES[name]: list(map(int, value.split('-')))})
         else:
             data.update({NAMES[name]: value})
     data.update({'sex': get_sex(data['first_name'])})
