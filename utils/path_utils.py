@@ -45,7 +45,7 @@ class Paths:
 
 class Resources:
     """
-    Class for .
+    Class for access to necessary files of current repository.
     """
 
     @staticmethod
@@ -100,4 +100,4 @@ class Resources:
         if browser == 'Firefox':
             return str(Paths.root() / 'geckodriver')
         elif browser == 'Chrome':
-            return str(Paths.root() / '!!!')
+            return str(Paths.root() / 'chromedriver')

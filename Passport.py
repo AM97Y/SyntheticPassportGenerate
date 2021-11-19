@@ -28,6 +28,10 @@ class Passport:
 
 
 class PassportContent(Passport):
+    """
+    This class keep information about contents of passport.
+
+    """
     def __init__(self):
 
         super().__init__()
@@ -62,7 +66,6 @@ class PassportContent(Passport):
             self._parameters = get_data(data=self._parameters, browser='Firefox', path_driver=Resources.driver())
             self._init_img()
         except Exception:
-            print(Exception)
             # Offline data
             print('offline')
             # Age of obtaining a passport.
@@ -95,7 +98,6 @@ class PassportContent(Passport):
                     self._init_img()
                 elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
                     tmp_choices = []
-
                     file = Resources.dataset(key)
                     if os.path.isfile(file):
                         with open(file, "r", encoding='utf-8') as f:
@@ -132,6 +134,10 @@ class PassportContent(Passport):
 
 
 class PassportAppearance(Passport):
+    """
+    This class keep information about appearance of passport.
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -154,7 +160,7 @@ class PassportAppearance(Passport):
         This function randomly fills in the appearance of the passport.
 
         """
-        # FIXED: Remove the cycle.
+
         for key, _ in self._parameters.items():
             if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
                 self._parameters[key] = choice((True, False))
@@ -172,6 +178,3 @@ class PassportAppearance(Passport):
                 del fonts_list
             elif key == 'fontsizeSpinBox':
                 self._parameters[key] = int(np.random.normal(35))
-
-    def init_img(self):
-        pass

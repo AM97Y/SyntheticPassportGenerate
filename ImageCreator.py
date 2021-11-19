@@ -10,58 +10,19 @@ from utils.processing_utils import convert_from_image_to_cv2, convert_from_cv2_t
 
 
 class ImageCreator:
+    """
+    This class create passport image.
+
+    """
+
     def __init__(self, passport_content_params: dict, passport_appearance_params: dict):
         self._passport_content_params = passport_content_params
         self._passport_appearance_params = passport_appearance_params
 
-    def _overlay_artifacts(self, img: Image) -> Image:
-        """
-        This function calls draw of watermarks.
-
-        :param img: Image.
-        :return: Changed image.
-        """
-
-        count_watermark = self._passport_appearance_params['blotsnumSpinBox']
-        files = Resources.dirty()
-        img = draw_watermark(img=img, count_watermark=count_watermark,
-                             files=files,
-                             blur=self._passport_appearance_params['blurFlashnumBlotsnum'],
-                             params={"paste_point": None,
-                                     "resize_size": None,
-                                     })
-
-        if self._passport_appearance_params['crumpledCheckBox']:
-            files = Resources.crumpled()
-            markup = self._passport_content_params["images"]["background"][1]['passport']
-            img = draw_watermark(img=img, count_watermark=1, files=files,
-                                 blur=self._passport_appearance_params['blurFlashnumBlotsnum'],
-                                 params={"paste_point": get_box_corner_to_draw(markup),
-                                         "resize_size": get_box_size_to_draw(markup),
-                                         })
-            img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
-
-        if self._passport_appearance_params['blurCheckBox']:
-            img = img.filter(ImageFilter.BLUR)
-
-        if self._passport_appearance_params['noiseCheckBox']:
-            img = img.filter(ImageFilter.MinFilter(size=3))
-
-        if self._passport_appearance_params['flashnumSpinBox'] > 0:
-            count_watermark = self._passport_appearance_params['flashnumSpinBox']
-            image_cv = convert_from_image_to_cv2(img=img)
-            for _ in range(count_watermark):
-                transform = A.Compose([A.RandomSunFlare(num_flare_circles_lower=0,
-                                                        num_flare_circles_upper=1,
-                                                        src_radius=400,
-                                                        p=1)])
-                image_cv = transform(image=image_cv)["image"]
-            img = convert_from_cv2_to_image(img=image_cv)
-        return img
-
     def create_image(self) -> Image:
         """
         This function generates a passport image.
+
         :return: Image passport.
         """
         with Image.open(Paths.backgrounds() / self._passport_content_params["images"]["background"][0]) as img:
@@ -185,4 +146,49 @@ class ImageCreator:
 
             img = self._overlay_artifacts(img)
 
+        return img
+
+    def _overlay_artifacts(self, img: Image) -> Image:
+        """
+        This function calls draw of watermarks.
+
+        :param img: Image.
+        :return: Changed image.
+        """
+
+        count_watermark = self._passport_appearance_params['blotsnumSpinBox']
+        files = Resources.dirty()
+        img = draw_watermark(img=img, count_watermark=count_watermark,
+                             files=files,
+                             blur=self._passport_appearance_params['blurFlashnumBlotsnum'],
+                             params={"paste_point": None,
+                                     "resize_size": None,
+                                     })
+
+        if self._passport_appearance_params['crumpledCheckBox']:
+            files = Resources.crumpled()
+            markup = self._passport_content_params["images"]["background"][1]['passport']
+            img = draw_watermark(img=img, count_watermark=1, files=files,
+                                 blur=self._passport_appearance_params['blurFlashnumBlotsnum'],
+                                 params={"paste_point": get_box_corner_to_draw(markup),
+                                         "resize_size": get_box_size_to_draw(markup),
+                                         })
+            img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
+
+        if self._passport_appearance_params['blurCheckBox']:
+            img = img.filter(ImageFilter.BLUR)
+
+        if self._passport_appearance_params['noiseCheckBox']:
+            img = img.filter(ImageFilter.MinFilter(size=3))
+
+        if self._passport_appearance_params['flashnumSpinBox'] > 0:
+            count_watermark = self._passport_appearance_params['flashnumSpinBox']
+            image_cv = convert_from_image_to_cv2(img=img)
+            for _ in range(count_watermark):
+                transform = A.Compose([A.RandomSunFlare(num_flare_circles_lower=0,
+                                                        num_flare_circles_upper=1,
+                                                        src_radius=400,
+                                                        p=1)])
+                image_cv = transform(image=image_cv)["image"]
+            img = convert_from_cv2_to_image(img=image_cv)
         return img

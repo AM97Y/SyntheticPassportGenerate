@@ -34,6 +34,14 @@ def get_sex(name: str) -> str:
 
 
 def gender_format(text: str, sex: str) -> str:
+    """
+    This function returns the first, middle or last name in the correct gender.
+    
+    :param text:  First, middle or last name.
+    :param sex: Gender for format.
+    :return: Gender correct word.
+    """
+
     parsed = MorphAnalyzer().parse(text)
     if sex == "ЖЕН.":
         gender = 'femn'

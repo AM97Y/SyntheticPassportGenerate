@@ -37,6 +37,12 @@ class ChangeDataDialog(QDialog):
 
         self.show()
 
+    @property
+    def images_content(self) -> dict:
+        return self._image_content_paths
+        # return dict(zip(['photoLabel', 'officersignLabel', 'ownersignLabel', 'background'],
+        #                self.image_content_paths + [['', {}]]))
+
     def _connect_signals_slots(self):
         self.photoLabel.mousePressEvent = functools.partial(self._load_img, obj=self.photoLabel, name='photoLabel')
         self.officersignLabel.mousePressEvent = functools.partial(self._load_img, obj=self.officersignLabel,
@@ -108,12 +114,6 @@ class ChangeDataDialog(QDialog):
         """
         q_image = ImageQt(Image.open(image_path))
         add_pixmap_to_widget(pixmap=QPixmap.fromImage(q_image), widget=obj)
-
-    @property
-    def images_content(self) -> dict:
-        return self._image_content_paths
-        # return dict(zip(['photoLabel', 'officersignLabel', 'ownersignLabel', 'background'],
-        #                self.image_content_paths + [['', {}]]))
 
     def _load_img(self, event, obj, name: str) -> None:
         """
