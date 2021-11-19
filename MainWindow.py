@@ -2,15 +2,16 @@ from datetime import datetime
 
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDateEdit
+from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from ChangeDataDialog import ChangeDataDialog
-from Passport import PassportAppearance, PassportContent
 from ImageCreator import ImageCreator
+from MessageBox import MessageBox
+from Passport import PassportAppearance, PassportContent
 from utils.path_utils import Paths
 from utils.qt_utils import add_pixmap_to_widget, get_data
-from MessageBox import MessageBox
 
 
 class MainWindow(QMainWindow):
@@ -74,9 +75,11 @@ class MainWindow(QMainWindow):
         Generate new passport image.
 
         """
+        QApplication.setOverrideCursor(Qt.WaitCursor)
         self._passport_content.random_init()
         self._passport_appearance.random_init()
         self._create_image_passport()
+        QApplication.restoreOverrideCursor()
 
     def _create_image_passport(self) -> None:
         """
