@@ -3,7 +3,7 @@ from datetime import datetime
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from ChangeDataDialog import ChangeDataDialog
@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         uic.loadUi('MainWindow.ui', self)
         self.setFixedSize(self.width(), self.height())
-        # self.setWindowIcon(QtGui.QIcon('Icons/thermometer.ico'))
+        self.setWindowIcon(QIcon('Icons/MainWindow.ico'))
 
         self._connect_signals_slots()
 
@@ -33,10 +33,7 @@ class MainWindow(QMainWindow):
         self._dialog = None
 
     def _update_passport(self):
-        """
-        Update passport data after changed.
-
-        """
+        # Init passport parameters according to the content of dialog window
         new_parameters_appearance = {
             'blurCheckBox': self._dialog.blurCheckBox.isChecked(),
             'crumpledCheckBox': self._dialog.crumpledCheckBox.isChecked(),
@@ -65,15 +62,15 @@ class MainWindow(QMainWindow):
                 'background': self._passport_content.content["images"]["background"],
             }
         }
-
+        # Update passport parameters
         self._passport_content.update(new_passport_content)
         self._passport_appearance.update(new_parameters_appearance)
+        # Generate passport image with new passport parameters
         self._create_image_passport()
 
     def show_generate(self):
         """
-        Generate new passport image.
-
+        Show generated passport image
         """
         QApplication.setOverrideCursor(Qt.WaitCursor)
         self._passport_content.random_init()
@@ -83,8 +80,7 @@ class MainWindow(QMainWindow):
 
     def _create_image_passport(self) -> None:
         """
-        Create image passport.
-
+        Create image passport
         """
         self._img_creator = ImageCreator(self._passport_content.content, self._passport_appearance.content)
         self._img = self._img_creator.create_image()
@@ -94,35 +90,26 @@ class MainWindow(QMainWindow):
 
     def save(self) -> None:
         """
-        Save created images.
-
+        Save created passport image
         """
         file = f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
         img_file_path = Paths.outputs() / file
         try:
             self._img.save(str(img_file_path))
             self.statusBar.showMessage('Save file ' + file)
-            # timer = QTimer()
-            # timer.start(2147483647)
-            # self.label.setText('')
         except AttributeError:
             error_dialog = MessageBox()
             error_dialog.show_message('Изображение не сгенерированно')
 
     def show_change_dialog(self) -> None:
         """
-        Call ChangeDataDialog.
-
+        Show dialog window with settings of passport parameters
         """
         self._dialog = ChangeDataDialog(self._passport_content.content, self._passport_appearance.content)
         self._dialog.buttonBox.accepted.connect(self._update_passport)
         self._dialog.show()
 
     def _connect_signals_slots(self) -> None:
-        """
-        Connect signals slots.
-
-        """
         self.changeButton.clicked.connect(self.show_change_dialog)
         self.saveButton.clicked.connect(self.save)
         self.generateButton.clicked.connect(self.show_generate)

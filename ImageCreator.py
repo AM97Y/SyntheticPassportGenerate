@@ -1,5 +1,5 @@
-import PIL
 import albumentations as A
+import PIL
 from PIL import Image, ImageFilter, ImageOps, ImageFont
 
 from MessageBox import MessageBox
@@ -11,19 +11,17 @@ from utils.processing_utils import convert_from_image_to_cv2, convert_from_cv2_t
 
 class ImageCreator:
     """
-    This class create passport image.
-
+    This class create passport image
     """
-
     def __init__(self, passport_content_params: dict, passport_appearance_params: dict):
         self._passport_content_params = passport_content_params
         self._passport_appearance_params = passport_appearance_params
 
     def create_image(self) -> Image:
         """
-        This function generates a passport image.
+        This function generates passport image
 
-        :return: Image passport.
+        :return: created passport image
         """
         with Image.open(Paths.backgrounds() / self._passport_content_params["images"]["background"][0]) as img:
             img = img.convert('RGBA')
@@ -32,15 +30,9 @@ class ImageCreator:
             fonts = {
                 'text': ImageFont.truetype(font=str(Paths.fonts() / self._passport_appearance_params["fontComboBox"]),
                                            size=self._passport_appearance_params["fontsizeSpinBox"]),
-                'serie_number': ImageFont.truetype(Resources.numbers_font(), 46)}
+                'serie_number': ImageFont.truetype(Resources.numbers_font(), 46)
+            }
             font_colors = {'black': (self._passport_appearance_params['color_text'],) * 3, 'red': (130, 30, 30)}
-
-            img_text = get_text_image(text=self._passport_content_params['department'].upper(),
-                                      font=fonts['text'],
-                                      size=get_box_size_to_draw(markup=background_markup["issue_place"]),
-                                      color=font_colors['black'])
-
-            img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["issue_place"]), mask=img_text)
 
             # Add info to the first passport page
             # Add organization issued the passport to passport background
@@ -50,7 +42,6 @@ class ImageCreator:
                                       color=font_colors['black'])
             img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["issue_place"]), mask=img_text)
             # Add issue date to passport background
-
             img_text = get_text_image(text=self._passport_content_params['date_issue'].strftime("%m.%d.%Y"),
                                       font=fonts['text'],
                                       size=get_box_size_to_draw(markup=background_markup["issue_date"]),
@@ -101,6 +92,7 @@ class ImageCreator:
                                       color=font_colors['black'])
             img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["birth_place"]), mask=img_text)
 
+            # Add series and number to passport background
             series_number_text = " ".join([str(self._passport_content_params['series_passport']),
                                            str(self._passport_content_params['number_passport'])])
             img_text = get_text_image(text=series_number_text,
@@ -110,7 +102,6 @@ class ImageCreator:
             img.paste(im=img_text,
                       box=get_box_corner_to_draw(markup=background_markup["number_group1"], number=True),
                       mask=img_text)
-
             img_text = get_text_image(text=series_number_text,
                                       font=fonts['serie_number'],
                                       size=get_box_size_to_draw(markup=background_markup["number_group2"], number=True),
@@ -119,7 +110,8 @@ class ImageCreator:
                       box=get_box_corner_to_draw(markup=background_markup["number_group2"], number=True),
                       mask=img_text)
 
-            # photo
+            # Add images to passport background
+            #  Add photo of owner
             try:
                 with Image.open(self._passport_content_params['images']['photoLabel']) as img_photo:
                     img_photo = img_photo.resize(get_box_size_to_draw(markup=background_markup["photo"]), Image.NEAREST)
@@ -138,7 +130,6 @@ class ImageCreator:
             except PIL.UnidentifiedImageError:
                 error_dialog = MessageBox()
                 error_dialog.show_message('Выбранная подпись не является изображением.')
-
             # Add signature of owner
             """with Image.open(self._passport_content_params['images']['ownersignLabel']) as img_signature_2:
                 img_signature_2 = img_signature_2.resize(get_box_size_to_draw(background_markup["signature"], Image.NEAREST))
@@ -150,12 +141,12 @@ class ImageCreator:
 
     def _overlay_artifacts(self, img: Image) -> Image:
         """
-        This function calls draw of watermarks.
+        This function draws watermarks
 
-        :param img: Image.
-        :return: Changed image.
+        :param img: image to overlay artifacts
+        :return: changed image
         """
-
+        # Overlay blots
         count_watermark = self._passport_appearance_params['blotsnumSpinBox']
         files = Resources.dirty()
         img = draw_watermark(img=img, count_watermark=count_watermark,
@@ -164,7 +155,7 @@ class ImageCreator:
                              params={"paste_point": None,
                                      "resize_size": None,
                                      })
-
+        # Apply effect of "crumpled paper"
         if self._passport_appearance_params['crumpledCheckBox']:
             files = Resources.crumpled()
             markup = self._passport_content_params["images"]["background"][1]['passport']
@@ -174,13 +165,13 @@ class ImageCreator:
                                          "resize_size": get_box_size_to_draw(markup),
                                          })
             img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
-
+        # Apply blur
         if self._passport_appearance_params['blurCheckBox']:
             img = img.filter(ImageFilter.BLUR)
-
+        # Apply noise
         if self._passport_appearance_params['noiseCheckBox']:
             img = img.filter(ImageFilter.MinFilter(size=3))
-
+        # Overlay flashes
         if self._passport_appearance_params['flashnumSpinBox'] > 0:
             count_watermark = self._passport_appearance_params['flashnumSpinBox']
             image_cv = convert_from_image_to_cv2(img=img)
@@ -191,4 +182,5 @@ class ImageCreator:
                                                         p=1)])
                 image_cv = transform(image=image_cv)["image"]
             img = convert_from_cv2_to_image(img=image_cv)
+
         return img

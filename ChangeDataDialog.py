@@ -1,11 +1,10 @@
 import functools
 import os
-from datetime import datetime
 from typing import Union
 
 from PIL.ImageQt import ImageQt
 from PyQt5 import uic
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog, QFileDialog, QLabel
 from PIL import Image
 
@@ -18,7 +17,7 @@ class ChangeDataDialog(QDialog):
         QDialog.__init__(self)
         uic.loadUi('ChangeDataDialog.ui', self)
         self.setFixedSize(self.width(), self.height())
-        # self.setWindowIcon(QtGui.QIcon('Icons/results.ico'))
+        self.setWindowIcon(QIcon('Icons/ChangeDataDialog.ico'))
 
         self._connect_signals_slots()
 
@@ -27,9 +26,12 @@ class ChangeDataDialog(QDialog):
         self._fill_artifacts_fields(passport_appearance_params)
         self._fill_fonts_fields(passport_appearance_params)
 
-        self._fill_img(image_path=passport_content_params['images']['photoLabel'], obj=self.photoLabel)
-        self._fill_img(image_path=passport_content_params['images']['officersignLabel'], obj=self.officersignLabel)
-        self._fill_img(image_path=passport_content_params['images']['ownersignLabel'], obj=self.ownersignLabel)
+        self._fill_label_by_img(image_path=passport_content_params['images']['photoLabel'],
+                                label_obj=self.photoLabel)
+        self._fill_label_by_img(image_path=passport_content_params['images']['officersignLabel'],
+                                label_obj=self.officersignLabel)
+        self._fill_label_by_img(image_path=passport_content_params['images']['ownersignLabel'],
+                                label_obj=self.ownersignLabel)
 
         self._image_content_paths = {'photoLabel': passport_content_params['images']['photoLabel'],
                                      'officersignLabel': passport_content_params['images']['officersignLabel'],
@@ -40,8 +42,6 @@ class ChangeDataDialog(QDialog):
     @property
     def images_content(self) -> dict:
         return self._image_content_paths
-        # return dict(zip(['photoLabel', 'officersignLabel', 'ownersignLabel', 'background'],
-        #                self.image_content_paths + [['', {}]]))
 
     def _connect_signals_slots(self):
         self.photoLabel.mousePressEvent = functools.partial(self._load_img, obj=self.photoLabel, name='photoLabel')
@@ -54,10 +54,8 @@ class ChangeDataDialog(QDialog):
         """
         Fill window fields which concerns data of the first passport page
 
-        :param passport_content_params: Dict with passport content.
+        :param passport_content_params: passport content of the first passport page
         """
-
-        # First passport page
         self.serieSpinBox.setValue(passport_content_params['series_passport'])
         self.numberSpinBox.setValue(passport_content_params['number_passport'])
         self.organizationLineEdit.setText(passport_content_params['department'])
@@ -67,9 +65,9 @@ class ChangeDataDialog(QDialog):
 
     def _fill_second_passport_page_fields(self, passport_content_params: dict) -> None:
         """
-        Fill window fields which concerns data of the second passport page.
+        Fill window fields which concerns data of the second passport page
 
-        :param passport_content_params: Dict with passport content.
+        :param passport_content_params: passport content of the second passport page
         """
         self.surnameLineEdit.setText(passport_content_params['second_name'])
         self.nameLineEdit.setText(passport_content_params['first_name'])
@@ -79,11 +77,10 @@ class ChangeDataDialog(QDialog):
 
     def _fill_artifacts_fields(self, passport_appearance_params: dict) -> None:
         """
-        Fill fields of GroupBox with artifacts data
+        Fill fields with parameters of artifacts applied to generated passport image
 
-        :param passport_appearance_params: Dict with passport appearance  for img.
+        :param passport_appearance_params: appearance parameters for generated passport image
         """
-
         self.blurCheckBox.setChecked(passport_appearance_params['blurCheckBox'])
         self.crumpledCheckBox.setChecked(passport_appearance_params['crumpledCheckBox'])
         self.noiseCheckBox.setChecked(passport_appearance_params['noiseCheckBox'])
@@ -93,9 +90,9 @@ class ChangeDataDialog(QDialog):
 
     def _fill_fonts_fields(self, passport_appearance_params: dict) -> None:
         """
-        Fill fields of GroupBox with fonts data
+        Fill fields with parameters of text font for generated passport image
 
-        :param passport_appearance_params: Dict with passport appearance for img.
+        :param passport_appearance_params: font parameters for generated passport image
         """
         for file in os.listdir(Paths.fonts()):
             if file != 'fonts.txt':
@@ -105,32 +102,29 @@ class ChangeDataDialog(QDialog):
         self.fontblurSpinBox.setValue(passport_appearance_params['fontblurSpinBox'])
 
     @staticmethod
-    def _fill_img(image_path: Union[str, ImageQt], obj: QLabel) -> None:
+    def _fill_label_by_img(image_path: Union[str, ImageQt], label_obj: QLabel) -> None:
         """
-        Filling images.
+        Filling label qt object by image
 
-        :param image_path: path to img.
-        :param obj: QLabel  that was clicked.
+        :param image_path: path to image to fill
+        :param label_obj: label to fill by image.
         """
         q_image = ImageQt(Image.open(image_path))
-        add_pixmap_to_widget(pixmap=QPixmap.fromImage(q_image), widget=obj)
+        add_pixmap_to_widget(pixmap=QPixmap.fromImage(q_image), widget=label_obj)
 
     def _load_img(self, event, obj, name: str) -> None:
         """
-        Load thumbnails of selected images.
+        Load thumbnails of selected images
 
-        :param event: Event clicking: QMouseEvent.
-        :param obj: Object by clicking on which there was a disposal.
-        :param name: Name image in imgs_dict.
+        :param event: mouse event clicking
+        :param obj: object which was clicked in
+        :param name: image name in imgs_dict
         """
-
-        if name == 'photoLabel':
-            dir = str(Paths.photo())
-        else:
-            dir = str(Paths.signs())
+        image_directory = str(Paths.photo()) if name == 'photoLabel' else str(Paths.signs())
         filters = 'Images (*.png *.xpm *.jpg *.bmp *.tiff)'
 
-        image_path = QFileDialog.getOpenFileName(self, caption=f"{name} image", directory=dir,
+        image_path = QFileDialog.getOpenFileName(self, caption=f"{name} image",
+                                                 directory=image_directory,
                                                  filter=filters)[0]
         if os.path.isfile(image_path):
             self._image_content_paths.update({name: image_path})
