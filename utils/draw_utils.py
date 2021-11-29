@@ -6,11 +6,11 @@ from typing import Tuple
 
 def get_box_size_to_draw(markup: list, number: bool = False) -> tuple:
     """
-    Get box size to draw the text insides.
+    Get box size to draw the text inside
 
-    :param markup: Background markup of entity.
-    :param number: True if it is needed to draw a number.
-    :return: Width and height of the box.
+    :param markup: background markup
+    :param number: True if it is needed to draw a number
+    :return: width and height of the box to draw inside
     """
 
     left_upper_point = markup[0]
@@ -27,31 +27,29 @@ def get_box_size_to_draw(markup: list, number: bool = False) -> tuple:
 
 def get_box_corner_to_draw(markup: list, number: bool = False) -> tuple:
     """
-    Returns the coordinate of corner box to draw
+    Get the coordinate of left upper box corner to draw inside
 
-    :param markup: Background markup  of entity
+    :param markup: background markup
     :param number: True if it is needed to draw a number
-    :return: Coordinate of corner box
+    :return: coordinate of left upper box corner
     """
-
     if number:
-        # FIXED: To get rid of this, you need to find how to insert in the upper left corner.
-        extra_space = get_box_size_to_draw(markup=markup)
-        return markup[0][0] - (extra_space[1] - extra_space[0]), markup[0][1]
+        w, h = get_box_size_to_draw(markup=markup)
+        return markup[0][0] - (h - w), markup[0][1]
     else:
         return markup[0][0], markup[0][1]
 
 
 def delete_white_background(img: Image) -> Image:
     """
-    Remove the white background on the image.
+    Remove the white background on the image
 
-    :param img: Image.
-    :return: Changed image.
+    :param img: image to remove white background
+    :return: changed image
     """
     img_signature_1 = img.convert('RGBA')
     arr = np.array(np.asarray(img_signature_1))
-    r, g, b, a = np.rollaxis(arr, axis=-1)
+    r, g, b, _ = np.rollaxis(arr, axis=-1)
     mask = ((r == 255) & (g == 255) & (b == 255))
     arr[mask, 3] = 0
     img = Image.fromarray(arr, mode='RGBA')
@@ -60,20 +58,19 @@ def delete_white_background(img: Image) -> Image:
 
 def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[int, int, int]) -> Image:
     """
-    This function draws text in background.
+    Get image with text inside
 
-    :param size: Size img.
-    :param color: Color text.
-    :param text: Drawing text.
-    :param font: Read font.
-    :return: Changed image.
+    :param size: image size
+    :param color: text color
+    :param text: text to draw inside
+    :param font: text font
+    :return: generated text image
         """
     # text = get_hyphenated_str(text, font, shape[0])
     text = text.upper()
     img_text = Image.new(mode="RGBA", size=size, color=(0, 0, 0, 0))
     drawer = ImageDraw.Draw(im=img_text)
     drawer.text(xy=(0, 0), text=text, fill=color, font=font)
-
     return img_text
 
 
@@ -96,13 +93,9 @@ def draw_watermark(img: Image, count_watermark: int, files: list, blur: int, par
         for i in range(0, count_watermark):
             with Image.open(choice(files)) as img_watermark:
                 img_watermark = img_watermark.convert('RGBA')
-                if params['paste_point']:
-                    paste_point = params['paste_point']
-                else:
-                    paste_point = (randint(0, w), randint(0, h))
+                paste_point = params['paste_point'] if params['paste_point'] else (randint(0, w), randint(0, h))
                 if params['resize_size'] is not None:
                     img_watermark = img_watermark.resize(size=params['resize_size'], resample=Image.NEAREST)
-
                 paste_mask = img_watermark.split()[3].point(lambda i: i * blur / 100.)
                 img.paste(im=img_watermark, box=paste_point, mask=paste_mask)
 

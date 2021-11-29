@@ -6,7 +6,7 @@ import rootpath
 
 class Paths:
     """
-    Class for easy access to necessary directories of current repository.
+    Class for easy access to necessary directories of current repository
     """
 
     @staticmethod
@@ -45,7 +45,7 @@ class Paths:
 
 class Resources:
     """
-    Class for access to necessary files of current repository.
+    Class for access to necessary files of current repository
     """
 
     @staticmethod

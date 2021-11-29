@@ -6,10 +6,10 @@ from PyQt5.QtWidgets import QLabel, QDateEdit
 
 def add_pixmap_to_widget(pixmap: QPixmap, widget: QLabel) -> None:
     """
-    This function add image to widget.
+    This function add pixmap to widget
 
-    :param pixmap: Pixmap with image.
-    :param widget: Widget which pixmap is added.
+    :param pixmap: pixmap to add
+    :param widget: widget to store the pixmap
     """
     img = pixmap \
         .scaledToWidth(widget.frameGeometry().width()) \
@@ -19,9 +19,9 @@ def add_pixmap_to_widget(pixmap: QPixmap, widget: QLabel) -> None:
 
 def get_data(obj: QDateEdit) -> datetime:
     """
-    This function covert QDateEdit to datatime.
+    This function convert QDateEdit to datatime
 
-    :param obj: DateEdit field.
-    :return: Data by datatime.
+    :param obj: DateEdit content
+    :return: data stored as datatime
     """
     return datetime(obj.date().year(), obj.date().month(), obj.date().day())

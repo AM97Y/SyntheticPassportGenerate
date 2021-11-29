@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from datetime import datetime
 
 from selenium import webdriver
@@ -24,12 +22,12 @@ NAMES: dict = {
 
 def get_data(data: dict, browser: str, path_driver: str) -> dict:
     """
-    This function returns a dict with unique downloaded data from request.
+    This function returns downloaded passport content from request
 
-    :param data: Passport content.
-    :param browser: Type browser - Chrome or Firefox.
-    :param path_driver: Driver location.
-    :return: Passport content with unique downloaded data from requests.
+    :param data: passport content.p
+    :param browser: browser type (Chrome or Firefox)
+    :param path_driver: path to browser driver
+    :return: downloaded passport content
     """
 
     if browser == 'Firefox':
@@ -44,7 +42,7 @@ def get_data(data: dict, browser: str, path_driver: str) -> dict:
         raise ValueError('use browser Chrome or Firefox')
 
     driver.get(URL)
-    # Extract passport data generated on the web page.
+    # Extract passport data generated on the web page
     for name in NAMES:
         value = driver.find_element_by_xpath(f'//input[@id="{name}"]').get_attribute('value')
         if name == 'Address':
