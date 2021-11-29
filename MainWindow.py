@@ -15,7 +15,6 @@ from utils.qt_utils import add_pixmap_to_widget, get_data
 
 
 class MainWindow(QMainWindow):
-
     def __init__(self):
         QMainWindow.__init__(self)
         uic.loadUi('MainWindow.ui', self)
@@ -29,22 +28,21 @@ class MainWindow(QMainWindow):
 
         self._img = None
         self._img_creator = None
-
         self._dialog = None
 
     def _update_passport(self):
         # Init passport parameters according to the content of dialog window
         new_parameters_appearance = {
-            'blurCheckBox': self._dialog.blurCheckBox.isChecked(),
-            'crumpledCheckBox': self._dialog.crumpledCheckBox.isChecked(),
-            'noiseCheckBox': self._dialog.noiseCheckBox.isChecked(),
-            'blotsnumSpinBox': self._dialog.blotsnumSpinBox.value(),
-            'flashnumSpinBox': self._dialog.flashnumSpinBox.value(),
+            'blurCheckBox': self._dialog.blurCheckBox.isChecked(), # if Blur is applied to passport image
+            'crumpledCheckBox': self._dialog.crumpledCheckBox.isChecked(), # if "Crumpled paper" effect is applied to passport image
+            'noiseCheckBox': self._dialog.noiseCheckBox.isChecked(), # if Noise is applied to passport image
+            'blotsnumSpinBox': self._dialog.blotsnumSpinBox.value(), # count of blots to draw on passport image
+            'flashnumSpinBox': self._dialog.flashnumSpinBox.value(), # count of flashes to draw on passport image
             'blurFlashnumBlotsnum': self._dialog.blurFlashnumBlotsnum.value(),
-            'fontComboBox': self._dialog.fontComboBox.currentText(),
-            'fontsizeSpinBox': self._dialog.fontsizeSpinBox.value(),
-            'fontblurSpinBox': self._dialog.fontblurSpinBox.value(),
-            'color_text': (255 - int((255.0 * (self._dialog.fontblurSpinBox.value() / 100)))),
+            'fontComboBox': self._dialog.fontComboBox.currentText(), # font for passport data text fields
+            'fontsizeSpinBox': self._dialog.fontsizeSpinBox.value(), # font size
+            #'fontblurSpinBox': self._dialog.fontblurSpinBox.value(), # font blur value
+            'color_text': (255 - int((255.0 * (self._dialog.fontblurSpinBox.value() / 100)))), # font color
         }
         new_passport_content = {
             'first_name': self._dialog.nameLineEdit.text(),
@@ -68,16 +66,6 @@ class MainWindow(QMainWindow):
         # Generate passport image with new passport parameters
         self._create_image_passport()
 
-    def show_generate(self):
-        """
-        Show generated passport image
-        """
-        QApplication.setOverrideCursor(Qt.WaitCursor)
-        self._passport_content.random_init()
-        self._passport_appearance.random_init()
-        self._create_image_passport()
-        QApplication.restoreOverrideCursor()
-
     def _create_image_passport(self) -> None:
         """
         Create image passport
@@ -88,28 +76,31 @@ class MainWindow(QMainWindow):
         qimage = ImageQt(self._img)
         add_pixmap_to_widget(QPixmap.fromImage(qimage), self.passportImg)
 
-    def save(self) -> None:
+    def _show_changedata_dialog(self) -> None:
         """
-        Save created passport image
-        """
-        file = f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
-        img_file_path = Paths.outputs() / file
-        try:
-            self._img.save(str(img_file_path))
-            self.statusBar.showMessage('Save file ' + file)
-        except AttributeError:
-            error_dialog = MessageBox()
-            error_dialog.show_message('Изображение не сгенерированно')
-
-    def show_change_dialog(self) -> None:
-        """
-        Show dialog window with settings of passport parameters
+        Show dialog window with passport parameters
         """
         self._dialog = ChangeDataDialog(self._passport_content.content, self._passport_appearance.content)
         self._dialog.buttonBox.accepted.connect(self._update_passport)
         self._dialog.show()
 
+    def _save_passport_image(self) -> None:
+        new_img_file = f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
+        try:
+            self._img.save(str(Paths.outputs() / new_img_file))
+            self.statusBar.showMessage('Save file ' + new_img_file)
+        except AttributeError:
+            error_dialog = MessageBox()
+            error_dialog.show_message('Изображение не сгенерировано')
+
+    def _show_generated_passport_image(self):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        self._passport_content.random_init()
+        self._passport_appearance.random_init()
+        self._create_image_passport()
+        QApplication.restoreOverrideCursor()
+
     def _connect_signals_slots(self) -> None:
-        self.changeButton.clicked.connect(self.show_change_dialog)
-        self.saveButton.clicked.connect(self.save)
-        self.generateButton.clicked.connect(self.show_generate)
+        self.changeButton.clicked.connect(self._show_changedata_dialog)
+        self.saveButton.clicked.connect(self._save_passport_image)
+        self.generateButton.clicked.connect(self._show_generated_passport_image)
