@@ -8,7 +8,7 @@ import numpy as np
 
 from Sex import Sex
 from utils.name_utils import gender_format, load_names
-from utils.path_utils import Resources
+from utils.resources_utils import Resources
 from utils.processing_utils import load_markup
 from utils.request import get_data
 

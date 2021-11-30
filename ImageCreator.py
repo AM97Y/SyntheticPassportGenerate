@@ -5,7 +5,8 @@ from PIL import Image, ImageFilter, ImageOps, ImageFont
 from MessageBox import MessageBox
 from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw, delete_white_background, get_text_image, \
     draw_watermark
-from utils.path_utils import Paths, Resources
+from utils.path_utils import Paths
+from utils.resources_utils import Resources
 from utils.processing_utils import convert_from_image_to_cv2, convert_from_cv2_to_image
 
 
