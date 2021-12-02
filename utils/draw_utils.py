@@ -56,10 +56,12 @@ def delete_white_background(img: Image) -> Image:
     return img
 
 
-def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[int, int, int]) -> Image:
+def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[int, int, int],
+                   center: bool = True) -> Image:
     """
     Get image with text inside
 
+    :param center: place in the middle or not.
     :param size: image size
     :param color: text color
     :param text: text to draw inside
@@ -70,7 +72,14 @@ def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[in
     text = text.upper()
     img_text = Image.new(mode="RGBA", size=size, color=(0, 0, 0, 0))
     drawer = ImageDraw.Draw(im=img_text)
-    drawer.text(xy=(0, 0), text=text, fill=color, font=font)
+    if center:
+        W, H = size
+        w, h = drawer.textsize(text, font=font)
+        xy = ((W - w) / 2, (H - h) / 2)
+    else:
+        xy = (0, 0)
+
+    drawer.text(xy=xy, text=text, fill=color, font=font)
     return img_text
 
 

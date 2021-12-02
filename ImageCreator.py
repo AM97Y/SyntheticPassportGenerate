@@ -99,14 +99,14 @@ class ImageCreator:
             img_text = get_text_image(text=series_number_text,
                                       font=fonts['serie_number'],
                                       size=get_box_size_to_draw(markup=background_markup["number_group1"], number=True),
-                                      color=font_colors['red']).rotate(270)
+                                      color=font_colors['red'], center=False).rotate(270)
             img.paste(im=img_text,
                       box=get_box_corner_to_draw(markup=background_markup["number_group1"], number=True),
-                      mask=img_text)
+                      mask=img_text,)
             img_text = get_text_image(text=series_number_text,
                                       font=fonts['serie_number'],
                                       size=get_box_size_to_draw(markup=background_markup["number_group2"], number=True),
-                                      color=font_colors['red']).rotate(270)
+                                      color=font_colors['red'], center=False).rotate(270)
             img.paste(im=img_text,
                       box=get_box_corner_to_draw(markup=background_markup["number_group2"], number=True),
                       mask=img_text)
