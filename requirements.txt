@@ -6,4 +6,4 @@ PyQt5==5.15.4
 rootpath==0.1.1
 numpy==1.19.5
 pymorphy2==0.9.1
-selenium==4.1.0
+selenium==3.141.0
