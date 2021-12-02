@@ -11,7 +11,7 @@ from ImageCreator import ImageCreator
 from MessageBox import MessageBox
 from Passport import PassportAppearance, PassportContent
 from utils.path_utils import Paths
-from utils.qt_utils import add_pixmap_to_widget, get_data
+from utils.qt_utils import add_pixmap_to_widget, convert_dateedit_to_datetime
 
 
 class MainWindow(QMainWindow):
@@ -33,16 +33,17 @@ class MainWindow(QMainWindow):
     def _update_passport(self):
         # Init passport parameters according to the content of dialog window
         new_parameters_appearance = {
-            'blurCheckBox': self._dialog.blurCheckBox.isChecked(), # if Blur is applied to passport image
-            'crumpledCheckBox': self._dialog.crumpledCheckBox.isChecked(), # if "Crumpled paper" effect is applied to passport image
-            'noiseCheckBox': self._dialog.noiseCheckBox.isChecked(), # if Noise is applied to passport image
-            'blotsnumSpinBox': self._dialog.blotsnumSpinBox.value(), # count of blots to draw on passport image
-            'flashnumSpinBox': self._dialog.flashnumSpinBox.value(), # count of flashes to draw on passport image
+            'blurCheckBox': self._dialog.blurCheckBox.isChecked(),  # if Blur is applied to passport image
+            'crumpledCheckBox': self._dialog.crumpledCheckBox.isChecked(),
+            # if "Crumpled paper" effect is applied to passport image
+            'noiseCheckBox': self._dialog.noiseCheckBox.isChecked(),  # if Noise is applied to passport image
+            'blotsnumSpinBox': self._dialog.blotsnumSpinBox.value(),  # count of blots to draw on passport image
+            'flashnumSpinBox': self._dialog.flashnumSpinBox.value(),  # count of flashes to draw on passport image
             'blurFlashnumBlotsnum': self._dialog.blurFlashnumBlotsnum.value(),
-            'fontComboBox': self._dialog.fontComboBox.currentText(), # font for passport data text fields
-            'fontsizeSpinBox': self._dialog.fontsizeSpinBox.value(), # font size
-            #'fontblurSpinBox': self._dialog.fontblurSpinBox.value(), # font blur value
-            'color_text': (255 - int((255.0 * (self._dialog.fontblurSpinBox.value() / 100)))), # font color
+            'fontComboBox': self._dialog.fontComboBox.currentText(),  # font for passport data text fields
+            'fontsizeSpinBox': self._dialog.fontsizeSpinBox.value(),  # font size
+            'fontblurSpinBox': self._dialog.fontblurSpinBox.value(),  # font blur value
+            'color_text': (255 - int((255.0 * (self._dialog.fontblurSpinBox.value() / 100)))),  # font color
         }
         new_passport_content = {
             'first_name': self._dialog.nameLineEdit.text(),
@@ -52,8 +53,8 @@ class MainWindow(QMainWindow):
             'number_passport': self._dialog.numberSpinBox.value(),
             'department_code': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
             'department': self._dialog.organizationLineEdit.text(),
-            'date_issue': get_data(self._dialog.issueDateEdit),
-            'date_birth': get_data(self._dialog.birthDateEdit),
+            'date_issue': convert_dateedit_to_datetime(self._dialog.issueDateEdit),
+            'date_birth': convert_dateedit_to_datetime(self._dialog.birthDateEdit),
             'sex': self._dialog.sexComboBox.currentText(),
             'images': {
                 **self._dialog.images_content,

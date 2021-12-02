@@ -10,7 +10,7 @@ from Sex import Sex
 from utils.name_utils import gender_format, load_names
 from utils.resources_utils import Resources
 from utils.processing_utils import load_markup
-from utils.request import get_data
+from utils.request import upload_online_passport_data
 
 
 class Passport(ABC):
@@ -33,6 +33,7 @@ class PassportContent(Passport):
     """
     This class keeps information about data content of passport
     """
+
     def __init__(self):
         super().__init__()
         self._parameters = {
@@ -60,10 +61,13 @@ class PassportContent(Passport):
         """
         This function randomly fills in the content of the passport
         """
-        try: # Online mode of generating passport data
-            self._parameters = get_data(data=self._parameters, browser='Firefox', path_driver=Resources.driver())
+        try:
+            # Online mode of generating passport data
+            self._parameters = upload_online_passport_data(data=self._parameters, browser='Firefox',
+                                                           path_driver=Resources.driver())
             self._init_visual_content()
-        except Exception: # Offline mode of generating passport data
+        except Exception:
+            # Offline mode of generating passport data
             years_difference = choice(range(14, 30))
             # Fill in the sex of person
             self._parameters['sex'] = str(choice(list(Sex)))
@@ -100,7 +104,8 @@ class PassportContent(Passport):
 
     def _init_visual_content(self) -> None:
         """
-        This function randomly fills in the visual content of the passport
+        This function randomly fills in the visual content of the passport.
+
         """
         # Fill in the photo of person
         path_to_photos = Resources.photo_male() if self._parameters['sex'] == "МУЖ." else Resources.photo_female()
@@ -108,8 +113,8 @@ class PassportContent(Passport):
 
         # Fills in pictures of signatures
         path_to_signs = Resources.signs()
-        self._parameters['images']['officersignLabel'] = choice(path_to_signs) # signature of the passport officer
-        self._parameters['images']['ownersignLabel'] = choice(path_to_signs) # signature of the person
+        self._parameters['images']['officersignLabel'] = choice(path_to_signs)  # signature of the passport officer
+        self._parameters['images']['ownersignLabel'] = choice(path_to_signs)  # signature of the person
 
         # Fill in passport background
         path_to_backgrounds = Resources.background()
@@ -121,6 +126,7 @@ class PassportAppearance(Passport):
     """
     This class keeps information about passport appearance.
     """
+
     def __init__(self):
         super().__init__()
         self._parameters = {

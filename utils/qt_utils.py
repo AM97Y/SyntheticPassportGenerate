@@ -17,7 +17,7 @@ def add_pixmap_to_widget(pixmap: QPixmap, widget: QLabel) -> None:
     widget.setPixmap(img)
 
 
-def get_data(obj: QDateEdit) -> datetime:
+def convert_dateedit_to_datetime(obj: QDateEdit) -> datetime:
     """
     This function convert QDateEdit to datatime
 

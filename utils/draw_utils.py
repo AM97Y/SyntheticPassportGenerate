@@ -76,12 +76,10 @@ def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[in
 
 def draw_watermark(img: Image, count_watermark: int, files: list, blur: int, params: dict = None) -> Image:
     """
-    TDraws watermarks with the specified transparency level on the image.
+    Draws watermarks with the specified transparency level on the image.
 
-    :param params:
-               paste_point: New watermark sizes.
-               paste_point: If you set the coordinate, then what.
-    :param blur: Blur
+    :param params: paste_point - new watermark sizes; paste_point - if you set the coordinate, then what.
+    :param blur: Blur watermarck.
     :param files: List files watermarks.
     :param img: Edited Image.
     :param count_watermark: Number of watermarks.

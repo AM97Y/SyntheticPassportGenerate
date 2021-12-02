@@ -20,7 +20,7 @@ NAMES: dict = {
 }
 
 
-def get_data(data: dict, browser: str, path_driver: str) -> dict:
+def upload_online_passport_data(data: dict, browser: str, path_driver: str) -> dict:
     """
     This function returns downloaded passport content from request
 
