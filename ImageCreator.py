@@ -43,7 +43,7 @@ class ImageCreator:
                                       color=font_colors['black'])
             img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["issue_place"]), mask=img_text)
             # Add issue date to passport background
-            img_text = get_text_image(text=self._passport_content_params['date_issue'].strftime("%m.%d.%Y"),
+            img_text = get_text_image(text=self._passport_content_params['date_issue'].strftime("%d.%m.%Y"),
                                       font=fonts['text'],
                                       size=get_box_size_to_draw(markup=background_markup["issue_date"]),
                                       color=font_colors['black'])
@@ -81,7 +81,7 @@ class ImageCreator:
                                       color=font_colors['black'])
             img.paste(im=img_text, box=get_box_corner_to_draw(markup=background_markup["sex"]), mask=img_text)
             # Add birth date to passport background
-            img_text = get_text_image(text=self._passport_content_params['date_birth'].strftime("%m.%d.%Y"),
+            img_text = get_text_image(text=self._passport_content_params['date_birth'].strftime("%d.%m.%Y"),
                                       font=fonts['text'],
                                       size=get_box_size_to_draw(markup=background_markup["birth_date"]),
                                       color=font_colors['black'])
