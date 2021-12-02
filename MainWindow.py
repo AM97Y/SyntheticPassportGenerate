@@ -50,6 +50,7 @@ class MainWindow(QMainWindow):
             'second_name': self._dialog.surnameLineEdit.text(),
             'patronymic_name': self._dialog.patronymicLineEdit.text(),
             'series_passport': self._dialog.serieSpinBox.value(),
+            'address': self._dialog.birthPlacelineEdit.text(),
             'number_passport': self._dialog.numberSpinBox.value(),
             'department_code': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
             'department': self._dialog.organizationLineEdit.text(),

@@ -74,6 +74,7 @@ class ChangeDataDialog(QDialog):
         self.patronymicLineEdit.setText(passport_content_params['patronymic_name'])
         self.sexComboBox.setCurrentText(passport_content_params['sex'])
         self.birthDateEdit.setDate(passport_content_params['date_birth'])
+        self.birthPlacelineEdit.setText(passport_content_params['address'])
 
     def _fill_artifacts_fields(self, passport_appearance_params: dict) -> None:
         """
