@@ -124,6 +124,18 @@ class ImageCreator:
             try:
                 with Image.open(self._passport_content_params['images']['officersignLabel']) as img_signature_1:
                     img_signature_1 = delete_white_background(img_signature_1).resize(
+                        get_box_size_to_draw(markup=background_markup["officer_signature"]), Image.NEAREST)
+
+                    paste_point = get_box_corner_to_draw(markup=background_markup["officer_signature"])
+                    img.paste(im=img_signature_1, box=paste_point, mask=img_signature_1)
+            except PIL.UnidentifiedImageError:
+                error_dialog = MessageBox()
+                error_dialog.show_message('Выбранная подпись не является изображением.')
+
+            # Add signature of owner
+            try:
+                with Image.open(self._passport_content_params['images']['ownersignLabel']) as img_signature_1:
+                    img_signature_1 = delete_white_background(img_signature_1).resize(
                         get_box_size_to_draw(markup=background_markup["signature"]), Image.NEAREST)
 
                     paste_point = get_box_corner_to_draw(markup=background_markup["signature"])
@@ -131,10 +143,6 @@ class ImageCreator:
             except PIL.UnidentifiedImageError:
                 error_dialog = MessageBox()
                 error_dialog.show_message('Выбранная подпись не является изображением.')
-            # Add signature of owner
-            """with Image.open(self._passport_content_params['images']['ownersignLabel']) as img_signature_2:
-                img_signature_2 = img_signature_2.resize(get_box_size_to_draw(background_markup["signature"], Image.NEAREST))
-                img.paste(img_signature_2, get_box_corner_to_draw(background_markup["signature"]))"""
 
             img = self._overlay_artifacts(img)
 
