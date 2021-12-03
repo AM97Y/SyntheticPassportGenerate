@@ -31,7 +31,8 @@ class ImageCreator:
             fonts = {
                 'text': ImageFont.truetype(font=str(Paths.fonts() / self._passport_appearance_params["fontComboBox"]),
                                            size=self._passport_appearance_params["fontsizeSpinBox"]),
-                'serie_number': ImageFont.truetype(Resources.numbers_font(), 46)
+                'serie_number': ImageFont.truetype(Resources.numbers_font(),
+                                                   self._passport_appearance_params["font_pick"]+6)
             }
             font_colors = {'black': (self._passport_appearance_params['color_text'],) * 3, 'red': (130, 30, 30)}
 

@@ -16,6 +16,7 @@ from utils.request import upload_online_passport_data
 class Passport(ABC):
     def __init__(self):
         self._parameters = {}
+        self._font_pick = 0
 
     @abstractmethod
     def random_init(self) -> None:
@@ -24,6 +25,15 @@ class Passport(ABC):
     @property
     def content(self) -> dict:
         return self._parameters
+
+    @property
+    def font_pick(self) -> int:
+        return self._font_pick
+
+    @font_pick.setter
+    def font_pick(self, value):
+        if value > 0:
+            self._font_pick = value
 
     def update(self, passport_data: dict) -> None:
         self._parameters.update(passport_data)
@@ -55,7 +65,6 @@ class PassportContent(Passport):
                 'background': ['', {}]
             }
         }
-        self.random_init()
 
     def random_init(self) -> None:
         """
@@ -119,7 +128,8 @@ class PassportContent(Passport):
         # Fill in passport background
         path_to_backgrounds = Resources.background()
         background = choice(path_to_backgrounds)
-        self._parameters['images']['background'] = [background, load_markup(file=background)]
+        markup, self._font_pick = load_markup(file=background)
+        self._parameters['images']['background'] = [background, markup]
 
 
 class PassportAppearance(Passport):
@@ -140,8 +150,8 @@ class PassportAppearance(Passport):
             'color_text': 0,
             'fontsizeSpinBox': 28,
             'fontblurSpinBox': 80,
+            'font_pick': 0
         }
-        self.random_init()
 
     def random_init(self) -> None:
         """
@@ -153,10 +163,15 @@ class PassportAppearance(Passport):
             elif key == 'blotsnumSpinBox' or key == 'flashnumSpinBox':
                 self._parameters[key] = np.random.poisson(0.5)
             elif key == 'blurFlashnumBlotsnum':
+                print(self._font_pick)
                 self._parameters[key] = int(np.random.normal(35))
             elif key == 'fontblurSpinBox':
                 self._parameters[key] = randint(75, 100)
             elif key == 'fontComboBox':
                 self._parameters[key] = choice([file for file in Resources.fonts()])
             elif key == 'fontsizeSpinBox':
-                self._parameters[key] = int(np.random.normal(40))
+                self._parameters['fontsizeSpinBox'] = self._font_pick
+                self._parameters['font_pick'] = self._font_pick
+                self._parameters[key] = int(np.random.normal(self._font_pick))
+
+

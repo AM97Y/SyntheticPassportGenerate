@@ -70,7 +70,8 @@ class MainWindow(QMainWindow):
 
     def _create_image_passport(self) -> None:
         """
-        Create image passport
+        Create image passport.
+
         """
         self._img_creator = ImageCreator(self._passport_content.content, self._passport_appearance.content)
         self._img = self._img_creator.create_image()
@@ -80,11 +81,16 @@ class MainWindow(QMainWindow):
 
     def _show_changedata_dialog(self) -> None:
         """
-        Show dialog window with passport parameters
+        Show dialog window with passport parameters.
+
         """
-        self._dialog = ChangeDataDialog(self._passport_content.content, self._passport_appearance.content)
-        self._dialog.buttonBox.accepted.connect(self._update_passport)
-        self._dialog.show()
+        try:
+            self._dialog = ChangeDataDialog(self._passport_content.content, self._passport_appearance.content)
+            self._dialog.buttonBox.accepted.connect(self._update_passport)
+            self._dialog.show()
+        except TypeError:
+            error_dialog = MessageBox()
+            error_dialog.show_message('Изображение не сгенерировано')
 
     def _save_passport_image(self) -> None:
         new_img_file = f'{datetime.now().strftime("%Y-%m-%d-%H.%M.%S.%f")}.png'
@@ -98,6 +104,7 @@ class MainWindow(QMainWindow):
     def _show_generated_passport_image(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         self._passport_content.random_init()
+        self._passport_appearance.font_pick = self._passport_content.font_pick
         self._passport_appearance.random_init()
         self._create_image_passport()
         QApplication.restoreOverrideCursor()
