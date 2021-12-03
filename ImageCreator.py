@@ -31,8 +31,8 @@ class ImageCreator:
             fonts = {
                 'text': ImageFont.truetype(font=str(Paths.fonts() / self._passport_appearance_params["fontComboBox"]),
                                            size=self._passport_appearance_params["fontsizeSpinBox"]),
-                'serie_number': ImageFont.truetype(Resources.numbers_font(),
-                                                   self._passport_appearance_params["font_pick"]+6)
+                'serie_number': ImageFont.truetype(font=Resources.numbers_font(),
+                                                   size=self._passport_appearance_params["font_pick"]+6)
             }
             font_colors = {'black': (self._passport_appearance_params['color_text'],) * 3, 'red': (130, 30, 30)}
 
@@ -161,7 +161,6 @@ class ImageCreator:
         files = Resources.dirty()
         img = draw_watermark(img=img, count_watermark=count_watermark,
                              files=files,
-                             blur=self._passport_appearance_params['blurFlashnumBlotsnum'],
                              params={"paste_point": None,
                                      "resize_size": None,
                                      })
@@ -170,14 +169,14 @@ class ImageCreator:
             files = Resources.crumpled()
             markup = self._passport_content_params["images"]["background"][1]['passport']
             img = draw_watermark(img=img, count_watermark=1, files=files,
-                                 blur=self._passport_appearance_params['blurFlashnumBlotsnum'],
                                  params={"paste_point": get_box_corner_to_draw(markup),
                                          "resize_size": get_box_size_to_draw(markup),
                                          })
             img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
         # Apply blur
-        if self._passport_appearance_params['blurCheckBox']:
-            img = img.filter(ImageFilter.BLUR)
+        if self._passport_appearance_params['blurFlashnumBlotsnum'] > 0:
+            img = img.filter(ImageFilter.GaussianBlur(
+                radius=(self._passport_appearance_params['blurFlashnumBlotsnum']/200.)*20))
         # Apply noise
         if self._passport_appearance_params['noiseCheckBox']:
             img = img.filter(ImageFilter.MinFilter(size=3))

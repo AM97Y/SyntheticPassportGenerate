@@ -82,7 +82,6 @@ class ChangeDataDialog(QDialog):
 
         :param passport_appearance_params: appearance parameters for generated passport image
         """
-        self.blurCheckBox.setChecked(passport_appearance_params['blurCheckBox'])
         self.crumpledCheckBox.setChecked(passport_appearance_params['crumpledCheckBox'])
         self.noiseCheckBox.setChecked(passport_appearance_params['noiseCheckBox'])
         self.blotsnumSpinBox.setValue(passport_appearance_params['blotsnumSpinBox'])

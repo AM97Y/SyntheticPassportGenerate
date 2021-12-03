@@ -83,12 +83,11 @@ def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[in
     return img_text
 
 
-def draw_watermark(img: Image, count_watermark: int, files: list, blur: int, params: dict = None) -> Image:
+def draw_watermark(img: Image, count_watermark: int, files: list, params: dict = None) -> Image:
     """
     Draws watermarks with the specified transparency level on the image.
 
     :param params: paste_point - new watermark sizes; paste_point - if you set the coordinate, then what.
-    :param blur: Blur watermarck.
     :param files: List files watermarks.
     :param img: Edited Image.
     :param count_watermark: Number of watermarks.
@@ -103,7 +102,7 @@ def draw_watermark(img: Image, count_watermark: int, files: list, blur: int, par
                 paste_point = params['paste_point'] if params['paste_point'] else (randint(0, w), randint(0, h))
                 if params['resize_size'] is not None:
                     img_watermark = img_watermark.resize(size=params['resize_size'], resample=Image.NEAREST)
-                paste_mask = img_watermark.split()[3].point(lambda i: i * blur / 100.)
+                paste_mask = img_watermark.split()[3].point(lambda i: i * 20 / 100.)
                 img.paste(im=img_watermark, box=paste_point, mask=paste_mask)
 
     return img.convert('RGBA')

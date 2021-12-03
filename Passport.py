@@ -140,12 +140,11 @@ class PassportAppearance(Passport):
     def __init__(self):
         super().__init__()
         self._parameters = {
-            'blurCheckBox': True,
+            'blurFlashnumBlotsnum': 0,
             'crumpledCheckBox': True,
             'noiseCheckBox': True,
             'blotsnumSpinBox': 2,
             'flashnumSpinBox': 1,
-            'blurFlashnumBlotsnum': 30,
             'fontComboBox': '',
             'color_text': 0,
             'fontsizeSpinBox': 28,
@@ -158,20 +157,20 @@ class PassportAppearance(Passport):
         This function randomly fills in the appearance of the passport.
         """
         for key, _ in self._parameters.items():
-            if key == 'blurCheckBox' or key == 'crumpledCheckBox' or key == 'noiseCheckBox':
+            if key == 'crumpledCheckBox' or key == 'noiseCheckBox':
                 self._parameters[key] = choice((True, False))
             elif key == 'blotsnumSpinBox' or key == 'flashnumSpinBox':
                 self._parameters[key] = np.random.poisson(0.5)
             elif key == 'blurFlashnumBlotsnum':
-                print(self._font_pick)
                 self._parameters[key] = int(np.random.normal(35))
-            elif key == 'fontblurSpinBox':
-                self._parameters[key] = randint(75, 100)
+            elif key == 'blurFlashnumBlotsnum':
+                self._parameters[key] = randint(0, 100)
             elif key == 'fontComboBox':
                 self._parameters[key] = choice([file for file in Resources.fonts()])
             elif key == 'fontsizeSpinBox':
                 self._parameters['fontsizeSpinBox'] = self._font_pick
                 self._parameters['font_pick'] = self._font_pick
                 self._parameters[key] = int(np.random.normal(self._font_pick))
+
 
 

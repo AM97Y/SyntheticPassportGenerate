@@ -33,13 +33,12 @@ class MainWindow(QMainWindow):
     def _update_passport(self):
         # Init passport parameters according to the content of dialog window
         new_parameters_appearance = {
-            'blurCheckBox': self._dialog.blurCheckBox.isChecked(),  # if Blur is applied to passport image
+            'blurFlashnumBlotsnum': self._dialog.blurFlashnumBlotsnum.value(),  # if Blur is applied to passport image
             'crumpledCheckBox': self._dialog.crumpledCheckBox.isChecked(),
             # if "Crumpled paper" effect is applied to passport image
             'noiseCheckBox': self._dialog.noiseCheckBox.isChecked(),  # if Noise is applied to passport image
             'blotsnumSpinBox': self._dialog.blotsnumSpinBox.value(),  # count of blots to draw on passport image
             'flashnumSpinBox': self._dialog.flashnumSpinBox.value(),  # count of flashes to draw on passport image
-            'blurFlashnumBlotsnum': self._dialog.blurFlashnumBlotsnum.value(),
             'fontComboBox': self._dialog.fontComboBox.currentText(),  # font for passport data text fields
             'fontsizeSpinBox': self._dialog.fontsizeSpinBox.value(),  # font size
             'fontblurSpinBox': self._dialog.fontblurSpinBox.value(),  # font blur value

@@ -4,6 +4,8 @@ import os
 import cv2
 import numpy as np
 from PIL import Image, ImageFont
+from typing import Tuple
+
 from utils.path_utils import Paths
 
 
@@ -41,7 +43,7 @@ def convert_from_image_to_cv2(img: Image) -> np.ndarray:
     return cv2.cvtColor(np.array(img), cv2.COLOR_RGBA2RGB)
 
 
-def load_markup(file: str) -> dict:
+def load_markup(file: str) -> Tuple[dict, int]:
     """
     Loading the background markup from file
 
@@ -53,6 +55,7 @@ def load_markup(file: str) -> dict:
         with open(Paths.backgrounds() / file_json, 'r') as f:
             data = json.load(f)
             background_markup = {}
+            font_pick = data['font_pick']
             # background_markup = {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))
             #                     for elem in self.parameters["images"]["background"][1]["shapes"]}
             for elem in data["shapes"]:
@@ -61,5 +64,5 @@ def load_markup(file: str) -> dict:
                         {elem['label']: list(map(lambda x: [abs(int(x[0])), abs(int(x[1]))], elem['points']))}
                     )
 
-            return background_markup
-    return {}
+            return background_markup, font_pick
+    return {}, 0
