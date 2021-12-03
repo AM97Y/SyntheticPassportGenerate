@@ -162,9 +162,9 @@ class PassportAppearance(Passport):
             elif key == 'blotsnumSpinBox' or key == 'flashnumSpinBox':
                 self._parameters[key] = np.random.poisson(0.5)
             elif key == 'blurFlashnumBlotsnum':
-                self._parameters[key] = int(np.random.normal(35))
-            elif key == 'blurFlashnumBlotsnum':
-                self._parameters[key] = randint(0, 100)
+                self._parameters[key] = int(np.random.normal(10))
+            elif key == 'fontblurSpinBox':
+                self._parameters[key] = randint(50, 100)
             elif key == 'fontComboBox':
                 self._parameters[key] = choice([file for file in Resources.fonts()])
             elif key == 'fontsizeSpinBox':
