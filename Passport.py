@@ -123,6 +123,7 @@ class PassportContent(Passport):
         # Fills in pictures of signatures
         path_to_signs = Resources.signs()
         self._parameters['images']['officersignLabel'] = choice(path_to_signs)  # signature of the passport officer
+        path_to_signs = list(filter(lambda x: x != self._parameters['images']['officersignLabel'], path_to_signs))
         self._parameters['images']['ownersignLabel'] = choice(path_to_signs)  # signature of the person
 
         # Fill in passport background
@@ -171,6 +172,3 @@ class PassportAppearance(Passport):
                 self._parameters['fontsizeSpinBox'] = self._font_pick
                 self._parameters['font_pick'] = self._font_pick
                 self._parameters[key] = int(np.random.normal(self._font_pick))
-
-
-
