@@ -1,15 +1,9 @@
-from math import floor
+from PIL import Image, ImageFont
 
-import albumentations as A
-import PIL
-from PIL import Image, ImageFilter, ImageOps, ImageFont
-
-from MessageBox import MessageBox
-from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw, delete_white_background, get_text_image, \
-    draw_watermark
+from utils.draw_utils import get_box_corner_to_draw, get_box_size_to_draw, get_text_image, \
+    draw_image, draw_artifacts
 from utils.path_utils import Paths
 from utils.resources_utils import Resources
-from utils.processing_utils import convert_from_image_to_cv2, convert_from_cv2_to_image
 
 
 class ImageCreator:
@@ -117,86 +111,19 @@ class ImageCreator:
 
             # Add images to passport background
             #  Add photo of owner
-            try:
-                with Image.open(self._passport_content_params['images']['photoLabel']) as img_photo:
-                    img_photo = img_photo.resize(get_box_size_to_draw(markup=background_markup["photo"]), Image.NEAREST)
-                    img.paste(im=img_photo, box=get_box_corner_to_draw(background_markup["photo"]))
-            except PIL.UnidentifiedImageError:
-                error_dialog = MessageBox()
-                error_dialog.show_message('Фотогорафия человека не является изображением')
-            # Add signature of officer
-            try:
-                with Image.open(self._passport_content_params['images']['officersignLabel']) as img_signature_1:
-                    img_signature_1 = delete_white_background(img_signature_1).resize(
-                        get_box_size_to_draw(markup=background_markup["officer_signature"]), Image.NEAREST)
+            img = draw_image(img=img, file_paste_img=self._passport_content_params['images']['photoLabel'],
+                             background_markup=background_markup["photo"])
 
-                    paste_point = get_box_corner_to_draw(markup=background_markup["officer_signature"])
-                    img.paste(im=img_signature_1, box=paste_point, mask=img_signature_1)
-            except PIL.UnidentifiedImageError:
-                error_dialog = MessageBox()
-                error_dialog.show_message('Выбранная подпись не является изображением.')
+            # Add signature of officer
+            img = draw_image(img=img, file_paste_img=self._passport_content_params['images']['officersignLabel'],
+                             background_markup=background_markup["officer_signature"], delete_background=True)
 
             # Add signature of owner
-            try:
-                with Image.open(self._passport_content_params['images']['ownersignLabel']) as img_signature_1:
-                    img_signature_1 = delete_white_background(img_signature_1).resize(
-                        get_box_size_to_draw(markup=background_markup["signature"]), Image.NEAREST)
+            img = draw_image(img=img, file_paste_img=self._passport_content_params['images']['ownersignLabel'],
+                             background_markup=background_markup["signature"], delete_background=True)
 
-                    paste_point = get_box_corner_to_draw(markup=background_markup["signature"])
-                    img.paste(im=img_signature_1, box=paste_point, mask=img_signature_1)
-            except PIL.UnidentifiedImageError:
-                error_dialog = MessageBox()
-                error_dialog.show_message('Выбранная подпись не является изображением.')
+            # Add artifacts
+            img = draw_artifacts(img=img, params=self._passport_appearance_params,
+                                 markup_passport=self._passport_content_params["images"]["background"][1]['passport'])
 
-            img = self._overlay_artifacts(img)
-
-        return img
-
-    def _overlay_artifacts(self, img: Image) -> Image:
-        """
-        This function draws watermarks
-
-        :param img: image to overlay artifacts
-        :return: changed image
-        """
-        # Overlay blots
-        count_watermark = self._passport_appearance_params['blotsnumSpinBox']
-        files = Resources.dirty()
-        img = draw_watermark(img=img, count_watermark=count_watermark,
-                             files=files,
-                             params={"paste_point": None,
-                                     "resize_size": None,
-                                     })
-        # Apply effect of "crumpled paper"
-        if self._passport_appearance_params['crumpledCheckBox']:
-            files = Resources.crumpled()
-            markup = self._passport_content_params["images"]["background"][1]['passport']
-            img = draw_watermark(img=img, count_watermark=1, files=files,
-                                 params={"paste_point": get_box_corner_to_draw(markup),
-                                         "resize_size": get_box_size_to_draw(markup),
-                                         })
-            img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
-
-        effects = [A.RGBShift(r_shift_limit=10, g_shift_limit=10, b_shift_limit=10, p=0.5),
-                   A.RandomBrightnessContrast(brightness_limit=0.1, contrast_limit=0.15),
-                  ]
-        # Apply blur
-        if self._passport_appearance_params['blurCheckBox']:
-            effects.append(A.OneOf([A.GaussianBlur(p=1), A.MedianBlur(p=1), A.Blur(p=1)], p=1))
-
-        # Apply noise
-        if self._passport_appearance_params['noiseCheckBox']:
-            # img = img.filter(ImageFilter.MinFilter(size=3))
-            effects.append(A.GaussNoise(p=1))
-
-        # Overlay flashes
-        if self._passport_appearance_params['flashnumSpinBox'] > 0:
-            effects += [A.RandomSunFlare(num_flare_circles_lower=0, num_flare_circles_upper=1,
-                                         src_radius=floor(6.25 * self._passport_appearance_params['font_pick']), p=1)] \
-                       * self._passport_appearance_params['flashnumSpinBox']
-
-        image_cv = convert_from_image_to_cv2(img=img)
-        transform = A.Compose(effects)
-        image_cv = transform(image=image_cv)["image"]
-        img = convert_from_cv2_to_image(img=image_cv)
         return img

@@ -89,7 +89,7 @@ class PassportContent(Passport):
                 elif key == 'department_code':
                     self._parameters[key] = [randint(100, 999), randint(100, 999)]
                 elif key == 'date_birth':
-                    start_date = date(year=1900, month=1, day=1)
+                    start_date = date(year=1930, month=1, day=1)
                     end_date = date(year=datetime.now().year - years_difference, month=1, day=1)
                     self._parameters[key] = Faker().date_between(start_date=start_date, end_date=end_date)
                 elif key == 'date_issue':
