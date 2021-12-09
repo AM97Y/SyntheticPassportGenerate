@@ -1,3 +1,5 @@
+from math import floor
+
 import albumentations as A
 import PIL
 from PIL import Image, ImageFilter, ImageOps, ImageFont
@@ -14,6 +16,7 @@ class ImageCreator:
     """
     This class create passport image
     """
+
     def __init__(self, passport_content_params: dict, passport_appearance_params: dict):
         self._passport_content_params = passport_content_params
         self._passport_appearance_params = passport_appearance_params
@@ -32,7 +35,7 @@ class ImageCreator:
                 'text': ImageFont.truetype(font=str(Paths.fonts() / self._passport_appearance_params["fontComboBox"]),
                                            size=self._passport_appearance_params["fontsizeSpinBox"]),
                 'serie_number': ImageFont.truetype(font=Resources.numbers_font(),
-                                                   size=self._passport_appearance_params["font_pick"]+6)
+                                                   size=self._passport_appearance_params["font_pick"] + 6)
             }
             font_colors = {'black': (self._passport_appearance_params['color_text'],) * 3, 'red': (130, 30, 30)}
 
@@ -103,7 +106,7 @@ class ImageCreator:
                                       color=font_colors['red'], center=False).rotate(270)
             img.paste(im=img_text,
                       box=get_box_corner_to_draw(markup=background_markup["number_group1"], number=True),
-                      mask=img_text,)
+                      mask=img_text, )
             img_text = get_text_image(text=series_number_text,
                                       font=fonts['serie_number'],
                                       size=get_box_size_to_draw(markup=background_markup["number_group2"], number=True),
@@ -173,26 +176,27 @@ class ImageCreator:
                                          "resize_size": get_box_size_to_draw(markup),
                                          })
             img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
+
+        effects = [A.RGBShift(r_shift_limit=10, g_shift_limit=10, b_shift_limit=10, p=0.5),
+                   A.RandomBrightnessContrast(brightness_limit=0.1, contrast_limit=0.15),
+                  ]
         # Apply blur
         if self._passport_appearance_params['blurCheckBox']:
-            image_cv = convert_from_image_to_cv2(img=img)
-            transform = A.Compose([A.OneOf([A.GaussianBlur(p=1), A.MedianBlur(p=1), A.Blur(p=1)], p=1)])
-            image_cv = transform(image=image_cv)["image"]
-            img = convert_from_cv2_to_image(img=image_cv)
+            effects.append(A.OneOf([A.GaussianBlur(p=1), A.MedianBlur(p=1), A.Blur(p=1)], p=1))
 
         # Apply noise
         if self._passport_appearance_params['noiseCheckBox']:
-            img = img.filter(ImageFilter.MinFilter(size=3))
+            # img = img.filter(ImageFilter.MinFilter(size=3))
+            effects.append(A.GaussNoise(p=1))
+
         # Overlay flashes
         if self._passport_appearance_params['flashnumSpinBox'] > 0:
-            count_watermark = self._passport_appearance_params['flashnumSpinBox']
-            image_cv = convert_from_image_to_cv2(img=img)
-            for _ in range(count_watermark):
-                transform = A.Compose([A.RandomSunFlare(num_flare_circles_lower=0,
-                                                        num_flare_circles_upper=1,
-                                                        src_radius=400,
-                                                        p=1)])
-                image_cv = transform(image=image_cv)["image"]
-            img = convert_from_cv2_to_image(img=image_cv)
+            effects += [A.RandomSunFlare(num_flare_circles_lower=0, num_flare_circles_upper=1,
+                                         src_radius=floor(6.25 * self._passport_appearance_params['font_pick']), p=1)] \
+                       * self._passport_appearance_params['flashnumSpinBox']
 
+        image_cv = convert_from_image_to_cv2(img=img)
+        transform = A.Compose(effects)
+        image_cv = transform(image=image_cv)["image"]
+        img = convert_from_cv2_to_image(img=image_cv)
         return img
