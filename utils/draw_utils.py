@@ -1,7 +1,15 @@
+from math import floor
 from random import randint, choice
-import numpy as np
-from PIL import Image, ImageDraw, ImageFont
 from typing import Tuple
+
+import albumentations as A
+import numpy as np
+import PIL
+from PIL import Image, ImageOps, ImageFont, ImageDraw
+
+from MessageBox import MessageBox
+from utils.processing_utils import convert_from_image_to_cv2, convert_from_cv2_to_image
+from utils.resources_utils import Resources
 
 
 def get_box_size_to_draw(markup: list, number: bool = False) -> tuple:
@@ -50,7 +58,7 @@ def delete_white_background(img: Image) -> Image:
     img_signature_1 = img.convert('RGBA')
     arr = np.array(np.asarray(img_signature_1))
     r, g, b, _ = np.rollaxis(arr, axis=-1)
-    mask = ((r == 255) & (g == 255) & (b == 255))
+    mask = ((r > 150) & (g > 150) & (b > 150))
     arr[mask, 3] = 0
     img = Image.fromarray(arr, mode='RGBA')
     return img
@@ -106,3 +114,85 @@ def draw_watermark(img: Image, count_watermark: int, files: list, params: dict =
                 img.paste(im=img_watermark, box=paste_point, mask=paste_mask)
 
     return img.convert('RGBA')
+
+
+def draw_image(img: Image, file_paste_img: str, background_markup, delete_background: bool = False) -> Image:
+    """
+    This function draws the image on the background.
+
+    :param img: Edited Image.
+    :param file_paste_img: Path to inserted image.
+    :param background_markup: Edited Image markup.
+    :param delete_background: True for deleted/
+    :return: Changed image.
+    """
+    try:
+        with Image.open(file_paste_img) as paste_img:
+
+            paste_img = paste_img.resize(
+                get_box_size_to_draw(markup=background_markup), Image.NEAREST)
+            paste_point = get_box_corner_to_draw(markup=background_markup)
+            if delete_background:
+                paste_img = delete_white_background(paste_img)
+                img.paste(im=paste_img, box=paste_point, mask=paste_img)
+            else:
+                img.paste(im=paste_img, box=paste_point)
+            return img
+
+    except PIL.UnidentifiedImageError:
+        error_dialog = MessageBox()
+        error_dialog.show_message('Выбранный объект не является изображением. Выберите другое изображение.')
+        return img
+
+
+def draw_artifacts(img: Image, params: dict, markup_passport: list) -> Image:
+    """
+    This function draws watermarks.
+
+    :param params: Information about artifacts.
+    :param markup_passport: Markup passport.
+    :param img: image to overlay artifacts.
+    :return: Changed image.
+    """
+
+    # Overlay blots
+    count_watermark = params['blotsnumSpinBox']
+    files = Resources.dirty()
+    img = draw_watermark(img=img, count_watermark=count_watermark,
+                         files=files,
+                         params={"paste_point": None,
+                                 "resize_size": None,
+                                 })
+    # Apply effect of "crumpled paper"
+    if params['crumpledCheckBox']:
+        files = Resources.crumpled()
+        img = draw_watermark(img=img, count_watermark=1, files=files,
+                             params={"paste_point": get_box_corner_to_draw(markup_passport),
+                                     "resize_size": get_box_size_to_draw(markup_passport),
+                                     })
+        img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
+
+    effects = [A.RGBShift(r_shift_limit=10, g_shift_limit=10, b_shift_limit=10, p=0.5),
+               A.RandomBrightnessContrast(brightness_limit=0.1, contrast_limit=0.15),
+               ]
+    # Apply blur
+    if params['blurCheckBox']:
+        effects.append(A.OneOf([A.GaussianBlur(p=1), A.MedianBlur(p=1), A.Blur(p=1)], p=1))
+
+    # Apply noise
+    if params['noiseCheckBox']:
+        # img = img.filter(ImageFilter.MinFilter(size=3))
+        effects.append(A.GaussNoise(p=1))
+
+    # Overlay flashes
+    if params['flashnumSpinBox'] > 0:
+        effects += [A.RandomSunFlare(num_flare_circles_lower=0, num_flare_circles_upper=1,
+                                     src_radius=floor(6.25 * params['font_pick']), p=1)] \
+                   * params['flashnumSpinBox']
+
+    image_cv = convert_from_image_to_cv2(img=img)
+    transform = A.Compose(effects)
+    image_cv = transform(image=image_cv)["image"]
+    img = convert_from_cv2_to_image(img=image_cv)
+
+    return img
