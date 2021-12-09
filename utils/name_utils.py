@@ -11,7 +11,7 @@ def load_names(sex: str) -> list:
     :param sex: sex of person
     :return: list of corresponding names
     """
-    names_file = 'male_names.csv' if sex else 'female_names.csv'
+    names_file = 'male_names.csv' if sex == 'МУЖ.' else 'female_names.csv'
     df = pd.read_csv(Paths.data_passport() / names_file, ';')
     return df[df.PeoplesCount > 20000]['Name'].tolist()
 
