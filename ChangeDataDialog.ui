@@ -457,7 +457,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
+      <y>30</y>
       <width>171</width>
       <height>17</height>
      </rect>
@@ -470,7 +470,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>70</y>
+      <y>50</y>
       <width>161</width>
       <height>17</height>
      </rect>
@@ -496,7 +496,7 @@
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>50</y>
+      <y>60</y>
       <width>51</width>
       <height>22</height>
      </rect>
@@ -522,7 +522,7 @@
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>50</y>
+      <y>60</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -544,39 +544,17 @@
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_19">
+   <widget class="QCheckBox" name="blurCheckBox">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>10</x>
       <y>70</y>
-      <width>141</width>
-      <height>21</height>
+      <width>161</width>
+      <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>Размытие страниц:</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="blurFlashnumBlotsnum">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>70</y>
-      <width>51</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="suffix">
-     <string>%</string>
-    </property>
-    <property name="maximum">
-     <number>99</number>
-    </property>
-    <property name="value">
-     <number>99</number>
-    </property>
-    <property name="displayIntegerBase">
-     <number>10</number>
+     <string>Размытие страниц</string>
     </property>
    </widget>
   </widget>

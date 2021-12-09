@@ -135,12 +135,13 @@ class PassportContent(Passport):
 class PassportAppearance(Passport):
     """
     This class keeps information about passport appearance.
+
     """
 
     def __init__(self):
         super().__init__()
         self._parameters = {
-            'blurFlashnumBlotsnum': 0,
+            'blurCheckBox': 0,
             'crumpledCheckBox': True,
             'noiseCheckBox': True,
             'blotsnumSpinBox': 2,
@@ -155,14 +156,13 @@ class PassportAppearance(Passport):
     def random_init(self) -> None:
         """
         This function randomly fills in the appearance of the passport.
+
         """
         for key, _ in self._parameters.items():
             if key == 'crumpledCheckBox' or key == 'noiseCheckBox':
                 self._parameters[key] = choice((True, False))
-            elif key == 'blotsnumSpinBox' or key == 'flashnumSpinBox':
+            elif key == 'blurCheckBox' or key == 'blotsnumSpinBox' or key == 'flashnumSpinBox':
                 self._parameters[key] = np.random.poisson(0.5)
-            elif key == 'blurFlashnumBlotsnum':
-                self._parameters[key] = int(np.random.normal(10))
             elif key == 'fontblurSpinBox':
                 self._parameters[key] = randint(50, 100)
             elif key == 'fontComboBox':

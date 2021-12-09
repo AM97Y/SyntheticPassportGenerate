@@ -86,7 +86,7 @@ class ChangeDataDialog(QDialog):
         self.noiseCheckBox.setChecked(passport_appearance_params['noiseCheckBox'])
         self.blotsnumSpinBox.setValue(passport_appearance_params['blotsnumSpinBox'])
         self.flashnumSpinBox.setValue(passport_appearance_params['flashnumSpinBox'])
-        self.blurFlashnumBlotsnum.setValue(passport_appearance_params['blurFlashnumBlotsnum'])
+        self.blurCheckBox.setChecked(passport_appearance_params['blurCheckBox'])
 
     def _fill_fonts_fields(self, passport_appearance_params: dict) -> None:
         """

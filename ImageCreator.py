@@ -174,9 +174,12 @@ class ImageCreator:
                                          })
             img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
         # Apply blur
-        if self._passport_appearance_params['blurFlashnumBlotsnum'] > 0:
-            img = img.filter(ImageFilter.GaussianBlur(
-                radius=(self._passport_appearance_params['blurFlashnumBlotsnum']/200.)*20))
+        if self._passport_appearance_params['blurCheckBox']:
+            image_cv = convert_from_image_to_cv2(img=img)
+            transform = A.Compose([A.OneOf([A.GaussianBlur(p=1), A.MedianBlur(p=1), A.Blur(p=1)], p=1)])
+            image_cv = transform(image=image_cv)["image"]
+            img = convert_from_cv2_to_image(img=image_cv)
+
         # Apply noise
         if self._passport_appearance_params['noiseCheckBox']:
             img = img.filter(ImageFilter.MinFilter(size=3))
