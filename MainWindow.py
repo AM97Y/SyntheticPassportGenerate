@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
             'address': self._dialog.birthPlacelineEdit.text(),
             'number_passport': self._dialog.numberSpinBox.value(),
             'department_code': [self._dialog.codeSpinBox1.value(), self._dialog.codeSpinBox2.value()],
-            'department': self._dialog.organizationLineEdit.text(),
+            'department': self._dialog.organizationLineEdit.toPlainText(),
             'date_issue': convert_dateedit_to_datetime(self._dialog.issueDateEdit),
             'date_birth': convert_dateedit_to_datetime(self._dialog.birthDateEdit),
             'sex': self._dialog.sexComboBox.currentText(),

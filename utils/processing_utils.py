@@ -9,17 +9,17 @@ from typing import Tuple
 from utils.path_utils import Paths
 
 
-def get_hyphenated_str(text: str, font: ImageFont, width_img: int) -> str:
+def get_hyphenated_str(text: str, font: ImageFont, w_box: int) -> str:
     """
     Transform the string into text with line breaks
 
     :param text: text to change by inserting the line breaks
     :param font: text font
-    :param width_img: image width
+    :param w_box: image width
     :return: edited text with line breaks
     """
     width, height = font.getsize(text)
-    if font.getsize(text)[0] >= width_img:
+    if width >= w_box:
         result = [i for i, chr in enumerate(text) if chr == ' ']
         # if not result:
         # print('Error get_hyphenated_str') print -> Exception
@@ -28,7 +28,7 @@ def get_hyphenated_str(text: str, font: ImageFont, width_img: int) -> str:
             if text[pos - 1] == ',':
                 text = "\n".join([text[:pos], text[pos + 1:]])
 
-                if font.getsize(text[pos + 3:])[0] < width_img:
+                if font.getsize(text[pos + 3:])[0] < w_box:
                     return text
 
     text = text.replace(' ', '\n')
@@ -59,10 +59,6 @@ def load_markup(file: str) -> Tuple[dict, int]:
             # background_markup = {elem['label']: list(map(lambda x: [int(x[0]), int(x[1])], elem['points']))
             #                     for elem in self.parameters["images"]["background"][1]["shapes"]}
             for elem in data["shapes"]:
-                if background_markup.get(elem['label'], None) is None:
-                    background_markup.update(
-                        {elem['label']: list(map(lambda x: [abs(int(x[0])), abs(int(x[1]))], elem['points']))}
-                    )
-
+                background_markup[elem['label']] = background_markup.get(elem['label'], [])+[list(map(lambda x: [abs(int(x[0])), abs(int(x[1]))], elem['points']))]
             return background_markup, font_pick
     return {}, 0

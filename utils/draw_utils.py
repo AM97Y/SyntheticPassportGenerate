@@ -1,6 +1,6 @@
 from math import floor
 from random import randint, choice
-from typing import Tuple
+from typing import Tuple, List
 
 import albumentations as A
 import numpy as np
@@ -8,11 +8,11 @@ import PIL
 from PIL import Image, ImageOps, ImageFont, ImageDraw
 
 from MessageBox import MessageBox
-from utils.processing_utils import convert_from_image_to_cv2, convert_from_cv2_to_image
+from utils.processing_utils import convert_from_image_to_cv2, convert_from_cv2_to_image, get_hyphenated_str
 from utils.resources_utils import Resources
 
 
-def get_box_size_to_draw(markup: list, number: bool = False) -> tuple:
+def get_box_size_to_draw(markup: List[list], number: bool = False) -> tuple:
     """
     Get box size to draw the text inside
 
@@ -33,13 +33,13 @@ def get_box_size_to_draw(markup: list, number: bool = False) -> tuple:
     return width, height
 
 
-def get_box_corner_to_draw(markup: list, number: bool = False) -> tuple:
+def get_box_corner_to_draw(markup: List[list], number: bool = False) -> tuple:
     """
-    Get the coordinate of left upper box corner to draw inside
+    Get the coordinate of left upper box corner to draw inside.
 
-    :param markup: background markup
-    :param number: True if it is needed to draw a number
-    :return: coordinate of left upper box corner
+    :param markup: Background markup.
+    :param number: True if it is needed to draw a number.
+    :return: coordinate of left upper box corner.
     """
     if number:
         w, h = get_box_size_to_draw(markup=markup)
@@ -64,34 +64,64 @@ def delete_white_background(img: Image) -> Image:
     return img
 
 
-def get_text_image(text: str, font: ImageFont, size: Tuple[int], color: Tuple[int, int, int],
-                   center: bool = True) -> Image:
+def draw_text(img: Image, background_markup: List[List[list]], text: str, font: ImageFont, color: Tuple[int, int, int],
+              number: bool = False) -> Image:
     """
-    Get image with text inside
+    Draw image with text inside.
 
-    :param center: place in the middle or not.
-    :param size: image size
-    :param color: text color
+    :param number:
+    :param img: Edited image.
+    :param background_markup: Object markup.
+    :param color: text color.
     :param text: text to draw inside
-    :param font: text font
-    :return: generated text image
-        """
-    # text = get_hyphenated_str(text, font, shape[0])
-    text = text.upper()
-    img_text = Image.new(mode="RGBA", size=size, color=(0, 0, 0, 0))
-    drawer = ImageDraw.Draw(im=img_text)
-    if center:
-        W, H = size
-        w, h = drawer.textsize(text, font=font)
-        xy = ((W - w) / 2, (H - h) / 2)
-    else:
-        xy = (0, 0)
+    :param font: text font.
+    :return: generated text image.
+    """
 
-    drawer.text(xy=xy, text=text, fill=color, font=font)
-    return img_text
+    prepositions = ("по", "в")
+    text_lines = text.split("\n")
+
+    for i, markup in enumerate(background_markup):
+        if i >= len(text_lines):
+            break
+
+        size = get_box_size_to_draw(markup=markup, number=number)
+        img_text = Image.new(mode="RGBA", size=size, color=(0, 0, 0, 0))
+        drawer = ImageDraw.Draw(im=img_text)
+
+        w_box, h_box = size
+        w_text, h_text = drawer.textsize(text_lines[i], font=font)
+        text = text.upper()
+
+        if w_text > w_box:
+            revers_words = text_lines[i].split(" ")[::-1]
+            for j, word in enumerate(revers_words):
+                if word in prepositions:
+                    revers_words.insert(j + 1, '\n')
+                    new_text_line_j = " ".join(revers_words[::-1]).split('\n')
+                    text_lines[i] = new_text_line_j[0]
+                    w_text, h_text = drawer.textsize(text_lines[i], font=font)
+                    text_lines.insert(i+1, new_text_line_j[1])
+                    break
+            else:
+                tmp_words = text_lines[i].split(' ')
+                tmp_words.insert(-2, '\n')
+                new_text_line_j = " ".join(tmp_words).split('\n')
+                text_lines[i] = new_text_line_j[0]
+                w_text, h_text = drawer.textsize(text_lines[i], font=font)
+                text_lines.insert(i + 1, new_text_line_j[1])
+
+        xy = ((w_box - w_text) / 2, 0)
+        drawer.text(xy=xy, text=text_lines[i], fill=color, font=font)
+        box = get_box_corner_to_draw(markup=markup, number=number)
+        if number:
+            img_text = img_text.rotate(270)
+        img.paste(im=img_text, box=box, mask=img_text)
+
+    return img
 
 
-def draw_watermark(img: Image, count_watermark: int, files: list, params: dict = None) -> Image:
+def draw_watermark(img: Image, count_watermark: int, files: List[str], params: dict = None) -> Image:
     """
     Draws watermarks with the specified transparency level on the image.
 
@@ -116,7 +146,7 @@ def draw_watermark(img: Image, count_watermark: int, files: list, params: dict =
     return img.convert('RGBA')
 
 
-def draw_image(img: Image, file_paste_img: str, background_markup, delete_background: bool = False) -> Image:
+def draw_image(img: Image, file_paste_img: str, background_markup: List[List[list]], delete_background: bool = False) -> Image:
     """
     This function draws the image on the background.
 
