@@ -101,7 +101,7 @@ def draw_text(img: Image, background_markup: List[List[list]], text: str, font: 
                     new_text_line_j = " ".join(revers_words[::-1]).split('\n')
                     text_lines[i] = new_text_line_j[0]
                     w_text, h_text = drawer.textsize(text_lines[i], font=font)
-                    text_lines.insert(i+1, new_text_line_j[1])
+                    text_lines.insert(i + 1, new_text_line_j[1])
                     break
             else:
                 tmp_words = text_lines[i].split(' ')
@@ -146,7 +146,8 @@ def draw_watermark(img: Image, count_watermark: int, files: List[str], params: d
     return img.convert('RGBA')
 
 
-def draw_image(img: Image, file_paste_img: str, background_markup: List[List[list]], delete_background: bool = False) -> Image:
+def draw_image(img: Image, file_paste_img: str, background_markup: List[List[list]],
+               delete_background: bool = False) -> Image:
     """
     This function draws the image on the background.
 
@@ -207,7 +208,9 @@ def draw_artifacts(img: Image, params: dict, markup_passport: list) -> Image:
                ]
     # Apply blur
     if params['blurCheckBox']:
-        effects.append(A.OneOf([A.GaussianBlur(p=1), A.MedianBlur(p=1), A.Blur(p=1)], p=1))
+        effects.append(A.OneOf([A.GaussianBlur(blur_limit=7, p=1),
+                                A.MedianBlur(blur_limit=3, p=1),
+                                A.Blur(blur_limit=7, p=1)], p=1))
 
     # Apply noise
     if params['noiseCheckBox']:
