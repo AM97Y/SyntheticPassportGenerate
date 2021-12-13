@@ -208,9 +208,9 @@ def draw_artifacts(img: Image, params: dict, markup_passport: list) -> Image:
                ]
     # Apply blur
     if params['blurCheckBox']:
-        effects.append(A.OneOf([A.GaussianBlur(blur_limit=7, p=1),
+        effects.append(A.OneOf([A.GaussianBlur(blur_limit=(1, 5), p=1),
                                 A.MedianBlur(blur_limit=3, p=1),
-                                A.Blur(blur_limit=7, p=1)], p=1))
+                                A.Blur(blur_limit=(1, 7), p=1)], p=1))
 
     # Apply noise
     if params['noiseCheckBox']:
