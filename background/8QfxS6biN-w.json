@@ -1,7 +1,6 @@
 {
-  "version": "4.5.5",
+  "version": "4.5.7",
   "flags": {},
-  "font_pick": 40,
   "shapes": [
     {
       "label": "passport",
@@ -69,30 +68,6 @@
         [
           1432.904830224773,
           1770.5882352941176
-        ]
-      ],
-      "group_id": null,
-      "shape_type": "polygon",
-      "flags": {}
-    },
-    {
-      "label": "officer_signature",
-      "points": [
-        [
-          72.32216333100268,
-          247.6646755867415
-        ],
-        [
-          182.4958054029514,
-          248.78667729433772
-        ],
-        [
-          182.32476444948358,
-          303.7213799696261
-        ],
-        [
-          72.49792462264384,
-          303.11531936356556
         ]
       ],
       "group_id": null,
@@ -487,5 +462,6 @@
   "imagePath": "8QfxS6biN-w.jpg",
   "imageData": null,
   "imageHeight": 2160,
-  "imageWidth": 1531
+  "imageWidth": 1531,
+  "font_pick": 40
 }

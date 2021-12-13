@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         uic.loadUi('MainWindow.ui', self)
         self.setFixedSize(self.width(), self.height())
-        self.setWindowIcon(QIcon('Icons/MainWindow.ico'))
+        self.setWindowIcon(QIcon('icons/MainWindow.ico'))
 
         self._connect_signals_slots()
 

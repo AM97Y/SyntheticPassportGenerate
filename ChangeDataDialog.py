@@ -17,7 +17,7 @@ class ChangeDataDialog(QDialog):
         QDialog.__init__(self)
         uic.loadUi('ChangeDataDialog.ui', self)
         self.setFixedSize(self.width(), self.height())
-        #self.setWindowIcon(QIcon('Icons/ChangeDataDialog.ico'))
+        self.setWindowIcon(QIcon('icons/ChangeDataDialog.ico'))
 
         self._connect_signals_slots()
 
