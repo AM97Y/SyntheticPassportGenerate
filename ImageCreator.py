@@ -83,14 +83,18 @@ class ImageCreator:
             # Add series and number to passport background
 
             # Add series and number to passport background
-            series_number_text = "    ".join([str(self._passport_content_params['series_passport']),
-                                           str(self._passport_content_params['number_passport'])])
-            img = draw_text(img=img, text=series_number_text,
+
+            series_number_text = " ".join([str(self._passport_content_params['series_passport'])[:2],
+                                           str(self._passport_content_params['series_passport'])[2:]])
+
+            number_text = "  ".join([series_number_text,
+                                     str(self._passport_content_params['number_passport'])])
+            img = draw_text(img=img, text=number_text,
                             background_markup=background_markup["number_group1"],
                             font=fonts['serie_number'],
                             color=font_colors['red'], number=True)
 
-            img = draw_text(img=img, text=series_number_text,
+            img = draw_text(img=img, text=number_text,
                             background_markup=background_markup["number_group2"],
                             font=fonts['serie_number'],
                             color=font_colors['red'], number=True)
