@@ -77,8 +77,8 @@ def draw_text(img: Image, background_markup: List[List[list]], text: str, font: 
     :param font: text font.
     :return: generated text image.
     """
-
-    prepositions = ("по", "в")
+    text = text.upper()
+    prepositions = ("ПО", "В")
     text_lines = text.split("\n")
 
     for i, markup in enumerate(background_markup):
@@ -91,7 +91,6 @@ def draw_text(img: Image, background_markup: List[List[list]], text: str, font: 
 
         w_box, h_box = size
         w_text, h_text = drawer.textsize(text_lines[i], font=font)
-        text = text.upper()
 
         if w_text > w_box:
             revers_words = text_lines[i].split(" ")[::-1]
@@ -209,8 +208,7 @@ def draw_artifacts(img: Image, params: dict, markup_passport: list) -> Image:
     # Apply blur
     if params['blurCheckBox']:
         effects.append(A.OneOf([A.GaussianBlur(blur_limit=(1, 5), p=1),
-                                A.MedianBlur(blur_limit=3, p=1),
-                                A.Blur(blur_limit=(1, 5), p=1)], p=0.75))
+                                A.Blur(blur_limit=(1, 5), p=1)], p=1))
 
     # Apply noise
     if params['noiseCheckBox']:
