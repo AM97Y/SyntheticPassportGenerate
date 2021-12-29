@@ -204,13 +204,13 @@ def draw_artifacts(img: Image, params: dict, markup_passport: list) -> Image:
         img = ImageOps.autocontrast(image=img.convert('RGB'), cutoff=2, ignore=2)
 
     effects = [A.RGBShift(r_shift_limit=10, g_shift_limit=10, b_shift_limit=10, p=0.5),
-               A.RandomBrightnessContrast(brightness_limit=0.1, contrast_limit=0.15),
+               A.RandomBrightnessContrast(brightness_limit=0.1, contrast_limit=0.1),
                ]
     # Apply blur
     if params['blurCheckBox']:
         effects.append(A.OneOf([A.GaussianBlur(blur_limit=(1, 5), p=1),
                                 A.MedianBlur(blur_limit=3, p=1),
-                                A.Blur(blur_limit=(1, 7), p=1)], p=1))
+                                A.Blur(blur_limit=(1, 5), p=1)], p=0.75))
 
     # Apply noise
     if params['noiseCheckBox']:

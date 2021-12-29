@@ -16,3 +16,10 @@ This program allows to generate dataset of RF passports for machine learning.
 * Installed [Python](https://www.python.org/downloads/) >= 3.6 or [Anaconda](https://www.anaconda.com/products/individual) >= 4.10.1
 * Web Browser: [Google Chrome](https://www.google.com/chrome) or [Mozilla Firefox](https://www.mozilla.org/en/firefox/new/)
 * Installed web driver (see [ChromeDriver](https://chromedriver.chromium.org/downloads) or [mozilla/geckodriver](https://github.com/mozilla/geckodriver/releases) for more information)
+
+## How to launch
+
+Use one of these command to launch the application:
+
+    1) python main.py
+    2) Click on <insert_the_name_of_app>.exe

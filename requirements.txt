@@ -7,3 +7,4 @@ rootpath==0.1.1
 numpy==1.19.5
 pymorphy2==0.9.1
 selenium==3.141.0
+pandas==1.1.5
