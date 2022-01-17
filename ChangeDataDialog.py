@@ -97,7 +97,7 @@ class ChangeDataDialog(QDialog):
         for file in os.listdir(Paths.fonts()):
             if file != 'fonts.txt':
                 self.fontComboBox.addItem(file)
-        self.fontComboBox.setCurrentText(passport_appearance_params['fontComboBox'].split('/')[-1])
+        self.fontComboBox.setCurrentText(passport_appearance_params['fontComboBox'].replace('\\', '/').split('/')[-1])
         self.fontsizeSpinBox.setValue(passport_appearance_params['fontsizeSpinBox'])
         self.fontblurSpinBox.setValue(passport_appearance_params['fontblurSpinBox'])
 
