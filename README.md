@@ -22,4 +22,4 @@ This program allows to generate dataset of RF passports for machine learning.
 Use one of these command to launch the application:
 
     1) python main.py
-    2) Download https://drive.google.com/file/d/1Fqseoys-oiKN2oc6OY5H4w-Rnho16R3K/view?usp=sharing and click on SyntheticPassportGenerate.exe
+    2) Download https://drive.google.com/file/d/1daoMltut3KiR_rFJTZVAoVJPbkSaoW6r/view?usp=sharing and click on SyntheticPassportGenerate.exe
