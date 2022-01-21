@@ -41,44 +41,21 @@ class Passport(ABC):
 
 class PassportContent(Passport):
     """
-    This class keeps information about data content of passport
+    This function randomly fills in the content of the passport.
+
     """
+    is_success = True
+    try:
+        print('Chrome')
+        # Online mode of generating passport data
+        self._parameters = upload_online_passport_data(data=self._parameters, browser='Chrome',
+                                                       path_driver=Resources.driver(browser='Chrome'))
+        self._init_visual_content()
 
-    def __init__(self):
-        super().__init__()
-        self._parameters = {
-            'first_name': '',
-            'second_name': '',
-            'patronymic_name': '',
-            'address': '',
-            'series_passport': 1,
-            'number_passport': 1,
-            'department_code': [0, 0],
-            'department': '',
-            'date_birth': '',
-            'date_issue': '',
-            'sex': 'МУЖ.',
-            'images': {
-                'photoLabel': '',
-                'officersignLabel': '',
-                'ownersignLabel': '',
-                'background': ['', {}]
-            }
-        }
+    except:
+        is_success = False
 
-    def random_init(self) -> None:
-        """
-        This function randomly fills in the content of the passport
-        """
-        try:
-            print('Chrom')
-            # Online mode of generating passport data
-            self._parameters = upload_online_passport_data(data=self._parameters, browser='Chrome',
-                                                           path_driver=Resources.driver(browser='Chrome'))
-            self._init_visual_content()
-        except:
-            pass
-
+    if not is_success:
         try:
             print('Firefox')
             # Online mode of generating passport data
@@ -86,7 +63,6 @@ class PassportContent(Passport):
                                                            path_driver=Resources.driver(browser='Firefox'))
             self._init_visual_content()
         except:
-            print('off')
             # Offline mode of generating passport data
             years_difference = choice(range(14, 70))
             # Fill in the sex of person
