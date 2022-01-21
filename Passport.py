@@ -71,11 +71,22 @@ class PassportContent(Passport):
         This function randomly fills in the content of the passport
         """
         try:
+            print('Chrom')
+            # Online mode of generating passport data
+            self._parameters = upload_online_passport_data(data=self._parameters, browser='Chrome',
+                                                           path_driver=Resources.driver(browser='Chrome'))
+            self._init_visual_content()
+        except:
+            pass
+
+        try:
+            print('Firefox')
             # Online mode of generating passport data
             self._parameters = upload_online_passport_data(data=self._parameters, browser='Firefox',
-                                                           path_driver=Resources.driver())
+                                                           path_driver=Resources.driver(browser='Firefox'))
             self._init_visual_content()
-        except Exception:
+        except:
+            print('off')
             # Offline mode of generating passport data
             years_difference = choice(range(14, 70))
             # Fill in the sex of person
