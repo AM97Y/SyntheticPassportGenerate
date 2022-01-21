@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -42,6 +43,8 @@ def upload_online_passport_data(data: dict, browser: str, path_driver: str) -> d
         raise ValueError('use browser Chrome or Firefox')
 
     driver.get(URL)
+    driver.set_page_load_timeout(30)
+    time.sleep(5)
     # Extract passport data generated on the web page
     for name in NAMES:
         value = driver.find_element_by_xpath(f'//input[@id="{name}"]').get_attribute('value')
