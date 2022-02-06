@@ -13,7 +13,7 @@ def load_names(sex: str) -> list:
     """
     names_file = 'male_names.csv' if sex == 'МУЖ.' else 'female_names.csv'
     df = pd.read_csv(Paths.data_passport() / names_file, ';')
-    return df['Name'].tolist()
+    return df[df.Popularity > -100]['Name'].tolist()
 
 
 def load_surnames(sex: str) -> list:
