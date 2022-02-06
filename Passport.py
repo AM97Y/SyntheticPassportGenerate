@@ -7,7 +7,7 @@ from random import choice, randint
 import numpy as np
 
 from Sex import Sex
-from utils.name_utils import gender_format, load_names
+from utils.name_utils import gender_format, load_names, load_surnames, load_patronymics
 from utils.resources_utils import Resources
 from utils.processing_utils import load_markup
 from utils.request import upload_online_passport_data
@@ -99,16 +99,17 @@ class PassportContent(Passport):
                     self._parameters[key] = Faker().date_between(start_date=start_date, end_date=end_date)
                 if key == 'first_name':
                     self._parameters[key] = choice(load_names(sex=self._parameters['sex']))
+                elif key == 'second_name':
+                    self._parameters[key] = choice(load_surnames(sex=self._parameters['sex']))
+                elif key == 'patronymic_name':
+                    self._parameters[key] = choice(load_patronymics(sex=self._parameters['sex']))
                 elif key == 'images':
                     self._init_visual_content()
-                elif key == 'second_name' or key == 'patronymic_name' or key == 'address' or key == 'department':
+                elif key == 'address' or key == 'department':
                     if os.path.isfile(Resources.dataset(key)):
                         with open(Resources.dataset(key), "r", encoding='utf-8') as f:
                             tmp_choices = [line.strip() for line in f]
-                        if key == 'department':
-                            self._parameters[key] = choice(tmp_choices)
-                        else:
-                            self._parameters[key] = gender_format(text=choice(tmp_choices), sex=self._parameters['sex'])
+                        self._parameters[key] = choice(tmp_choices)
                         del tmp_choices
 
     def _init_visual_content(self) -> None:
