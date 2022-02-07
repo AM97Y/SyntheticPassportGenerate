@@ -1,4 +1,3 @@
-from pymorphy2 import MorphAnalyzer
 import pandas as pd
 
 from utils.path_utils import Paths
@@ -54,16 +53,3 @@ def get_sex(name: str) -> str:
         return "МУЖ."
     else:
         return "ЖЕН."
-
-
-def gender_format(text: str, sex: str) -> str:
-    """
-    This function returns the first, middle or last name in the correct gender
-    
-    :param text: first, middle or last name
-    :param sex: gender for format
-    :return: gender correct word
-    """
-    parsed = MorphAnalyzer().parse(text)
-    gender = 'femn' if sex == "ЖЕН." else 'masc'
-    return (parsed[0].inflect({gender, 'nomn'}) or parsed[0]).word.title()
