@@ -23,6 +23,6 @@ Use one of these command to launch the application:
 
 1) Inside this repository: `python main.py`
 2) Regardless of the repository:
-   1) Download [SyntheticPassportGenerate app](https://drive.google.com/file/d/1J_VipG9H7ADi6rd9uvelKyCt07EhSbTh/view?usp=sharing) from Google Drive, 
+   1) Download [SyntheticPassportGenerate app](https://drive.google.com/file/d/1zp1ebK5ElfloE37AidAgf2HfSOXdS2vW/view?usp=sharing) from Google Drive, 
    2) Unarchive it,
    3) Double click on `SyntheticPassportGenerate.exe`.
